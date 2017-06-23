@@ -23,12 +23,12 @@
 	<!-- 扫描ServiceImpl -->
 	<context:component-scan base-package="com.supervise.serviceImpl" />
 
-	<!--<context:component-scan base-package="com.supervise.logAop" />-->
+	<context:component-scan base-package="com.supervise.config" />
 	<!-- 启动对@AspectJ注解的支持 -->
 	<!--通知spring使用cglib而不是jdk的来生成代理方法 AOP可以拦截到Controller-->  
   <aop:aspectj-autoproxy proxy-target-class="true"/>
 	<!-- 注解支持 -->  
-<context:annotation-config/> 
+  <context:annotation-config/>
 	<!--避免IE执行AJAX时，返回JSON出现下载文件 -->
 	<bean id="mappingJackson2HttpMessageConverter"
 		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
@@ -80,5 +80,5 @@
 		<!-- 内存中的最大值 -->
 		<property name="maxInMemorySize" value="40960" />
 	</bean>
-    <!--<import resource="spring-mvc-shiro.xml"/>-->
+
 </beans>

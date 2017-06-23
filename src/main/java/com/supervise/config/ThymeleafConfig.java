@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.dialect.IDialect;
@@ -19,9 +20,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Alex on 2017/1/6.
+ * Created by nathaniel on 2017/1/6.
  */
 @Configuration
+//@EnableWebMvc  // 启用 SpringMVC ，相当于 xml中的 <mvc:annotation-driven/>
 public class ThymeleafConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -65,7 +67,7 @@ public class ThymeleafConfig extends WebMvcConfigurerAdapter implements Applicat
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**")
-                .addResourceLocations("classpath:/static/assets/");
+                .addResourceLocations("/static/assets/");
         super.addResourceHandlers(registry);
     }
 }

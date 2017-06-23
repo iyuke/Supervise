@@ -20,18 +20,16 @@
  
 <!-- 定时器开关 开始 -->
 	<task:annotation-driven />
-	<!-- 标注类型 的事务配置 如果使用注解事务。就放开
-	<tx:annotation-driven />-->
 
 	<!-- 扫描serviceImpl的bean -->
 	<context:component-scan base-package="com.supervise.serviceImpl"/>
-	<!-- 扫描@Configuration的bean -->
-	<context:component-scan base-package="com.supervise.config"/>
+	<!-- 扫描@Configuration的shiro bean -->
+	<context:component-scan base-package="com.supervise.shiro.config"/>
 	
 	<!-- 统一异常处理方式 -->
 	<bean id="exceptionHandler" class="com.supervise.exception.MyExceptionHandler"/>
+
 	<!-- 初始化数据 -->
-	
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
 				 <property name ="locations">
 						 <list>
@@ -55,22 +53,6 @@
 				<!--<prop key="pageSqlId">.*query.*</prop>-->
 			<!--</props>-->
 		<!--</property>-->
-	<!--</bean>-->
-
-	<!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
-		<!--<property name="dataSource" ref="dataSource" />-->
-		<!--&lt;!&ndash; 自动匹配Mapper映射文件 &ndash;&gt;-->
-		<!--<property name="mapperLocations" value="classpath:mappings/*-mapper.xml"/>-->
-		<!--<property name="typeAliasesPackage" value="com.numberONe.entity"/>-->
-		<!--<property name="plugins">-->
-			<!--<array>-->
-				<!--<ref bean="pagePlugin" />-->
-			<!--</array>-->
-		<!--</property>-->
-	<!--</bean>-->
-	<!--&lt;!&ndash; 通过扫描的模式，扫描目录在com.numberONe.mapper目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 &ndash;&gt;-->
-	<!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
-		<!--<property name="basePackage" value="com.numberONe.mapper" />-->
 	<!--</bean>-->
 
 	<!-- Entity Manager -->
@@ -99,6 +81,7 @@
 	<jpa:repositories base-package="com.supervise.domain" entity-manager-factory-ref="entityManagerFactory"
 										transaction-manager-ref="transactionManager"></jpa:repositories>
 
+	<!-- 注解事务开启 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 
 	<!-- 事务配置 -->
@@ -130,6 +113,7 @@
 		    <aop:pointcut id="logPointCut" expression="execution(* org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(..))" /> 
 		    <aop:around method="logAll" pointcut-ref="logPointCut" /> </aop:aspect> 
 		</aop:config> -->
+
 	<!-- 使用Spring组件扫描的方式来实现自动注入bean -->
 	<context:component-scan base-package="com.supervise.task" />
 	<!-- 隐式地向 Spring 容器注册 -->

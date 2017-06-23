@@ -78,6 +78,7 @@
     <!-- / 表示所有的请求都要经过此serlvet -->
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+
 	<!-- <error-page>
 		<error-code>404</error-code>
 		<location>/404/404.jsp</location>
