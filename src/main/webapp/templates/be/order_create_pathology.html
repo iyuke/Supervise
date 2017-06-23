@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/common.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  </head>
+  <body class="skin-blue">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            创建订单
+            <small></small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="order_list_pathology.html" th:href="@{/be/order/base}"></i>基础病理订单管理</a></li>
+            <li class="active">创建订单</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <div class="box box-default">
+            <form class="form-horizontal" id="createForm" action="#" th:action="@{/be/order/pathology/create}" method="post"
+                  th:object="${createOrderDto}" role="form">
+              <input type="hidden" id="order.orderType" name="order.orderType" value="PATHOLOGY"/>
+              <div th:if="${error} != null" class="alert alert-warning alert-dismissable">
+                <button class="close" type="button" data-dismiss="alert">×</button>
+                <span th:text="${error}">错误信息</span>
+              </div>
+              <div class="box-body">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">患者信息</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="row order-detail-base">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="patient.fullName" class="col-md-3 control-label"
+                                 style="font-weight:normal"><span class="text-red">*&nbsp;</span>姓名</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.fullName" name="patient.fullName" type="text"
+                                   th:field="*{patient.fullName}" placeholder="请输入患者姓名"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="patient.gender" class="col-md-3 control-label" style="font-weight:normal"><span class="text-red">*&nbsp;</span>患者性别</label>
+                          <div class="col-md-9">
+                            <select class="form-control" id="patient.gender" name="patient.gender" th:field="*{patient.gender}">
+                              <option value="">请选择性别</option>
+                              <option value="男">男</option>
+                              <option value="女">女</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="patient.mobilePhone" class="col-md-3 control-label"
+                                 style="font-weight: normal"><span class="text-red">*&nbsp;</span>电话</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.mobilePhone" name="patient.mobilePhone" type="text"
+                                   th:field="*{patient.mobilePhone}" placeholder="请输入电话"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label class="col-md-3 control-label" for="patient.nativePlace" style="font-weight: normal">籍贯</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.nativePlace" name="patient.nativePlace" type="text" th:field="*{patient.nativePlace}"
+                                   placeholder="请输入籍贯"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="patient.nativePlace" class="col-md-3 control-label"
+                                 style="font-weight: normal">职业</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.career" name="patient.career" type="text" th:field="*{patient.career}"
+                                   placeholder="请输入职业"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="patient.idNo" class="col-md-3 control-label" style="font-weight: normal">身份证号</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.idNo" name="patient.idNo" type="text" th:field="*{patient.idNo}" placeholder="身份证号"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="patient.age" class="col-md-3 control-label" style="font-weight:normal">
+                            <span class="text-red">*&nbsp;</span>年龄
+                          </label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.age" type="text" th:field="*{patient.age}" placeholder="请输入患者年龄"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="patient.marry" class="col-md-3 control-label" style="font-weight:normal">婚姻状况</label>
+                          <div class="col-md-9">
+                            <select class="form-control" id="patient.marry" name="patient.marry" th:field="*{patient.marry}">
+                              <option value="">请选择婚姻状况</option>
+                              <option value="未婚">未婚</option>
+                              <option value="已婚">已婚</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="patient.address" class="col-md-3 control-label" style="font-weight: normal">地址</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.address" name="patient.address" type="text" th:field="*{patient.address}"
+                                   placeholder="地址"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="patient.postcode" class="col-md-3 control-label" style="font-weight:normal">邮编</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="patient.postcode" name="patient.postcode" type="text" th:field="*{patient.postcode}"
+                                   placeholder="请输入邮编"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">送检信息</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="row order-detail-base">
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <label for="orgHospitalId" class="col-md-3 control-label" style="font-weight: normal"><span class="text-red">*&nbsp;</span>送检医院</label>
+                          <div class="col-md-9">
+                            <select class="form-control" id="orgHospitalId" name="orgHospitalId" th:field="*{orgHospitalId}">
+                              <option value="">送检医院</option>
+                              <option th:each="orgHospital : ${orgHospitals}" th:value="${orgHospital.id}" th:text="${orgHospital.name}"/>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="departmentId" class="col-md-3 control-label" style="font-weight: normal">
+                            <span class="text-red">*&nbsp;</span>送检科室
+                          </label>
+                          <div class="col-md-9">
+                            <select class="form-control" id="departmentId" name="departmentId" th:field="*{departmentId}">
+                              <option value="">送检科室</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="application.doctor.id" class="col-md-3 control-label" style="font-weight: normal">
+                            <span class="text-red">*&nbsp;</span>送检医生
+                          </label>
+                          <div class="col-md-9">
+                            <select class="form-control" id="application.doctor.id" name="application.doctor.id"
+                                    th:field="*{application.doctor.id}">
+                              <option value="">送检医生</option>
+                              <option th:each="doctor : ${doctors}" th:value="${doctor.id}" th:text="${doctor.fullName}" />
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="dstHospitalId" class="col-md-3 control-label" style="font-weight:normal">
+                            <span class="text-red">*&nbsp;</span>诊断机构
+                          </label>
+                          <div class="col-md-9">
+                            <select id="dstHospitalId" name="dstHospitalId" th:field="*{dstHospitalId}" class="form-control">
+                              <option value="">诊断机构</option>
+                              <option th:each="dstHospital : ${dstHospitals}" th:value="${dstHospital.id}" th:text="${dstHospital.name}"/>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="applicationDate" class="col-md-3 control-label"
+                                 style="font-weight:normal"><span class="text-red">*&nbsp;</span>送检时间</label>
+                          <div class="col-md-9">
+                            <input class="form-control datepicker" id="applicationDate" name="applicationDate" type="text"
+                                   th:field="*{application.applicationDate}" placeholder="请输入样本送检时间"/>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="materialAcceptedDate" class="col-md-3 control-label"
+                                 style="font-weight:normal">接收时间</label>
+                          <div class="col-md-9">
+                            <input class="form-control datepicker" id="materialAcceptedDate" name="materialAcceptedDate" type="text"
+                                   th:field="*{materialAcceptedDate}" placeholder="请输入样本接收时间"/>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="application.hospitalNo" class="col-md-3 control-label" style="font-weight:normal">住院号</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="application.hospitalNo" name="application.hospitalNo" th:field="*{application.hospitalNo}"
+                                    type="text" placeholder="请输入门诊（住院）号"/>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="application.bedNo" class="col-md-3 control-label" style="font-weight:normal">床号</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="application.bedNo" type="text" placeholder="请输入床号"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <label for="application.surgery" class="col-md-3 control-label" style="font-weight:normal">
+                            <span class="text-red">*&nbsp;</span>手术所见
+                          </label>
+                          <div class="col-md-9">
+                            <textarea class="form-control" id="application.surgery" name="application.surgery"
+                                      th:field="*{application.surgery}" rows="3" placeholder="请输入手术名称及手术所见"></textarea>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="application.diagnosis" class="col-md-3 control-label" style="font-weight:normal">
+                            <span class="text-red">*&nbsp;</span>临床诊断
+                          </label>
+                          <div class="col-md-9">
+                            <textarea class="form-control" id="application.diagnosis" name="application.diagnosis"
+                                      th:field="*{application.diagnosis}" rows="3" placeholder="临床诊断"></textarea>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="application.medicalHistory" class="col-md-3 control-label" style="font-weight:normal">
+                            <span class="text-red">*&nbsp;</span>病史摘要
+                          </label>
+                          <div class="col-md-9">
+                            <textarea class="form-control" id="application.medicalHistory" name="application.medicalHistory"
+                                      th:field="*{application.medicalHistory}" rows="3"
+                                      placeholder="请输入病史摘要及临床检查所见(包括主要化验结果,特殊治疗)">
+                            </textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 送检样本信息 -->
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">样本信息</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="row order-detail-base">
+                      <div class="col-md-6 sampleInfo">
+                        <div class="form-group">
+                          <label class="col-md-3 control-label"><span class="text-red">*&nbsp;</span>送检样本</label>
+                          <div class="col-md-9">
+                            <label class="control-label label-left sample-add"><a href="javascript:;">添加样本</a></label>
+                          </div>
+                        </div>
+                        <div class="form-group sample">
+                          <label class="col-md-3 control-label" ><span class="text-red">*&nbsp;</span>样本</label>
+                          <div class="col-md-9">
+                            <div class="input-group with-margin">
+                              <span class="input-group-addon">采取部位</span>
+                              <input class="form-control" id="tissueSampleParts" name="tissueSampleParts" type="text" th:field="*{tissueSampleParts}"
+                                          placeholder="请输入采取部位"/>
+                            </div>
+                            <div class="input-group with-margin">
+                              <span class="input-group-addon">样本名称</span>
+                              <input class="form-control" id="tissueSampleNames" name="tissueSampleNames" type="text"
+                                     th:field="*{tissueSampleNames}" placeholder="请输入样本名称"/>
+                            </div>
+                            <div class="input-group with-margin">
+                              <span class="input-group-addon">采取时间</span>
+                              <input class="form-control datepicker" id="tissueSampleDates" name="tissueSampleDates" type="text"
+                                     th:field="*{tissueSampleDates}" placeholder="请输入采取时间"/>
+                            </div>
+                            <div class="input-group">
+                              <span class="input-group-addon">样本数量</span>
+                              <input class="form-control" id="tissueSampleAmounts" name="tissueSampleAmounts" type="text"
+                                          th:field="*{tissueSampleAmounts}" placeholder="请输入样本数量"/>
+                            </div>
+                            <label class="control-label label-right sample-delete"><a href="javascript:;">删除样本</a></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-md-3 control-label">固定液</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="application.sampleInfo.stationaryLiquid"
+                                   name="application.sampleInfo.stationaryLiquid" type="text" th:field="*{application.sampleInfo.stationaryLiquid}"
+                                   placeholder="请输入固定液"/>
+                          </div>
+                        </div>
+                        <div class="form-group no-button-margin">
+                          <label class="col-md-3 control-label" style="font-weight:normal">妇科样本</label>
+                          <div class="col-md-9">
+                            <div class="input-group" style="padding-top: 5px" >
+                              <input id="application.sampleInfo.isGynecologySample" name="application.sampleInfo.isGynecologySample"
+                                     type="radio" th:field="*{application.sampleInfo.isGynecologySample}" value="true"/>&nbsp;是
+                              <input id="application.sampleInfo.isGynecologySample" name="application.sampleInfo.isGynecologySample"
+                                     type="radio" th:field="*{application.sampleInfo.isGynecologySample}" value="false" checked/>&nbsp;否
+                            </div>
+                          </div>
+                        </div>
+                        <div class="all-info">
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group with-margin OandGDepartmentBaseInfo" style="margin-top: 15px">
+                                <span class="input-group-addon">末次月经日期</span>
+                                <input class="form-control datepicker" id="application.sampleInfo.lastMenstruationDate"
+                                            name="application.sampleInfo.lastMenstruationDate"
+                                       th:field="*{application.sampleInfo.lastMenstruationDate}" placeholder="请输入末次月经日期"/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group with-margin OandGDepartmentBaseInfo">
+                                <span class="input-group-addon">经量</span>
+                                <input class="form-control" id="application.sampleInfo.menstruationBloodVolume"
+                                            name="application.sampleInfo.menstruationBloodVolume"
+                                       th:field="*{application.sampleInfo.menstruationBloodVolume}" placeholder="经量"/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group with-margin OandGDepartmentBaseInfo">
+                                <span class="input-group-addon">周期及持续时间</span>
+                                <input class="form-control" id="application.sampleInfo.menstruationCycle"
+                                       name="application.sampleInfo.menstruationCycle" th:field="*{application.sampleInfo.menstruationCycle}"
+                                       placeholder="周期及持续时间"/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group with-margin OandGDepartmentBaseInfo">
+                                <span class="input-group-addon">小便妊娠反应</span>
+                                <input class="form-control" id="application.sampleInfo.urinePregnancyReaction"
+                                       name="application.sampleInfo.urinePregnancyReaction"
+                                       th:field="*{application.sampleInfo.urinePregnancyReaction}" placeholder="小便妊娠反应"/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group with-margin OandGDepartmentBaseInfo">
+                                <span class="input-group-addon">末次生产或流产日期</span>
+                                <input class="form-control datepicker" id="application.sampleInfo.lastParturitionOrAbortion"
+                                       name="application.sampleInfo.lastParturitionOrAbortion"
+                                       th:field="*{application.sampleInfo.lastParturitionOrAbortion}" placeholder="末次生产或流产日期"/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group with-margin OandGDepartmentBaseInfo">
+                                <span class="input-group-addon">刮宫日期</span>
+                                <input class="form-control datepicker" id="application.sampleInfo.uterineCurettageDate"
+                                       name="application.sampleInfo.uterineCurettageDate"
+                                       th:field="*{application.sampleInfo.uterineCurettageDate}" placeholder="刮宫日期"/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group with-margin OandGDepartmentBaseInfo">
+                                <span class="input-group-addon">其他</span>
+                                <input class="form-control" id="application.sampleInfo.otherInfo" name="application.sampleInfo.otherInfo"
+                                       th:field="*{application.sampleInfo.otherInfo}" placeholder="其他"/>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group no-button-margin">
+                            <div class="col-md-9 col-lg-offset-3">
+                              <div class="input-group OandGDepartmentBaseInfo">
+                                <span class="input-group-addon no-border" style="padding-left: 0px">是否经治疗</span>
+                                <div class="input-group" style="padding-top: 5px" >
+                                  <input id="application.sampleInfo.isTreated" name="application.sampleInfo.isTreated"
+                                         type="radio" th:field="*{application.sampleInfo.isTreated}" value="true"/>&nbsp;是
+                                  <input id="application.sampleInfo.isTreated" name="application.sampleInfo.isTreated"
+                                         type="radio" th:field="*{application.sampleInfo.isTreated}" value="false" checked/>&nbsp;否
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group no-button-margin">
+                              <div class="col-md-9 col-lg-offset-3">
+                                <div class="input-group with-margin OandGDepartmentOtherInfo" style="margin-top: 15px">
+                                  <span class="input-group-addon">治疗日期</span>
+                                  <input class="form-control datepicker" id="application.sampleInfo.treatmentDate"
+                                              name="application.sampleInfo.treatmentDate" th:field="*{application.sampleInfo.treatmentDate}"
+                                         placeholder="治疗日期"/>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group no-button-margin">
+                              <div class="col-md-9 col-lg-offset-3">
+                                <div class="input-group with-margin OandGDepartmentOtherInfo">
+                                  <span class="input-group-addon">剂量</span>
+                                  <input class="form-control" id="application.sampleInfo.dosage"
+                                              name="application.sampleInfo.dosage" th:field="*{application.sampleInfo.dosage}" placeholder="剂量"/>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group no-button-margin">
+                          <label class="col-md-3 control-label" style="font-weight:normal">病理检验</label>
+                          <div class="col-md-9">
+                            <div class="input-group" style="padding-top: 5px">
+                              <input id="application.sampleInfo.hasPathologyInspection"
+                                     name="application.sampleInfo.hasPathologyInspection"
+                                     type="radio" th:field="*{application.sampleInfo.hasPathologyInspection}" value="true"/>&nbsp;做过
+                              <input id="application.sampleInfo.hasPathologyInspection"
+                                     name="application.sampleInfo.hasPathologyInspection"
+                                     type="radio" th:field="*{application.sampleInfo.hasPathologyInspection}" value="false" checked/>&nbsp;未做过
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group no-button-margin">
+                          <div class="col-md-9 col-lg-offset-3">
+                            <div class="input-group with-margin pathologyExaminationInfo" style="margin-top: 15px">
+                              <span class="input-group-addon">何处</span>
+                              <input class="form-control" id="application.sampleInfo.inspectionPlace"
+                                     name="application.sampleInfo.inspectionPlace" th:field="*{application.sampleInfo.inspectionPlace}"
+                                     placeholder="请输入在何处做过病理检验"/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group no-button-margin">
+                          <div class="col-md-9 col-lg-offset-3">
+                            <div class="input-group with-margin pathologyExaminationInfo">
+                              <span class="input-group-addon">何时</span>
+                              <input class="form-control datepicker" id="application.sampleInfo.inspectionDate"
+                                          name="application.sampleInfo.inspectionDate" th:field="*{application.sampleInfo.inspectionDate}"
+                                          placeholder="请输入病理检验日期"/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group no-button-margin">
+                          <div class="col-md-9 col-lg-offset-3">
+                            <div class="input-group with-margin pathologyExaminationInfo">
+                              <span class="input-group-addon">病理号</span>
+                              <input class="form-control" id="application.sampleInfo.pathologyNo" name="application.sampleInfo.pathologyNo"
+                                     th:field="*{application.sampleInfo.pathologyNo}" placeholder="请输入检验病理号"/>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group no-button-margin">
+                          <div class="col-md-9 col-lg-offset-3">
+                            <div class="input-group with-margin pathologyExaminationInfo">
+                              <span class="input-group-addon">病理诊断</span>
+                              <input class="form-control" id="application.sampleInfo.pathologyDiagnosis"
+                                     name="application.sampleInfo.pathologyDiagnosis" th:field="*{application.sampleInfo.pathologyDiagnosis}"
+                                     placeholder="请输入检验病理诊断"/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">其它</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="row order-detail-base">
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <label for="order.remark" class="control-label col-md-3" style="font-weight:normal">备注</label>
+                          <div class="col-md-9">
+                            <textarea rows="5" class="form-control" id="order.remark" name="order.remark" th:field="*{order.remark}"
+                                      placeholder="备注"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input type="submit" class="btn btn-primary center-block" value="提交">
+              </div>
+            </form>
+          </div>
+        </section>
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+  </body>
+  <script src="../../static/assets/js/order_update_pathology.js" th:src="@{/assets/js/order_update_pathology.js}"></script>
+</html>

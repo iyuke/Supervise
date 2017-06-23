@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+</head>
+
+<body class="skin-blue">
+<div class="wrapper">
+
+    <!-- Main Header -->
+    <header class="main-header" th:include="be/fragment :: header"></header>
+
+    <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <span id="page-status" class="static" th:class="dynamic"></span>
+        <section class="content-header">
+            <h1>
+                检测项目管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="testItem.html" th:href="@{/be/test-item/index}">检测项目列表管理</a></li>
+                <li class="active">检测项目列表</li>
+            </ol>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title"> 检测项目列表</h3>
+                    <div class="pull-right">
+                        <div class="dropdown inline-block" style="margin-bottom: 10px;">
+                            <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">
+                                <i class="fa fa-search-plus "></i> 按检测类型查看 <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <th:block th:each="testType,iterStat : ${testTypes}">
+                                    <li><a class="testItemSearch" href="#" th:text="${testType.desc}" th:value="${testType}">类型</a></li>
+                                </th:block>
+                            </ul>
+                        </div>
+                        <button shiro:hasPermission="test-item:create" class="btn btn-success" id="testItemCreateBtn">
+                            添加检测项目
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                        <tr>
+                            <th style="width: 60px">#</th>
+                            <th>名称</th>
+                            <th>检测类型</th>
+                            <th>检测内容</th>
+                            <th>操作</th>
+                        </tr>
+                        <th:block th:each="testItem,iterStat : ${testItems}">
+                            <tr>
+                                <td th:text="(${pagination.currentPage} - 1) * 10 + ${iterStat.count}">1</td>
+                                <td th:text="${testItem.name}">甲状腺AC221突变</td>
+                                <td th:text="${testItem.testType.desc}">天A类型/td>
+                                <td>
+                                    <ul class="list-unstyled">
+                                        <th:block th:each="testGene,iterStat : ${testItem.testGenes}">
+                                            <li th:text="${testGene.name}"></li>
+                                        </th:block>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a class="btn btn-default btn-sm edit_btn" shiro:hasPermission="test-item:edit"  name ="edit_btn" data-th-attr="testItemId = ${testItem.id}"
+                                       th:id="${testItem.id}" title="编辑"><i class="fa fa-info fa-fw"></i></a>
+                                    <a class="btn btn-default btn-sm delete_btn" href="javascript:;" name="delete_btn" shiro:hasPermission="test-item:delete" data-th-attr="testItemName =${testItem.name}" th:id="${testItem.id}" >
+                                        <i class="fa fa-trash" title="删除"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+                <!-- Your Page Content Here -->
+                <div class="box-footer clearfix"><!-- 分页 -->
+                    <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- Main Footer -->
+    <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+</div>
+<div th:replace="be/modal/modal_testItem :: searchModal"></div>
+<div th:replace="be/modal/modal_testItem :: createModal"></div>
+<div th:replace="be/modal/modal_testItem :: editModal"></div>
+<div th:replace="be/modal/modal_testItem :: testItemScript"></div>
+<!-- /.content -->
+
+<script data-th-inline="javascript">
+    /*<![CDATA[*/
+    var currentPage = /*[[${pagination.currentPage}]]*/ '1';//当前页面
+    var pageSize = /*[[${pagination.pageSize}]]*/'5';
+    var totalPages = /*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+    /*]]>*/
+</script>
+<script src="../../static/assets/js/testItem.js" th:src="@{/assets/js/testItem.js}"></script>
+</body>
+</html>

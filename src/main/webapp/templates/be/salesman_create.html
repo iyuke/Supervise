@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <meta charset="UTF-8">
+    <script th:remove="all" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+    <script th:remove="all" src="../../static/assets/bootstrap/js/bootstrap-multiselect.js"></script>
+    <script th:remove="all" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script th:remove="all" src="../../static/assets/plugins/hd-common/common.js"></script>
+    <script th:remove="all" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <script th:remove="all" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+    <script th:remove="all" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+
+  </head>
+  <body class="skin-blue">
+  <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            创建销售人员
+          </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <div class="box box-default">
+            <form class="form-horizontal" id="createForm" action="#" th:action="@{/be/seller/create}"
+                  th:object="${createSellerDto}" method="post">
+              <div class="box-body top-margin">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="fullName" class="col-md-3 control-label" style="font-weight:normal">
+                        <span class="text-red">*&nbsp;</span>姓名</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="fullName" name="fullName" type="text" th:field="*{fullName}" placeholder="姓名"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="mobilePhone" class="col-md-3 control-label" style="font-weight:normal">
+                        <span class="text-red">*&nbsp;</span>手机号</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="mobilePhone" name="mobilePhone" type="text" th:field="*{mobilePhone}" placeholder="手机号"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="mobilePhone" class="col-md-3 control-label" style="font-weight:normal">邮箱</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="email" name="email" type="text" th:field="*{email}" placeholder="邮箱"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="gender" class="col-md-3 control-label" style="font-weight:normal">性别</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="gender" name="gender" type="text" th:field="*{gender}" placeholder="性别"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="age" class="col-md-3 control-label" style="font-weight:normal">年龄</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="age" name="age" type="text" th:field="*{age}" placeholder="年龄"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="duty" class="col-md-3 control-label" style="font-weight:normal">职务</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="duty" name="duty" type="text" th:field="*{duty}" placeholder="职务"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="department" class="col-md-3 control-label" style="font-weight:normal">所属部门</label>
+                      <div class="col-md-9">
+                        <select class="form-control" id="department" name="department" th:field="*{companyId}">
+                          <option value="">请选择销售部门</option>
+                          <option th:each="department : ${departmentList}"
+                                  th:value="${department.id}"
+                                  th:text="${department.name}">
+                            部门名称
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="immediateSuperior" class="col-md-3 control-label" style="font-weight:normal">直接上级</label>
+                      <div class="col-md-9">
+                        <select class="form-control selectpicker show-tick" id="immediateSuperior" name="immediateSuperior"
+                                th:field="*{leaderId}"
+                                data-live-search="true" data-th-attr="data-live-search= true">
+                          <option value="">请选择直接上级</option>
+                          <option th:each="leader : ${leaderList}"
+                                  th:value="${leader.id}"
+                                  th:text="${leader.fullName}">
+                            上级姓名
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="territory" class="col-md-3 control-label" style="font-weight:normal">负责区域</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="territory" name="territory" type="text" th:field="*{chargePlace}" placeholder="负责区域"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="positionStatus" class="col-md-3 control-label" style="font-weight:normal">在职状态</label>
+                      <div class="col-md-9">
+                        <select class="form-control" id="positionStatus" name="positionStatus" th:field="*{workStatus}">
+                          <option value="IN_SERVICE">在职</option>
+                          <option value="LEAVE">离职</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="accountStatus" class="col-md-3 control-label" style="font-weight:normal">账户状态</label>
+                      <div class="col-md-9">
+                        <select class="form-control" id="accountStatus" name="accountStatus" th:field="*{valid}">
+                          <option value="true">有效</option>
+                          <option value="false">无效</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" type="submit" value="提交"/>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+  <script src="../../static/assets/js/salesman_update.js" th:src="@{/assets/js/salesman_update.js}"></script>
+  </body>
+</html>

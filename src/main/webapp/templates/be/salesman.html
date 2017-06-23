@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <meta charset="UTF-8">
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  </head>
+  <body class="skin-blue">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            销售管理
+          </h1>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title"> 销售列表</h3>
+              <div class="pull-right" style="margin-bottom: 10px;">
+                <a shiro:hasPermission="seller:create" class="btn btn-success" href="salesman_create.html"
+                   th:href="@{/be/seller/create}">
+                  <i class="fa fa-pencil-square-o"></i>&nbsp;创建销售</a>
+                <button shiro:hasPermission="seller:search" class="btn btn-success" id="samlesmanSearchBtn">
+                  <i class="fa fa-search-plus"></i>&nbsp;搜索销售
+                </button>
+              </div>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive">
+              <table class="table table-bordered table-striped">
+                <tbody>
+                <tr>
+                  <th style="width: 60px">#</th>
+                  <th>姓名</th>
+                  <th>手机号</th>
+                  <th>邮箱</th>
+                  <th>职务</th>
+                  <th>直接上级</th>
+                  <th>负责区域</th>
+                  <th>销售指标</th>
+                  <th>达成率</th>
+                  <th>在职状态</th>
+                  <th>操作</th>
+                </tr>
+                <th:block th:each="seller,status : ${sellers}">
+                  <tr>
+                    <td th:text="${(pagination.currentPage - 1)* 10 + status.count}">1</td>
+                    <td th:text="${seller.fullName}">张三</td>
+                    <td th:text="${seller.mobilePhone}">131****0101</td>
+                    <td th:text="${seller.email}">11***_ys@163.com</td>
+                    <td th:text="${seller.duty}">销售</td>
+                    <td th:text="${seller.leaderName}">张小三</td>
+                    <td th:text="${seller.chargePlace}">华东</td>
+                    <td th:text="${seller.target}">300万</td>
+                    <td th:text="${seller.completionRate}">20%</td>
+                    <td>
+                      <span class="text-success" th:class="${seller.workStatus.name() == 'LEAVE'} ? 'text-danger' : 'text-success' "
+                            th:text="${seller.workStatus.desc}">在职</span>
+                    </td>
+                    <td>
+                      <a shiro:hasPermission="seller:detail" class="btn btn-primary btn-xs detailView"
+                              th:href="@{/be/seller/detail(sellerId=${seller.id})}" name="detailView">
+                        详情
+                      </a>
+                      <button shiro:hasPermission="resetPassword" class="btn btn-danger btn-xs resetPasswd" th:id="${seller.id}" name="resetPasswd">
+                        重置密码
+                      </button>
+                    </td>
+                  </tr>
+                </th:block>
+                </tbody>
+              </table>
+            </div><!-- /.box-body -->
+            <!-- Your Page Content Here -->
+            <div class="box-footer clearfix"><!-- 分页 -->
+              <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+              </ul>
+            </div>
+          </div>
+        </section>
+        <!-- /.content -->
+
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+    <div th:replace="be/modal/modal_search_salesman :: searchModal"></div>
+    <script data-th-inline="javascript">
+      /*<![CDATA[*/
+      var currentPage= /*[[${pagination.currentPage}]]*/ '1';//当前页面
+      var pageSize= /*[[${pagination.pageSize}]]*/'5';
+      var totalPages=/*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+      /*]]>*/
+    </script>
+    <script src="../../static/assets/js/salesman.js" th:src="@{/assets/js/salesman.js}"></script>
+  </body>
+</html>

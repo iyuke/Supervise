@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <link th:remove="all" rel="stylesheet" href="../../static/assets/plugins/layer/skin/layer.css"/>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <!--<script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>-->
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+    <!--<script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>-->
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/layer/layer.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/common.js"></script>
+  </head>
+  <!--
+  BODY TAG OPTIONS:
+  =================
+  Apply one or more of the following classes to get the
+  desired effect
+  |---------------------------------------------------------|
+  | SKINS         | skin-blue                               |
+  |               | skin-black                              |
+  |               | skin-purple                             |
+  |               | skin-yellow                             |
+  |               | skin-red                                |
+  |               | skin-green                              |
+  |---------------------------------------------------------|
+  |LAYOUT OPTIONS | fixed                                   |
+  |               | layout-boxed                            |
+  |               | layout-top-nav                          |
+  |               | sidebar-collapse                        |
+  |---------------------------------------------------------|
+
+  -->
+  <body class="skin-blue">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            样本管理
+          </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">样本列表</h3>
+              <div class="pull-right" style="margin-bottom: 10px;">
+                  <button shiro:hasPermission="sample:sampleInform_search" class="btn btn-success" data-toggle="modal"
+                          data-target="#searchModal"><i class="fa fa-search-plus"></i>&nbsp;搜索样本
+                  </button>
+                  <button shiro:hasPermission="sample:sampleInform_export" class="btn btn-success" id="sampleInformExport_btn">
+                    <i class="fa fa-sign-out"></i> 导出Excel</button>
+                    <button shiro:hasPermission="sample:sampleInform_create" class="btn btn-success" id="sampleInformCreate"
+                            hasSchedule="true"
+                            th:attr="hasSchedule=(${sampleReceivedWeekDay} != null ? true : false)">
+                      <i class="fa fa-pencil-square-o"></i>&nbsp;通知收样
+                    </button>
+              </div>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive">
+              <table class="table table-striped">
+                <tbody>
+                <tr>
+                  <th>#</th>
+                  <th>收样编号</th>
+                  <th>送检医院</th>
+                  <th>样本数量</th>
+                  <th>大标本数量</th>
+                  <th>小标本数量</th>
+                  <th>送检医生</th>
+                  <th>联系方式</th>
+                  <th>收样时间</th>
+                  <th>状态</th>
+                </tr>
+                <tr th:each="dto,iterStat : ${sampleInformDtos}">
+                  <td th:text="(${pagination.currentPage} - 1) * 10 + ${iterStat.count}">1</td>
+                  <td th:text="${dto.sampleInform.sampleInformNo}">SY20170101120000</td>
+                  <td th:text="${dto.hospital}"></td>
+                  <td th:text="${dto.sampleInform.bigSampleNum} + ${dto.sampleInform.smallSampleNum}">10</td>
+                  <td th:text="${dto.sampleInform.bigSampleNum}">4</td>
+                  <td th:text="${dto.sampleInform.smallSampleNum}">6</td>
+                  <td th:text="${dto.sampleInform.sampleDoctor.userName}">李医生</td>
+                  <td th:text="${dto.sampleInform.sampleDoctor.mobilePhone}">131xxxx0001</td>
+                  <td th:text="${dto.sampleReceiveWeekDay}">星期二</td>
+                  <td>
+                    <a class="sampleInformState_btn" shiro:hasPermission="sample:sampleInform_update" id="sampleInformState_btn"
+                       name="sampleInformState_btn" href="Javascript:;"
+                       th:attr="id=${dto.sampleInform.id}"
+                       th:value="${dto.sampleInform.state}">
+                      <span th:class="${dto.sampleInform.state == '已收样'} ? 'label label-primary' : 'label label-success'"
+                            th:text="${dto.sampleInform.state}">已收样</span>
+                    </a>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div><!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+              </ul>
+            </div>
+          </div>
+          <!-- Your Page Content Here -->
+        </section><!-- /.content -->
+
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+
+    <!--下载清单-->
+    <form id="downloadForm" action="#" th:action="@{/be/sample/inform/export}" method="post"
+          th:object="${sampleSearchConditions}">
+      <input name="orgHospitalId" type="hidden" th:field="*{orgHospitalId}">
+      <input name="mobilePhone" type="hidden" th:field="*{mobilePhone}">
+      <input name="sampleAcceptDate" type="hidden" th:field="*{sampleAcceptDate}">
+      <input name="sampleStatus" type="hidden" th:field="*{searchSampleState}">
+    </form>
+    <script data-th-inline="javascript">
+      /*<![CDATA[*/
+      var currentPage= /*[[${pagination.currentPage}]]*/ '1';//当前页面
+      var pageSize= /*[[${pagination.pageSize}]]*/'5';
+      var totalPages=/*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+      /*]]>*/
+    </script>
+    <script src="../../static/assets/js/sample_inform.js" th:src="@{/assets/js/sample_inform.js}"></script>
+    <div th:replace="be/modal/modal_sample_inform :: searchModal"></div>
+    <div th:replace="be/modal/modal_sample_inform :: createSampleInformModal"></div>
+    <div th:replace="be/modal/modal_sample_inform :: sampleInformModalScript"></div>
+  </body>
+</html>

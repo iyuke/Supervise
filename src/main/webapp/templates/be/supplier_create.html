@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <meta charset="UTF-8">
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/common.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/bootstrap/js/bootstrap-multiselect.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+  </head>
+  <body class="skin-blue">
+  <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>创建供应商</h1>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+          <div class="box box-default">
+            <form class="form-horizontal" id="supplierCreateForm" action="#" method="post">
+              <div class="box-body">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">基本信息</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="name_create" class="col-md-3 control-label font-normal">
+                            <span class="text-red">*&nbsp;</span>供应商名称
+                          </label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="name_create" name="name" type="text" placeholder="供应商名称"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="supplierType_create" class="col-md-3 control-label font-normal">
+                            <span class="text-red">*&nbsp;</span>供应商类型
+                          </label>
+                          <div class="col-md-9">
+                            <select class="form-control" id="supplierType_create" name="supplierType" multiple="multiple" multi-text="请选择供应商类型">
+                              <option value="CONSULTATION_SUPPLIER">病理会诊</option>
+                              <option value="GENE_SUPPLIER">分子检测</option>
+                              <option value="OTHERS">其它</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group" id="org_region_create">
+                          <label for="provinceId_create" class="col-md-3 control-label font-normal">
+                            <span class="text-red">*&nbsp;</span>所属地区</label>
+                          <div class="col-md-9">
+                            <div class="row">
+                              <div class="col-md-4">
+                                <select class="form-control" id="provinceId_create" name="provinceId">
+                                  <option value="">省/直辖市</option>
+                                  <option value="上海市">上海市</option>
+                                </select>
+                              </div>
+                              <div class="col-md-4">
+                                <select class="form-control" id="cityId_create" name="cityId">
+                                  <option value="">市/区</option>
+                                  <option value="上海市">上海市</option>
+                                </select>
+                              </div>
+                              <div class="col-md-4">
+                                <select class="form-control" id="districtId_create" name="districtId">
+                                  <option value="">县</option>
+                                  <option value="徐汇区">徐汇区</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="address_create" class="col-md-3 control-label font-normal">地址</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="address_create" name="address" type="text" placeholder="地址"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label class="control-label col-md-3" for="remark">备注</label>
+                          <div class="col-md-9">
+                            <textarea class="form-control" id="remark" rows="3" placeholder="备注"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <label for="contactName_create" class="col-md-3 control-label font-normal">联系人</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="contactName_create" name="contactName" type="text" placeholder="供应商联系人"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="contactPhone_create" class="col-md-3 control-label font-normal">联系人电话</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="contactPhone_create" name="contactPhone" type="text" placeholder="联系人电话"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="contactEmail_create" class="col-md-3 control-label font-normal">联系人邮箱</label>
+                          <div class="col-md-9">
+                            <input class="form-control" id="contactEmail_create" name="contactEmail" type="text" placeholder="联系人邮箱"/>
+                          </div>
+                        </div>
+                        <div class="form-group ">
+                          <label for="operator_create" class="col-md-3 control-label font-normal">衡道对接人员</label>
+                          <div class="col-md-9">
+                            <select class="form-control selectpicker show-tick" id="operator_create" name="operatorId"
+                                    data-live-search="true" data-th-attr="data-live-search= true">
+                              <option value="">衡道对接人员</option>
+                              <option value="张三" th:each="user : ${users}" th:text="${user.fullName}" th:value="${user.id}">张三</option>
+                              <option value="李四" th:if="${false}">李四</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">合作项目</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="col-md-3 control-label font-normal">基础病理</label>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="col-md-3 control-label font-normal">分子病理</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <div class="col-md-9 col-lg-offset-3">
+                            <div class="panel-group collapse-group" id="testPathologyItem">
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#routine">
+                                      常规病理
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="routine" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <td><input class="itemList" type="checkbox"></td>
+                                        <td>检测项目A</td>
+                                        <td>50</td>
+                                      </tr>
+                                      <tr>
+                                        <td><input class="itemList" type="checkbox"></td>
+                                        <td>检测项目B</td>
+                                        <td>100</td>
+                                      </tr>
+                                      <tr>
+                                        <td><input class="itemList" type="checkbox"></td>
+                                        <td>检测项目C</td>
+                                        <td>50</td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#gell_gynecology">
+                                      细胞学（妇科)
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="gell_gynecology" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td>50</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td>100</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td>50</td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#gell">
+                                      细胞学（非妇科)
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="gell" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td>50</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td>100</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td>50</td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#hpv">
+                                      HPVDNA-HC2
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="hpv" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td>50</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td>100</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td>50</td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#landing_gynecology">
+                                      兰丁细胞学检测
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="landing_gynecology" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td>50</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td>100</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td>50</td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#consultation">
+                                      疑难会诊
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="consultation" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td>50</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td>100</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td>50</td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <div class="col-md-9 col-lg-offset-3">
+                            <div class="panel-group collapse-group" id="testGeneItem">
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testGeneItem" href="#chemotherapy">
+                                      化疗用药检测
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="chemotherapy" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td><input class="itemList" name="price" value="50"></td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td><input class="itemList" name="price" value="100"></td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td><input class="itemList" name="price" value="50"></td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testGeneItem" href="#target_drug">
+                                      靶向用药检测
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="target_drug" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td><input class="itemList" name="price" value="50"></td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td><input class="itemList" name="price" value="100"></td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td><input class="itemList"name="price"  value="50"></td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="panel panel-default">
+                                <div class="panel-heading" role="tab">
+                                  <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#testGeneItem" href="#tumor_prognosis">
+                                      肿瘤预后检测
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="tumor_prognosis" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <table class="table">
+                                      <tr>
+                                        <td class="no-border"><input class="allOption" type="checkbox"></td>
+                                        <td class="no-border">项目名称</td>
+                                        <td class="no-border">结算价格（元）</td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目A</td>
+                                        <td><input class="itemList" name="price" value="50"></td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目B</td>
+                                        <td><input class="itemList" name="price" value="100"></td>
+                                      </tr>
+                                      <tr>
+                                        <th><input class="itemList" type="checkbox"></th>
+                                        <td>检测项目C</td>
+                                        <td><input class="itemList" name="price" value="50"></td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" type="submit" value="提交"/>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+  
+  <script src="../../static/assets/js/supplier_create.js"
+          th:src="@{/assets/js/supplier_create.js}"></script>
+  </body>
+</html>

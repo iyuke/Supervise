@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<!-- modal -->
+<div class="modal fade" id="createModal" th:fragment="createModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span>×</span>
+        </button>
+        <h4 class="modal-title">创建用户</h4>
+      </div>
+      <div class="modal-body">
+        <form action="#" th:action="@{/be/user/create}" id="createSysUser" th:object="${createSysUserDto}" method="post">
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="userName_create">用户名</label>
+                  <input class="form-control" name="userName" id="userName_create" type="text" th:field="*{userName}" placeholder="请输入用户名"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="fullName_create">用户姓名</label>
+                  <input class="form-control" id="fullName_create" name="fullName" th:field="*{fullName}" type="text" placeholder="请输入用户姓名"/>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mobilePhone_create">手机号</label>
+                  <input class="form-control" name="mobilePhone" id="mobilePhone_create" type="text" th:field="*{mobilePhone}" placeholder="请输入手机号"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="email_create">邮箱</label>
+                  <input class="form-control" name="email" id="email_create" th:field="*{email}" type="text" placeholder="请输入邮箱"/>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="gender_create">性别</label>
+                  <select class="form-control" name="gender" id="gender_create" th:field="*{gender}">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="age_create">年龄</label>
+                  <input class="form-control" id="age_create" name="age" type="text" th:field="*{age}" placeholder="请输入年龄"/>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="duty_create">职务</label>
+                  <input class="form-control" id="duty_create" name="duty" type="text" th:field="*{duty}" placeholder="请输入职务"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="valid_create">用户是否有效</label>
+                  <select class="form-control" id="valid_create" name="valid" th:field="*{valid}">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="remark_create">备注</label>
+                  <input class="form-control" id="remark_create" name="remark" type="text" th:field="*{remark}" placeholder="请输入备注"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="userRoleList_create">角色</label>
+                  <select class="form-control" id="userRoleList_create" name="userRoleList" th:field="*{userRoleList}" multiple="multiple"
+                          multi-text="请选择角色" margin="0px">
+                    <option th:each="ptd : ${roleList}" th:value="${ptd.id}" th:text="${ptd.roleName}"></option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">所属机构设置</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                      <ul class="nav nav-tabs" id="tabTitleCreate">
+                        <li th:each="ptd,iterStat : ${orgGroupDtoList}" th:class="${iterStat.first} ? 'active' : ''">
+                          <a href="#create_1" th:href="'#create_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.desc}"></a>
+                        </li>
+                      </ul>
+                      <div id="tabContentCreate" class="tab-content">
+                        <div class="tab-pane active" th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'"
+                             th:each="ptd,iterStat : ${orgGroupDtoList}" id="create_1" th:id="'create_' + ${iterStat.count}" name="tabId">
+                          <div class="form-group">
+                            <div class="radio" th:each="dto,iterStat : ${ptd.organizationDtoList}">
+                              <label>
+                                <input class="orgHosp" name="organizationId" type="radio" th:field="*{organizationId}" th:value="${dto.id}"/>
+                                <label th:text="${dto.name}"></label>
+                              </label>
+                              <div th:each="subOrg : ${dto.subOrganization}" class="sub-orgs" style="display:none; padding-left: 40px;">
+                                <div class="radio">
+                                  <label>
+                                    <input type="radio" name="organizationId" th:field="*{organizationId}" th:value="${subOrg.id}"/>
+                                    <label th:text="${subOrg.name}"></label>
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div><!-- /.tab-content -->
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-footer">
+          <input class="btn btn-primary center-block" type="submit" id="create_confirm" value="创建"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="editModal" th:fragment="editModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span>×</span>
+        </button>
+        <h4 class="modal-title">用户信息编辑</h4>
+      </div>
+      <div class="modal-body">
+        <form action="#" th:action="@{/be/user/edit}" id="editSysUser" th:object="${editSysUserDto}" method="post">
+          <input name="id" id="id_edit" type="hidden"/>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="userName_edit">用户名</label>
+                  <input class="form-control" name="userName" id="userName_edit" type="text" th:field="*{userName}" placeholder="请输入用户名"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="fullName_edit">用户姓名</label>
+                  <input class="form-control" id="fullName_edit" name="fullName" type="text" th:field="*{fullName}" placeholder="请输入用户姓名"/>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mobilePhone_edit">手机号</label>
+                  <input class="form-control" name="mobilePhone" id="mobilePhone_edit" type="text" th:field="*{mobilePhone}" placeholder="请输入手机号"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="email_edit">邮箱</label>
+                  <input class="form-control" name="email" id="email_edit" type="text" th:field="*{email}" placeholder="请输入邮箱"/>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="gender_edit">性别</label>
+                  <select class="form-control" name="gender" id="gender_edit" th:field="*{gender}">
+                    <option value="">请选择</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="age_edit">年龄</label>
+                  <input class="form-control" name="age" id="age_edit" type="text" th:field="*{age}" placeholder="请输入年龄"/>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="duty_edit">职务</label>
+                  <input class="form-control" name="duty" id="duty_edit" type="text" th:field="*{duty}" placeholder="请输入职务"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="valid_edit">用户是否有效</label>
+                  <select class="form-control" name="valid" id="valid_edit" th:field="*{valid}">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="remark_edit">备注</label>
+                  <input class="form-control" name="remark" id="remark_edit" type="text" th:field="*{remark}" placeholder="请输入备注"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="userRoleList_edit">角色</label>
+                  <select class="form-control" name="userRoleList" id="userRoleList_edit" th:field="*{userRoleList}" multiple="multiple"
+                          multi-text="请选择角色" margin="0px">
+                    <option th:each="ptd : ${roleList}" th:value="${ptd.id}" th:text="${ptd.roleName}"></option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">所属机构设置</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                      <ul class="nav nav-tabs" id="tabTitleEdit">
+                        <li th:each="ptd,iterStat : ${orgGroupDtoList}" th:class="${iterStat.first} ? 'active' : ''">
+                          <a href="#edit_1" th:href="'#edit_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.desc}"></a>
+                        </li>
+                      </ul>
+                      <div id="tabContentEdit" class="tab-content">
+                        <div th:each="ptd,iterStat : ${orgGroupDtoList}" class="tab-pane active"
+                             th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" name="tabId" id="edit_1"
+                             th:id="'edit_' + ${iterStat.count}">
+                          <div class="form-group">
+                            <div th:each="dto,iterStat : ${ptd.organizationDtoList}" class="radio">
+                              <label>
+                                <input class="orgHosp" name="organizationId" type="radio" th:value="${dto.id}"/>
+                                <label th:text="${dto.name}"></label>
+                              </label>
+                              <div th:each="subOrg : ${dto.subOrganization}" class="sub-orgs" style="display:none; padding-left: 40px;">
+                                <div class="radio">
+                                  <label>
+                                    <input name="organizationId" type="radio" th:value="${subOrg.id}"/>
+                                    <label th:text="${subOrg.name}"></label>
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div><!-- /.tab-content -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" type="submit" id="edit_confirm" value="更新"/>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 搜索用户 -->
+<div class="modal fade" id="searchModal" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span>×</span></button>
+        <h4 class="modal-title">用户搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal tab-content form-endpoint" id="search_form" action="#" th:action="@{/be/user/index}"
+                   method="get" th:object="${userSearchConditions}">
+          <div class="box-body">
+            <div class="form-group">
+              <label for="username_search">用户名</label>
+              <input class="form-control" name="username" id="username_search" type="text" th:field="*{username}" placeholder="请输入用户名"
+                     th:value="${userSearchConditions.username}"/>
+            </div>
+            <div class="form-group">
+              <label for="fullName_search">用户姓名</label>
+              <input class="form-control" name="fullName" id="fullName_search" type="text" th:field="*{fullName}" placeholder="请输入用户姓名"
+                     th:value="${userSearchConditions.fullName}"/>
+            </div>
+            <div class="form-group">
+              <label for="mobilePhone_search">手机号</label>
+              <input class="form-control" name="mobilePhone" id="mobilePhone_search" type="text" th:field="*{mobilePhone}" placeholder="请输入手机号"
+                     th:value="${userSearchConditions.mobilePhone}"/>
+            </div>
+            <div class="form-group">
+              <label for="organizationId_search">一级机构</label>
+              <select class="form-control" name="organizationId" id="organizationId_search" th:field="*{organizationId}">
+                <option value="">请选择</option>
+                <option th:each="organization : ${organizations}" th:value="${organization.id}" th:text="${organization.name}"
+                          th:selected="${organization.id == userSearchConditions.organizationId} ? 'true' : 'false'">
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="roleType_search">用户类型</label>
+              <select class="form-control" name="roleType" id="roleType_search" th:field="*{roleType}">
+                <option value="">请选择</option>
+                  <option th:each="rType : ${roleList}" th:value="${rType.roleCode}" th:text="${rType.roleName}"
+                          th:selected="${rType.roleCode == userSearchConditions.roleType} ? 'true' : 'false'">
+                  </option>
+              </select>
+            </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <button id ="search_form_submit"  class="btn btn-primary center-block">搜索</button>
+          </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- queryOrgModal -->
+<div id="queryOrgModal" class="modal fade" th:fragment="queryOrgModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span>×</span></button>
+        <h4 class="modal-title">设置查询机构</h4>
+      </div>
+      <div class="modal-body">
+        <form action="#" th:action="@{/be/user/set-vieworg}" id="setSysUserViewOrg" th:object="${viewOrgSysUserDto}" method="post">
+          <input type="hidden" id="id_query" name="id" th:field="*{id}" />
+          <div class="box-body">
+            <div class="alert alert-warning" role="alert">
+              <strong>提示：</strong> 查询机构是指该用户可以查看的订单所属的送检医院或者其下属机构（比如科室），可以设置多个。
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">可查询机构设置</h3>
+              </div>
+              <div class="panel-body">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                  <ul id="tabTitleQueryOrg" class="nav nav-tabs">
+                    <li th:each="ptd,iterStat : ${viewOrgList}" class="active" th:class="${iterStat.first} ? 'active' : ''">
+                      <a href="#query_1" th:href="'#query_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.desc}"></a></li>
+                  </ul>
+                  <div class="tab-content" id="tabContentQueryOrg">
+                    <th:block th:each="ptd,iterStat : ${viewOrgList}">
+                      <div name="tabId" th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" id="query_1"
+                           th:id="'query_' + ${iterStat.count}">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="allOption" checked="checked">
+                            <strong>全选</strong>
+                          </label>
+                        </div>
+                        <div class="form-group">
+                          <div class="checkbox" th:each="dto,iterStat : ${ptd.organizationDtoList}">
+                            <label>
+                              <input class="q-orgHosp" name="userOrgList" type="checkbox" th:value="${dto.id}"/>
+                              <label th:text="${dto.name}"></label>
+                            </label>
+                            <div class="sub-q-orgs" style="padding-left: 40px;">
+                              <div class="checkbox" th:each="subOrg : ${dto.subOrganization}">
+                                <label>
+                                  <input name="userOrgList" type="checkbox" th:value="${subOrg.id}"/>
+                                  <label th:text="${subOrg.name}"></label>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </th:block>
+                </div><!-- /.tab-content -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-footer">
+          <input class="btn btn-primary center-block" type="submit" id="set_vieworg" value="提交"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+<th:block th:fragment="sysUserScript">
+  <script src="../../../static/assets/js/modal/modal_sysuser.js" th:src="@{/assets/js/modal/modal_sysuser.js}"></script>
+</th:block>
+</body>
+</html>

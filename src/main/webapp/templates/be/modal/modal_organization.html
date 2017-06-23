@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<!-- modal -->
+<div class="modal fade" id="createModal" th:fragment="createModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span>×</span>
+        </button>
+        <h4 class="modal-title">创建机构</h4>
+      </div>
+      <div class="modal-body">
+        <form action="#" th:action="@{/be/company/create}" class="form-horizontal tab-content form-endpoint" id="createOrganization"
+                   th:object="${createOrganizationDto}" method="post">
+          <div class="box-body">
+            <div class="form-group">
+              <label for="name_create">机构名称</label>
+              <input class="form-control" id="name_create" name="name" th:field="*{name}" type="text" placeholder="请输入机构名称"/>
+            </div>
+            <div class="form-group">
+              <label>机构类型</label>
+              <select class="form-control" id="orgTypes_create" name="type" th:field="*{type}">
+                <option th:each="orgType : ${orgTypeList}" value="1" th:value="${orgType}" th:text="${orgType.desc}">送检医院</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="hasFather_create">是否有上级机构？</label>
+              <input class="hasFather" id="hasFather_create" name="hasFather" type="radio" th:field="*{hasFather}" value="true"/>是
+              <input class="hasFather" id="hasFather_create" name="hasFather" type="radio" th:field="*{hasFather}" value="false"/>否
+            </div>
+            <div class="form-group collapse" id="parent_div_create">
+              <label>上级机构</label>
+              <select class="form-control parentId" id="parentId_create" name="parentId" th:field="*{parentId}">
+                <option value="">请选择</option>
+                <option th:each="organization : ${parentOrgs}" th:value="${organization.id}" th:text="${organization.name}"></option>
+              </select>
+            </div>
+            <!--<div class="form-group">-->
+              <!--<label for="leader_create">负责人</label>-->
+              <!--<input class="form-control" id="leader_create" name="manager" type="text" th:field="*{manager}" placeholder="请输入负责人"/>-->
+            <!--</div>-->
+            <div class="form-group collapse in" id="org_region_create">
+              <label for="provinceId_create">所属地区</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <select class="form-control" id="provinceId_create" name="provinceId" th:field="*{provinceId}">
+                    <option value="">省/直辖市</option>
+                    <option th:each="province : ${provinces}" value="1" th:value="${province.id}" th:text="${province.name}">上海市</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control" id="cityId_create" name="cityId" th:field="*{cityId}">
+                    <option value="">市/区</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control" id="districtId_create" name="districtId" th:field="*{districtId}">
+                    <option value="">县</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="address_create">地址</label>
+              <input class="form-control" id="address_create" name="address" type="text" th:field="*{address}" placeholder="请输入地址"/>
+            </div>
+            <div class="form-group">
+              <label for="description_create">描述</label>
+              <input class="form-control" id="description_create" name="description" type="text" th:field="*{description}"
+                          placeholder="请输入描述"/>
+            </div>
+            <div class="form-group">
+              <label for="remark_create">备注</label>
+              <input class="form-control" id="remark_create" name="remark" type="text" th:field="*{remark}" placeholder="请输入备注"/>
+            </div>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" id="create_confirm" type="submit" value="创建">
+          </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<div id="editModal" class="modal fade" th:fragment="editModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span>
+        </button>
+        <h4 class="modal-title">机构信息编辑</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal tab-content form-endpoint" id="editOrganization" action="#" th:action="@{/be/company/edit}"
+              th:object="${editOrganizationDto}" method="post">
+          <input id="id_edit" name="id" th:field="*{id}" type="hidden"/>
+          <div class="box-body">
+            <div class="form-group">
+              <label for="name_edit">机构名称</label>
+              <input class="form-control" id="name_edit" name="name" type="text" th:field="*{name}" placeholder="请输入机构名称"/>
+            </div>
+            <div class="form-group">
+              <label>机构类型</label>
+              <select class="form-control" id="orgTypes_edit" name="type" th:field="*{type}">
+                <option th:each="orgType : ${orgTypeList}" th:value="${orgType}" th:text="${orgType.desc}">送检医院</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="hasFather_edit">是否有上级机构？</label>
+              <input id="hasFather_edit" name="hasFather" class="hasFather" type="radio" th:field="*{hasFather}" value="true"/>是
+              <input id="hasFather_edit" name="hasFather" class="hasFather" type="radio" th:field="*{hasFather}" value="false"/>否
+            </div>
+            <div class="form-group collapse in" id="parent_div_edit">
+              <label>上级机构</label>
+              <select class="form-control parentId" id="parentId_edit" name="parentId" th:field="*{parentId}">
+                <option value="">请选择</option>
+                <option th:each="organization : ${parentOrgs}" th:value="${organization.id}"
+                        th:text="${organization.name}"></option>
+              </select>
+            </div>
+            <!--<div class="form-group">-->
+              <!--<label for="leader_edit">负责人</label>-->
+              <!--<input class="form-control" id="leader_edit" name="manager" type="text" th:field="*{manager}" placeholder="请输入负责人"/>-->
+            <!--</div>-->
+            <div class="form-group collapse in" id="org_region_edit">
+              <label for="provinceId_edit">所属地区</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <select class="form-control" id="provinceId_edit" name="provinceId" th:field="*{provinceId}">
+                    <option value="">省/直辖市</option>
+                    <option th:each="province : ${provinces}" th:value="${province.id}" th:text="${province.name}"></option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control" id="cityId_edit" name="cityId" th:field="*{cityId}">
+                    <option value="">市/区</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control" id="districtId_edit" name="districtId" th:field="*{districtId}">
+                    <option value="">县</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="address_edit">地址</label>
+              <input class="form-control" id="address_edit" name="address" type="text" th:field="*{address}" placeholder="请输入地址"/>
+            </div>
+            <div class="form-group">
+              <label for="description_edit">描述</label>
+              <input class="form-control" id="description_edit" name="description" type="text" th:field="*{description}" placeholder="请输入描述"/>
+            </div>
+            <div class="form-group">
+              <label for="remark_edit">备注</label>
+              <input class="form-control" id="remark_edit" name="remark" type="text" th:field="*{remark}" placeholder="请输入备注"/>
+            </div>
+          </div>
+          <div shiro:hasPermission="organization:edit" class="box-footer">
+            <input class="btn btn-primary center-block" id="edit_confirm" type="submit" value="更新"/>
+          </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<!-- 搜索 -->
+<div id="searchModal" class="modal fade" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span></button>
+        <h4 class="modal-title">机构搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal tab-content form-endpoint" id="search_form" action="#" th:action="@{/be/company/index}"
+              th:object="${searchConditions}" method="get">
+          <div class="box-body">
+            <input class="organizationSearchConditionsCityId" name="organizationSearchConditionsCityId" th:field="*{cityId}" hidden>
+            <input class="organizationSearchConditionsDistrictId" name="organizationSearchConditionsDistrictId" th:field="*{districtId}" hidden>
+            <div class="form-group">
+              <label for="orgType_search">机构类型</label>
+              <select class="form-control" name="type" id="orgType_search" th:field="*{type}">
+                <option value="">请选择</option>
+                  <option th:each="orgType : ${orgTypeList}" th:value="${orgType.name()}"
+                          th:selected="${orgType.name() == searchConditions.orgType} ? 'true' : 'false' " th:text="${orgType.desc}">
+                    送检医院
+                  </option>
+                </c:forEach>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="name_search">机构名称</label>
+              <input class="form-control" name="name" id="name_search" th:field="*{name}" type="text" placeholder="请输入机构名称"/>
+            </div>
+            <div class="form-group collapse in" id="org_region_search">
+              <label >所属地区</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <select class="form-control" id="provinceId_search" name="provinceId" th:field="*{provinceId}">
+                    <option value="">省/直辖市</option>
+                      <option th:each="province : ${provinces}" th:value="${province.id}"
+                              th:selected="${province.id == searchConditions.provinceId} ? 'true' : 'false'" th:text="${province.name}">
+                      </option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control" id="cityId_search" name="cityId" th:field="*{cityId}">
+                    <option value="">市/区</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control" id="districtId_search" name="districtId" th:field="*{districtId}">
+                    <option value="">县</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <button class="btn btn-primary center-block" id ="search">搜索</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 设置信息人员Modal-->
+<!-- informModal -->
+<div class="modal fade" id="informModal" th:fragment="informModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span></button>
+        <h4 class="modal-title">信息推送配置</h4>
+      </div>
+      <div class="modal-body">
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-5">
+              <div class="form-group">
+                <label for="orgIds">所在机构名称</label>
+                <select class="form-control no-margin" id="orgIds" multiple="multiple" multi-text="机构名称">
+                  <option th:each="topOrganization : ${parentOrgs}" th:value="${topOrganization.id}" th:text="${topOrganization.name}">
+                    六安市人民医院
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="form-group">
+                <label>人员姓名</label>
+                <input class="form-control" id="informPersonName"  type="text" placeholder="请输入信息人员姓名">
+                <input class="form-control hidden" id="orgId" type="text"/>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <a shiro:hasPermission="organization:inform_config" class="showPersonSearched" name="showPersonSearched"
+                   href="javascript:void(0);">
+                  <input class="btn btn-primary btn-search" type="button" value="筛选">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">推送人员</h3>
+                </div>
+                <div class="panel-body center-block">
+                  <div class="form-group col-md-offset-3" id="informPerson">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">筛选结果</h3>
+                </div>
+                <div class="panel-body">
+                  <!--<div class="nothing-info" id="infoBody">
+                    <h1>尚未提交筛选条件</h1>
+                  </div>-->
+                  <!--<div class="append-html">
+                    <table id="userList" class="table table-responsive no-margin">
+                      <tr>
+                        <th>编号</th>
+                        <th>姓名</th>
+                        <th>机构</th>
+                        <th>操作</th>
+                    </tr>-->
+                    <!--<tr>
+                      <td>%i</td>
+                      <td>%person.fullName</td>
+                      <td>%person.organizationName</td>
+                      <td>
+                        <a class="addInformPerson" shiro:hasPermission="organization:inform_config" href="javascript:void(0)" id="%person.id"
+                        name="addInformPerson">添加</a>
+                      </td>
+                    </tr>-->
+                    <!--</table>
+                  </div>-->
+                  <!--<div class="box-footer clearfix">
+                    <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl1"></ul>
+                  </div>-->
+                  <div id="real-html">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row text-right">
+            <div class="col-md-12">
+              <button class="btn btn-default" id="submitInformPerson">完成</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<th:block th:fragment="organizationScript">
+  <script src="../../static/assets/js/modal/modal_organization.js" th:src="@{/assets/js/modal/modal_organization.js}"></script>
+</th:block>
+</body>
+</html>

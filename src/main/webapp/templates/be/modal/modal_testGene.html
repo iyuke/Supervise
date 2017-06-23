@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <!-- 搜索 -->
+  <div class="modal fade" id="searchModal" th:fragment="searchModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" aria-label="Close" type="button" ><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title">检测内容搜索</h4>
+        </div>
+        <div class="modal-body">
+          <form action="#" id="search_form" th:action="@{/be/test-gene/index}" commandName="testGeneSearchConditions"
+                     method="get">
+            <div class="box-body">
+            <div class="form-group">
+              <label >名称</label>
+              <input class="form-control" name="name" placeholder="请输入检测项目名称"
+                     th:value="${testGeneSearchConditions.name}" type="text" />
+            </div>
+            <div class="form-group">
+                <label >价格</label>
+                <div class="row">
+                  <div class="col-md-4">
+                    <input class="form-control" name="lowPrice" placeholder="请输入价格"
+                           th:value="${testGeneSearchConditions.lowPrice}" type="text"  />
+                  </div>
+                  <div class="col-md-4" >
+                    <label  style="height: 34px;font-size: 16px;display: table;width: auto;margin-left: auto;margin-right: auto"> <=价格<= </label>
+                  </div>
+                  <div class="col-md-4">
+                    <input class="form-control" name="highPrice" placeholder="请输入价格"
+                           th:value="${testGeneSearchConditions.highPrice}" type="text" />
+                  </div>
+                </div>
+            </div>
+            <input name="currentPage" hidden>
+            <input name="pageSize" hidden>
+            <div class="box-footer">
+              <input class="btn btn-primary center-block" type="submit" value="搜索" />
+            </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 创建检测内容 -->
+  <div class="modal fade" id="createModal" th:fragment="createModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" aria-label="Close" type="button" ><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title">检测内容创建</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal" id="createForm" action="#" th:action="@{/be/test-gene/create}" method="post"
+                th:object="${createTestGeneDto}" role="form">
+            <div class="box-body">
+                <div class="form-group">
+                  <label >检测内容名称</label>
+                  <input  class="form-control"  type="text" id="name_create" name="name" th:field="*{name}" placeholder="请输入检测内容名称"/>
+                </div>
+                <div class="form-group">
+                  <label >价格</label>
+                  <input class="form-control" id ="price_create" type="text" th:field="*{price}" placeholder="请输入价格"/>
+                </div>
+                <div class="form-group">
+                  <label >样本要求</label>
+                  <input class="form-control" id ="sampleRequirement_create" type="text" th:field="*{sampleRequirement}" placeholder="请输入样本要求"/>
+                </div>
+                <div class="form-group">
+                  <label >检测方法</label>
+                  <input class="form-control" id ="experimentalMethod_create" type="text" th:field="*{experimentalMethod}" placeholder="请输入检测方法"/>
+                </div>
+                <div class="form-group">
+                  <label >出报告时间</label>
+                  <input class="form-control" id ="reportTime_create" type="text" th:field="*{reportTime}" placeholder="请输入出报告时间"/>
+                </div>
+                <div class="form-group">
+                  <label >适用癌种</label>
+                  <select id="cancers_create" th:field="*{cancers}" multiple="multiple"
+                            multi-text="请选择适用癌种" class="form-control" margin="0px">
+                    <option th:each="cancerType : ${cancerTypeList}" th:value="${cancerType.name()}" th:text="${cancerType.desc}"/>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label >描述</label>
+                  <input class="form-control" id ="description_create" type="text" th:field="*{description}" placeholder="请输入描述"/>
+                </div>
+            </div>
+            <div class="box-footer">
+              <input class="btn btn-primary center-block" type="submit" value="提交">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑检测内容 -->
+  <div class="modal fade" id="editModal" th:fragment="editModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" aria-label="Close" type="button" ><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title">检测内容编辑</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal" th:action="@{/be/test-gene/edit}" method="post" id="editForm" th:object="${editTestGeneDto}">
+            <input th:field="*{id}" id = "id_edit" type="hidden"/>
+            <div class="box-body">
+                <div class="form-group">
+                  <label >检测内容名称</label>
+                  <input class="form-control" id="name_edit" th:field="*{name}" type="text" placeholder="请输入名称"/>
+                </div>
+                <div class="form-group">
+                  <label >价格</label>
+                  <input class="form-control" id = "price_edit"  th:field="*{price}" type="text" placeholder="请输入价格"/>
+                </div>
+                <div class="form-group">
+                  <label >样本要求</label>
+                  <input class="form-control" id ="sampleRequirement_edit" type="text" th:field="*{sampleRequirement}" placeholder="请输入样本要求"/>
+                </div>
+                <div class="form-group">
+                  <label >检测方法</label>
+                  <input class="form-control" id ="experimentalMethod_edit" type="text" th:field="*{experimentalMethod}" placeholder="请输入检测方法"/>
+                </div>
+                <div class="form-group">
+                  <label >出报告时间</label>
+                  <input class="form-control" id ="reportTime_edit" type="text" th:field="*{reportTime}" placeholder="请输入出报告时间"/>
+                </div>
+                <div class="form-group">
+                  <label >适用癌种</label>
+                  <select id="cancers_edit" th:field="*{cancers}" multiple="multiple"
+                          multi-text="请选择适用癌种" class="form-control" margin="0px">
+                    <option th:each="cancerType : ${cancerTypeList}" th:value="${cancerType.name()}" th:text="${cancerType.desc}"/>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label >描述</label>
+                  <input class="form-control" id ="description_edit" type="text" th:field="*{description}" placeholder="请输入描述"/>
+                </div>
+            </div>
+            <div class="box-footer">
+              <input class="btn btn-primary center-block"  id="edit_confirm" type="submit" value="提交"/>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <th:block th:fragment="testGeneScript">
+    <script src="../../../static/assets/js/modal/modal_testGene.js" th:src="@{/assets/js/modal/modal_testGene.js}"></script>
+  </th:block>
+</body>
+</html>

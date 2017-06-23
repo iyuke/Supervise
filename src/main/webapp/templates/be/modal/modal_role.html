@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+<!-- modal -->
+<div id="createModal" class="modal fade" th:fragment="createModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal">
+          <span>×</span>
+        </button>
+        <h4 class="modal-title">添加角色</h4>
+      </div>
+      <div class="modal-body">
+        <form id="createForm" action="#" th:action="@{/be/role/create}" th:object="${roleDtoCreate}" method="post">
+          <div class="box-body">
+            <div class="form-group">
+              <label>角色名称</label>
+              <input class="form-control" name="roleName" id="roleName_create" type="text" th:field="*{roleName}"
+                     placeholder="请输入角色名称"/>
+            </div>
+            <div class="form-group">
+              <label>角色代码</label>
+              <input class="form-control" name="roleCode" id="roleCode_create" type="text" th:field="*{roleCode}"
+                     placeholder="角色代码只能包含英文字母和下划线"/>
+            </div>
+            <div class="form-group">
+              <label>是否有效</label>
+              <select class="form-control" id="valid_create" name="valid" th:field="*{valid}">
+                <option value="true">是</option>
+                <option value="false">否</option>
+              </select>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">权限设置</h3>
+              </div>
+              <div class="panel-body">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                  <ul class="nav nav-tabs" id="tabTitleCreate">
+                    <li th:each="ptd,iterStat : ${categoryPermissions}" class="active"
+                        th:class="${iterStat.first} ? 'active' : ''">
+                      <a th:href="'#' + ${iterStat.count}" href="#1" data-toggle="tab" th:text="${ptd.desc}">通用权限</a>
+                    </li>
+                  </ul>
+                  <div class="tab-content" id="tabContentCreate">
+                    <div th:each="ptd,iterStat : ${categoryPermissions}" class="tab-pane active"
+                         th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" name="tabId" id="1" th:id="${iterStat.count}">
+                      <div class="checkbox">
+                        <label>
+                          <input name="allOption" type="checkbox" checked="checked">
+                          <strong>全选</strong>
+                        </label>
+                      </div>
+                      <div class="form-group">
+                        <div class="checkbox" th:each="dto : ${ptd.permissionDtoList}">
+                          <label>
+                            <input type="checkbox" th:field="*{permissionIdList}" th:value="${dto.id}" th:label="${dto.name}"/>
+                            <span th:text="${dto.name}">登陆</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div><!-- /.tab-content -->
+                </div>
+              </div>
+            </div>
+          </div>
+            <div shiro:hasPermission="role:create" class="box-footer">
+              <input class="btn btn-primary center-block" id="create_confirm" type="submit" value="添加"/>
+            </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<div id="editModal" class="modal fade" th:fragment="editModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal">
+          <span>×</span>
+        </button>
+        <h4 class="modal-title">角色信息编辑</h4>
+      </div>
+      <div class="modal-body">
+        <form th:action="@{/be/role/edit}" id="editForm" th:object="${roleDtoEdit}" method="post">
+          <input name="id" id="id_edit" type="hidden"/>
+          <div class="box-body">
+            <div class="form-group">
+              <label>角色名称</label>
+              <input class="form-control" name="roleName" id="roleName_edit" th:field="*{roleName}" type="text" value="系统管理员"
+                     readonly="true"/>
+            </div>
+            <div class="form-group">
+              <label>角色代码</label>
+              <input class="form-control" name="roleCode" id="roleCode_edit" th:field="*{roleCode}" type="text" value="ADMIN"
+                     readonly="true"/>
+            </div>
+            <div class="form-group">
+              <label>是否有效</label>
+              <select class="form-control" name="valid" id="valid_edit" th:field="*{valid}">
+                <option value="true">是</option>
+                <option value="false">否</option>
+              </select>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">权限设置</h3>
+              </div>
+              <div class="panel-body">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                  <ul class="nav nav-tabs" id="tabTitleEdit">
+                    <li th:each="ptd,iterStat: ${categoryPermissions}" class="active"
+                        th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'">
+                      <a th:href="'#edit_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.desc}">通用权限</a>
+                    </li>
+                  </ul>
+                  <div id="tabContentEdit" class="tab-content">
+                    <div th:each="ptd,iterStat : ${categoryPermissions}" class="tab-pane active"
+                         th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" name="tabId" th:id="'edit_' + ${iterStat.count}">
+                      <div class="checkbox">
+                        <label>
+                          <input name="allOption" type="checkbox" checked="checked">
+                          <strong>全选</strong>
+                        </label>
+                      </div>
+                      <div class="form-group">
+                        <div class="checkbox" th:each="dto : ${ptd.permissionDtoList}">
+                          <label>
+                            <input name="permissionIdList" type="checkbox" th:field="*{permissionIdList}" th:value="${dto.id}"/>
+                            <span th:text="${dto.name}">登陆</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div><!-- /.tab-content -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div shiro:hasPermission="role:edit" class="box-footer">
+            <input class="btn btn-primary center-block" id="edit_confirm" type="submit" value="修改"/>
+          </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+<th:block th:fragment="updateRoleScript">
+  <script src="../../../static/assets/js/modal/modal_role.js" th:src="@{/assets/js/modal/modal_role.js}"></script>
+</th:block>
+</body>
+</html>

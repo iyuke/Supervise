@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  </head>
+  <body class="skin-blue">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            订单管理
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"></i>基础病理订单管理</a></li>
+            <li class="active">订单列表</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">订单列表</h3>
+              <div class="pull-right" style="margin-bottom: 10px;">
+                <a shiro:hasPermission="order:pathology_create" href="#" th:href="@{/be/order/pathology/create}">
+                  <button class="btn btn-success">
+                    <i class="fa fa-pencil-square-o"></i>&nbsp;创建订单
+                  </button>
+                </a>
+                <button shiro:hasPermission="order:pathology_index" class="btn btn-success" id="orderSearchBtn"><i
+                    class="fa fa-search-plus"></i>&nbsp;搜索订单
+                </button>
+                <button shiro:hasPermission="order:pathology_export" class="btn btn-success" id="orderExportBtn">
+                  <i class="fa fa-sign-out"></i>&nbsp;导出Excel
+                </button>
+              </div>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive" id="printDiv">
+              <table class="table table-bordered table-striped" id="order_datatable" style="margin-bottom: 30px;">
+                <tbody>
+                <tr>
+                  <th style="width: 60px">#</th>
+                  <th>订单编号</th>
+                  <th shiro:hasPermission="field:order_orgHospital">送检医院</th>
+                  <th>患者姓名</th>
+                  <th>联系电话</th>
+                  <th shiro:hasPermission="field:order_dstHospital">诊断机构</th>
+                  <th>病理检验号</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+                <th:block th:each="orderDto,iterStat : ${orders}">
+                  <tr>
+                    <td th:text="(${pagination.currentPage} - 1) * 10 + ${iterStat.count}">1</td>
+                    <td th:text="${orderDto.order.orderNo}">FZ012015040104</td>
+                    <td shiro:hasPermission="field:order_orgHospital" th:text="${orderDto.orgHospitalName}">
+                      安徽省六安市人民医院
+                    </td>
+                    <td th:text="${orderDto.order.patient.fullName}">张三</td>
+                    <td th:text="${orderDto.order.patient.mobilePhone}">18736452634</td>
+                    <td shiro:hasPermission="field:order_dstHospital">
+                      <span th:each="dstHospital : ${orderDto.application.dstHospitals}" th:utext="|${dstHospital.name}<br>|">
+                        上海复旦临床病理诊断中心
+                      </span>
+                    </td>
+                    <td>
+                      <span th:each="dstHospReport : ${orderDto.order.dstHospReports}" th:utext="|${dstHospReport.consultationNo}<br>|">
+                        20160893
+                      </span>
+                    </td>
+                    <td>
+                      <span class="label status-label" th:text="${orderDto.order.state}">已收样</span>
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <a class="btn btn-default btn-sm" th:id="${orderDto.order.orderNo}"
+                           href="order_detail.html?type=pathology" th:href="@{/be/order/pathology/detail(orderNo=${orderDto.order.orderNo})}"
+                           title="订单详情">
+                          <i class="fa fa-info fa-fw"></i>
+                        </a>
+                        <a shiro:hasPermission="order:pathology_edit" class="btn btn-default btn-sm" th:id="${orderDto.order.orderNo}"
+                           href="order_edit_pathology.html" th:href="@{/be/order/pathology/edit(orderNo=${orderDto.order.orderNo})}" title="编辑订单">
+                          <i class="fa fa-edit fa-fw"></i>
+                        </a>
+                        <a th:if="${orderDto.reportUrl} != null" shiro:hasPermission="field:order_dstHospReport"
+                           class="btn btn-default btn-sm" href="#" th:href="${cdnHost}${orderDto.reportUrl}"
+                           title="下载报告" target="_blank" download>
+                          <i class="fa fa-download fa-fw"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </th:block>
+                </tbody>
+              </table>
+            </div>
+            <div class="box-footer clearfix"><!-- 分页 -->
+              <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+
+    <div th:replace="be/modal/modal_search_order_pathology :: searchModal"></div>
+
+    <!--下载清单-->
+    <form id="exportConditionsForm" action="#" th:action="@{/be/order/export}" method="post">
+      <input name="patientName" type="hidden" th:value="${orderSearchConditions.patientName}">
+      <input name="idNo" type="hidden" th:value="${orderSearchConditions.idNo}">
+      <input name="consultationNo" type="hidden" th:value="${orderSearchConditions.consultationNo}">
+      <input name="orderState" type="hidden" th:value="${orderSearchConditions.orderState}">
+      <input name="orgHospitalId" type="hidden" th:value="${orderSearchConditions.orgHospitalId}">
+      <input name="dstHospitalId" type="hidden" th:value="${orderSearchConditions.dstHospitalId}">
+      <input name="orderType" type="hidden" th:value="PATHOLOGY">
+    </form>
+    <script data-th-inline="javascript">
+      /*<![CDATA[*/
+      var currentPage= /*[[${pagination.currentPage}]]*/ '1';//当前页面
+      var pageSize= /*[[${pagination.pageSize}]]*/'5';
+      var totalPages=/*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+      /*]]>*/
+    </script>
+    <script src="../../static/assets/js/order_list.js" th:src="@{/assets/js/order_list.js}"></script>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  </head>
+
+  <body class="skin-blue">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            订单管理
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="order_list_gene.html" th:href="@{/be/order/gene}">分子病理订单管理</a></li>
+            <li class="active">订单列表</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">订单列表</h3>
+              <div class="pull-right" style="margin-bottom: 10px;">
+                <a shiro:hasPermission="order:gene_create" href="order_create_gene.html" th:href="@{/be/order/gene/create}">
+                  <button class="btn btn-success">
+                    <i class="fa fa-pencil-square-o"></i>&nbsp;创建订单
+                  </button>
+                </a>
+                <a shiro:hasPermission="order:gene_index">
+                  <button class="btn btn-success" id="orderSearchBtn">
+                    <i class="fa fa-search-plus"></i>&nbsp;搜索订单
+                  </button>
+                </a>
+                <button shiro:hasPermission="order:gene_export" class="btn btn-success" id="orderExportBtn">
+                  <i class="fa fa-sign-out"></i>&nbsp;导出Excel
+                </button>
+              </div>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive">
+              <table class="table table-striped">
+                <tbody>
+                <tr>
+                  <th width="60">#</th>
+                  <th>订单编号</th>
+                  <th>送检日期</th>
+                  <th>患者姓名</th>
+                  <th>样本类型</th>
+                  <th shiro:hasPermission="field:order_orgHospital">送检医院</th>
+                  <th shiro:hasPermission="field:order_department">送检科室</th>
+                  <th shiro:hasPermission="field:order_doctor">送检医生</th>
+                  <th>联系方式</th>
+                  <th>预计报告日期</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+                <th:block th:each="ordergene,iterStat : ${orders}">
+                  <tr>
+                    <td th:text="(${pagination.currentPage} - 1) * 10 + ${iterStat.count}">1</td>
+                    <td th:text="${ordergene.order.orderNo}">FZ012015040104</td>
+                    <td th:text="${#dates.format(ordergene.application.applicationDate, 'yyyy-MM-dd')}">2016-06-09</td>
+                    <td th:text="${ordergene.patient.fullName}">张三</td>
+                    <td><span th:each="sampletype : ${ordergene.sampleTypes}" th:utext="|${sampletype}<br>|">外周血</span></td>
+                    <td shiro:hasPermission="field:order_orgHospital" th:text="${ordergene.orgHospitalName}">六安市人民医院</td>
+                    <td shiro:hasPermission="field:order_department" th:text="${ordergene.departmentName}">安徽省</td>
+                    <td shiro:hasPermission="field:order_doctor" th:text="${ordergene.application.doctor.fullName}">六安市</td>
+                    <td th:text="${ordergene.application.doctor.mobilePhone}">13100001234</td>
+                    <td th:text="${ordergene.order.reportExpectDate} == null ?
+                    '' : ${#dates.format(ordergene.order.reportExpectDate, 'yyyy-MM-dd')}">2016-6-20</td>
+                    <td>
+                    <span class="label status-label" th:data-reportStatus="${ordergene.order.reportStatus}"
+                          th:text="${ordergene.order.state}">
+                      已收样
+                    </span>
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <a shiro:hasPermission="order:gene_index" class="btn btn-default btn-sm" href="order_detail.html?type=gene"
+                           th:href="@{/be/order/gene/detail(orderNo=${ordergene.order.orderNo})}"
+                           th:id="${ordergene.order.orderNo}" title="订单详情"><i class="fa fa-info fa-fw"></i></a>
+                        <a shiro:hasPermission="order:gene_edit" class="btn btn-default btn-sm" href="order_edit_gene.html"
+                           th:href="@{/be/order/gene/edit(orderNo=${ordergene.order.orderNo})}"
+                           th:id="${ordergene.order.orderNo}" title="编辑订单"><i class="fa fa-edit fa-fw"></i></a>
+                        <a shiro:hasPermission="field:order_geneReport" th:if="${ordergene.reportUrl} != null" class="btn btn-default btn-sm"
+                           href="#" th:href="@{|${cdnHost}${ordergene.reportUrl}|}" title="下载报告" target="_blank" download>
+                          <i class="fa fa-download fa-fw"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </th:block>
+                </tbody>
+              </table>
+            </div><!-- /.box-body -->
+            <div class="box-footer clearfix"><!-- 分页 -->
+              <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+              </ul>
+            </div>
+          </div>
+        </section><!-- /.content -->
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+
+    <div th:replace="be/modal/modal_search_order_gene :: searchModal"></div>
+
+    <!--下载清单-->
+    <form id="exportConditionsForm" action="#" th:action="@{/be/order/export}" method="post">
+      <input name="patientName" type="hidden" th:value="${orderSearchConditions.patientName}">
+      <input name="idNo" type="hidden" th:value="${orderSearchConditions.idNo}">
+      <input name="orderState" type="hidden" th:value="${orderSearchConditions.orderState}">
+      <input name="orgHospitalId" type="hidden" th:value="${orderSearchConditions.orgHospitalId}">
+      <input name="departmentId" type="hidden" th:value="${orderSearchConditions.departmentId}">
+      <input name="doctorId" type="hidden" th:value="${orderSearchConditions.doctorId}">
+      <input name="orderType" type="hidden" th:value="GENE">
+    </form>
+    <script data-th-inline="javascript">
+      /*<![CDATA[*/
+      var currentPage= /*[[${pagination.currentPage}]]*/ '1';//当前页面
+      var pageSize= /*[[${pagination.pageSize}]]*/'5';
+      var totalPages=/*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+      /*]]>*/
+    </script>
+    <script src="../../static/assets/js/order_list.js" th:src="@{/assets/js/order_list.js}"></script>
+  </body>
+</html>
+

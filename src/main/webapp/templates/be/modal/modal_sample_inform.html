@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+<!-- 订单搜索 -->
+<div class="modal fade" id="searchModal" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button">×</button>
+        <h4 class="modal-title">样本搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal tab-content form-endpoint" id="search_form" action="#"
+              th:action="@{/be/sample/inform/index}" method="get" th:object="${sampleSearchConditions}">
+          <div class="box-body">
+            <div class="form-group">
+              <label for="orgHospitalId">送检医院</label>
+              <select class="form-control" name="orgHospitalId" id="orgHospitalId">
+                <option value="">请选择送检医院</option>
+                <option th:each="orgHospital,iterStat : ${orgHospitals}" th:value="${orgHospital.id}"
+                        th:text="${orgHospital.name}"
+                        th:selected="${orgHospital.id == sampleSearchConditions.orgHospitalId} ? true : false"
+                XXX医院</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="mobilePhone">联系方式</label>
+              <input class="form-control" name="mobilePhone" id="mobilePhone" type="text"
+                     th:value="${sampleSearchConditions.mobilePhone}" th:field="*{mobilePhone}" placeholder="请输入联系方式">
+            </div>
+            <div class="form-group">
+              <label for="sampleAcceptDate">收样时间</label>
+              <input class="form-control datepicker" name="sampleAcceptDate" id="sampleAcceptDate" type="text"
+                     th:value="${sampleSearchConditions.sampleAcceptDate}" th:field="*{sampleAcceptDate}" placeholder="请输入收样时间">
+            </div>
+            <div class="form-group">
+              <label for="sampleAcceptDate">收样状态</label>
+              <select class="form-control" name="searchSampleState" id="searchSampleState">
+                <option value="">请选择收样状态</option>
+                <option th:each="status,iterStat : ${sampleStatus}" th:value="${status.desc}" th:text="${status.desc}"
+                        th:selected="${status.desc == sampleSearchConditions.searchSampleState}">
+                  已收样
+                </option>
+                <option th:remove="all">待收样</option>
+              </select>
+            </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <button class="btn btn-primary center-block">搜索</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="sampleInformModal" th:fragment="createSampleInformModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button">×</button>
+        <h4 class="modal-title">通知收样</h4>
+      </div>
+      <form id="createSampleInform" action="#" th:action="@{/be/sample/inform/create}" method="post"
+            th:object="${createSampleInformDto}">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>送检医院</label>
+            <input class="form-control" name="orgHospitalId" readonly="true"
+                   value="XXX医院" th:value="${hospitalName}" />
+          </div>
+          <div class="form-group">
+            <label>小标本</label>
+            <input class="form-control" name="sampleInform.smallSampleNum" placeholder="请输入小标本数量" />
+          </div>
+          <div class="form-group">
+            <label>大标本</label>
+            <input class="form-control" name="sampleInform.bigSampleNum" placeholder="请输入大标本数量" />
+          </div>
+          <div class="form-group">
+            <label>预计收样时间:
+              <span th:text="${sampleAcceptDate} + '/' + (${sampleReceivedWeekDay} == null ? '' : ${sampleReceivedWeekDay.desc})"></span></label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="submit" class="btn btn-primary center-block" value="提交">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<th:block th:fragment="sampleInformModalScript">
+  <script src="../../static/assets/js/modal/modal_sample_inform.js" th:src="@{/assets/js/modal/modal_sample_inform.js}"></script>
+</th:block>
+</body>
+</html>

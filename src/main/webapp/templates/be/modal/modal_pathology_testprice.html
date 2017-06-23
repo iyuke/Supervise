@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <!-- 检测内容详情 -->
+  <div class="modal fade" id="testContentDetailModal" th:fragment="testContentDetailModal">
+    <span id="page-status" class="static" th:class="dynamic"></span>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" aria-label="Close" type="button" ><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title" id="nameDetail">内镜组织活检检测与诊断</h4>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <tbody>
+            <tr>
+              <td class="no-border" width="30%">编号／医保代码：</td>
+              <td class="no-border" id="priceCodeDetail">20170810</td>
+            </tr>
+            <tr>
+              <td>检测方法：</td>
+              <td id="methodDetail">H-E染色</td>
+            </tr>
+            <tr>
+              <td>样本要求：</td>
+              <td id="sampleRequirementDetail">10%中心缓冲福尔马林浸泡送检</td>
+            </tr>
+            <tr>
+              <td>保存稳定性：</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>室温</td>
+              <td id="preservationNormalTemperatureDetail">长期</td>
+            </tr>
+            <tr>
+              <td>冷藏</td>
+              <td id="preservationRefrigerationDetail">禁止</td>
+            </tr>
+            <tr>
+              <td>冷冻</td>
+              <td id="preservationFreezingDetail">禁止</td>
+            </tr>
+            <tr>
+              <td>报告时间：</td>
+              <td id="reportRequirementDetail">3个工作日，如遇需重新取材、制片，特殊染色，疑难病例需全科讨论等，顺延1-2个工作日</td>
+            </tr>
+            <tr>
+              <td>收费：</td>
+              <td id="priceDetail">60元</td>
+            </tr>
+            <tr>
+              <td>临床意义：</td>
+              <td id="clinicSignificanceDetail">明确病变性质</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 搜索收费标准 -->
+  <div class="modal fade" id="testPriceSearchModal" th:fragment="testPriceSearchModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" aria-label="Close" type="button" ><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title">搜索项目</h4>
+        </div>
+        <div class="modal-body">
+          <form id="search_form" action="#" th:action="@{/be/pathology-test/index}" class="form-horizontal tab-content form-endpoint"
+                th:object="${searchConditions}" th:method="GET">
+            <div class="box-body">
+              <div class="form-group">
+                <label for="testItemName_search">检测项目</label>
+                <input class="form-control" id="testItemName_search" name="pathologyTestItem" type="text" th:value="*{pathologyTestItem}" placeholder="请输入检测项目名称"/>
+              </div>
+              <div class="form-group">
+                <label for="pathologyType_search">所属类型</label>
+                <select class="form-control" id="pathologyType_search" name="pathologyType">
+                  <option value="">请选择所属类型</option>
+                  <option th:each="rType : ${pathologyTypeList}" th:value="${rType.name()}" th:text="${rType.desc}"
+                          th:selected="${searchConditions.pathologyType == rType.name()} ? 'true' : 'false'">常规病理</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <!--TO DO-->
+                <label >内容收费</label>
+                <div class="row">
+                  <div class="col-md-4">
+                    <input class="form-control" name="lowPrice" type="text" th:value="*{lowPrice}" placeholder="请输入价格"/>
+                  </div>
+                  <div class="col-md-4" >
+                    <label  style="height: 34px;font-size: 16px;display: table;width: auto;margin-left: auto;margin-right: auto"> <=价格<= </label>
+                  </div>
+                  <div class="col-md-4">
+                    <input class="form-control" name="highPrice" type="text" th:value="*{highPrice}" placeholder="请输入价格"/>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="priceCode_search">医保代码/编号</label>
+                <input class="form-control" id="priceCode_search" name="priceCode" type="text" th:value="*{priceCode}" placeholder="请输入医保代码/编号"/>
+              </div>
+            </div>
+            <div class="box-footer">
+              <button id="search_form_submit" class="btn btn-primary center-block">搜索</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

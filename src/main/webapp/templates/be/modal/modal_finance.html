@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <!-- 搜索 -->
+  <div class="modal fade" id="searchModal" th:fragment="searchModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal" aria-label="Close" type="button" ><span aria-hidden="true">×</span>
+          </button>
+          <h4 class="modal-title">订单搜索</h4>
+        </div>
+        <div class="modal-body">
+          <form action="#" id="search_form" th:action="@{/be/order/fee/search}" th:object="${orderSearchConditions}"
+                     method="get">
+            <div class="box-body">
+              <div class="form-group">
+                <select class="form-control"  name="orgHospitalId" th:field="${orderSearchConditions.orgHospitalId}">
+                  <option value="">送检医院</option>
+                  <option th:each="orgHospital : ${orgHospitals}"
+                          th:selected="${orgHospital.id == orderSearchConditions.orgHospitalId} ? 'true' : 'false'"
+                          th:value="${orgHospital.id}" th:text="${orgHospital.name}">顺丰</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <select class="form-control" name="dstHospitalId">
+                  <option value="">诊断医院</option>
+                  <option th:each="dstHospital : ${dstHospitals}" th:value="${dstHospital.id}" th:text="${dstHospital.name}"
+                          th:selected="${dstHospital.id == orderSearchConditions.dstHospitalId} ? 'true' : 'false'">
+                  </option>
+                </select>
+              </div>
+            <div class="form-group">
+                <label >患者姓名</label>
+                    <input class="form-control" name="patientName" id="patientName"
+                           th:field="${orderSearchConditions.patientName}" placeholder="请输入患者姓名"
+                           th:value="${orderSearchConditions.patientName}" type="text"  />
+            </div>
+            <div class="form-group">
+              <label >财务状态</label>
+                <select class="form-control" name="feeStatus" th:field="${orderSearchConditions.feeStatus}">
+                  <option value="">财务状态</option>
+                  <option th:each="feeStatus : ${feeStatuses}"
+                          th:selected="${feeStatus == orderSearchConditions.feeStatus} ? 'true' : 'false'"
+                          th:value="${feeStatus}" th:text="${feeStatus.desc}">需补款</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="applicationDateRange">送检日期区间</label>
+                <input class="form-control daterange" name="applicationDateRange" id="applicationDateRange"
+                       th:field="${orderSearchConditions.applicationDateRange}"  type="text"
+                       placeholder="请输入日期区间" th:value="${orderSearchConditions.applicationDateRange}">
+              </div>
+            </div>
+            <input name="currentPage" hidden>
+            <input name="pageSize" hidden>
+            <div class="box-footer">
+              <input class="btn btn-primary center-block" type="submit" value="搜索" />
+            </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <th:block th:fragment="financeScript">
+    <script src="../../../static/assets/js/modal/modal_finance.js" th:src="@{/assets/js/modal/modal_finance.js}"></script>
+  </th:block>
+</body>
+</html>

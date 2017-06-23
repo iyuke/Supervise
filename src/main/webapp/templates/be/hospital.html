@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <meta charset="UTF-8">
+  <script th:remove="all" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+  <script th:remove="all" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  <script th:remove="all" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+</head>
+<body class="skin-blue">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header" th:include="be/fragment :: header"></header>
+
+  <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        送检医院管理
+      </h1>
+      <span id="page-status" class="static" th:class="'dynamic'"></span>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">送检医院列表</h3>
+          <div class="pull-right" style="margin-bottom: 10px;">
+            <a class="btn btn-success" href="hospital_create.html" th:href="create" shiro:hasPermission="hospital:create">
+              <i class="fa fa-pencil-square-o"></i>&nbsp;创建医院
+            </a>
+            <button class="btn btn-success" id="hospitalSearchBtn">
+              <i class="fa fa-search-plus"></i>&nbsp;搜索医院
+            </button>
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body table-responsive">
+          <table class="table table-bordered table-striped">
+            <tbody>
+            <tr>
+              <th style="width: 60px">#</th>
+              <th>医院代码</th>
+              <th>医院名称</th>
+              <th>医院级别</th>
+              <th>所属省份</th>
+              <th>病理科联系人</th>
+              <th>联系人电话</th>
+              <th>负责销售</th>
+              <th>合作状态</th>
+              <th>科室数</th>
+              <th>操作</th>
+            </tr>
+            <tr th:each="hospital,status : ${hospitals}">
+              <td th:text="${(pagination.currentPage - 1)* 10 + status.count}">1</td>
+              <td th:text="${hospital.hospitalCode}">20170504</td>
+              <td th:text="${hospital.name}">安徽六安市人民医院</td>
+              <td th:text="${hospital.hospitalLevel == null ? '' : hospital.hospitalLevel.desc}">二级甲等</td>
+              <td th:text="${hospital.provinceName}">安徽省</td>
+              <td th:text="${hospital.contactName}">张五</td>
+              <td th:text="${hospital.contactPhone}">131****0101</td>
+              <td th:text="${hospital.sellerName}">张三</td>
+              <td>
+                <span class="label status-label font-normal cooperationState"
+                      th:text="${null == hospital.cooperationState ? '' : hospital.cooperationState.desc}">已拜访
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-primary btn-xs departmentView" name="departmentView"
+                        th:text="${#lists.size(hospital.departments)}">5
+                </button>
+              </td>
+              <td>
+                <a class="btn btn-primary btn-xs detailView" name="detailView"
+                   th:href="@{/be/hospital/detail(id=${hospital.id})}">
+                  详情
+                </a>
+                <button shiro:hasPermission="hospital:delete" class="btn btn-danger btn-xs deleteBtn" th:id="${hospital.id}"
+                        th:value="${hospital.name}">
+                  删除
+                </button>
+                <a class="btn btn-success btn-xs cooperationInfoAdd" name="cooperationInfoAdd" th:if="${null == hospital.cooperationState}"
+                   th:href="@{detail(edit=cooperation,id=${hospital.id})}" shiro:hasPermission="hospital:addCooperationItem">
+                  添加合作信息
+                </a>
+                <a class="btn btn-success btn-xs departmentAdd" name="departmentAdd" th:attr="id=${hospital.id}"
+                   shiro:hasPermission="hospital:departmentAdd">
+                  添加科室
+                </a>
+              </td>
+              <td class="hide departments">
+                <table class="table">
+                  <tbody>
+                  <tr>
+                    <td class="no-border">科室名称</td>
+                    <td class="no-border">科室负责人</td>
+                    <td class="no-border">联系电话</td>
+                    <td class="no-border">联系邮箱</td>
+                    <td class="no-border" style="width: 20%">备注</td>
+                  </tr>
+                  <tr th:each="department : ${hospital.departments}">
+                    <td th:text="${department.name}">病理科</td>
+                    <td th:text="${department.directorName}">张三</td>
+                    <td th:text="${department.contactPhone}">131****3782</td>
+                    <td th:text="${department.contactEmail}">mail@example.com</td>
+                    <td th:text="${department.remark}">此科室非常有潜力，应重点排查</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr th:remove="all">
+              <td>1</td>
+              <td>20170504</td>
+              <td>安徽六安市人民医院</td>
+              <td>二级甲等</td>
+              <td>安徽省</td>
+              <td>张五</td>
+              <td>131****0101</td>
+              <td>张三</td>
+              <td>
+                <span class="label status-label font-normal cooperationState">未签约有合作</span>
+              </td>
+              <td>
+                <button class="btn btn-primary btn-xs departmentView" name="departmentView">5</button>
+              </td>
+              <td>
+                <button class="btn btn-primary btn-xs detailView" name="detailView">
+                  详情
+                </button>
+                <button class="btn btn-success btn-xs cooperationInfoAdd" name="cooperationInfoAdd">
+                  添加合作信息
+                </button>
+                <button class="btn btn-success btn-xs departmentAdd" name="departmentAdd">
+                  添加科室
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div><!-- /.box-body -->
+        <!-- Your Page Content Here -->
+        <div class="box-footer clearfix"><!-- 分页 -->
+          <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+          </ul>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+
+  </div><!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+</div><!-- ./wrapper -->
+<div th:replace="be/modal/modal_hospital :: searchModal"></div>
+<div th:replace="be/modal/modal_hospital :: createDepartmentModal"></div>
+<div th:replace="be/modal/modal_hospital :: departmentDetailModal"></div>
+<div th:replace="be/modal/modal_hospital :: hospitalScript"></div>
+<script data-th-inline="javascript">
+  /*<![CDATA[*/
+  var currentPage = /*[[${pagination.currentPage}]]*/ '1';//当前页面
+  var pageSize = /*[[${pagination.pageSize}]]*/'5';
+  var totalPages = /*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+  /*]]>*/
+</script>
+<script src="../../static/assets/js/hospital.js" th:src="@{/assets/js/hospital.js}"></script>
+</body>
+</html>

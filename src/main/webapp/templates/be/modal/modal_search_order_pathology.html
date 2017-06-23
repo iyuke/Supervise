@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="../../../static/assets/bootstrap/css/bootstrap.min.css" th:remove="all"/>
+  <script type="text/javascript" src="../../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/datepicker/bootstrap-datepicker.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/formValidation.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/language/zh_CN.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js" th:remove="all"></script>
+</head>
+<body>
+
+</body>
+<!-- 订单搜索 -->
+<div id="searchModal" class="modal fade" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">订单搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form id="search_form" th:action="@{/be/order/pathology/search}" method="get" th:object="${orderSearchConditions}">
+          <div class="box-body">
+            <input type="hidden" name="orderType" value="PATHOLOGY">
+            <div class="form-group">
+              <label for="patientName">患者姓名</label>
+              <input class="form-control" name="patientName" type="text" placeholder="请输入患者姓名"
+                     th:value="${orderSearchConditions.patientName}" id="patientName"/>
+            </div>
+            <div class="form-group">
+              <label for="idNo">患者身份证号</label>
+              <input class="form-control" name="idNo" type="text" placeholder="请输入患者身份证号"
+                     th:value="${orderSearchConditions.idNo}" id="idNo"/>
+            </div>
+            <div class="form-group">
+              <label for="orderState">订单状态</label>
+              <select class="form-control" name="orderState" id="orderState">
+                <option value="">请选择</option>
+                <option th:each="orderState : ${orderStates}" th:text="${orderState.desc}"
+                        th:selected="${orderState.desc == orderSearchConditions.orderState} ? 'true' : 'false'"></option>
+              </select>
+            </div>
+              <div shiro:hasPermission="field:order_dstHospital" class="form-group">
+                <label for="dstHospitalId">诊断机构</label>
+                <select class="form-control" name="dstHospitalId" id="dstHospitalId">
+                  <option value="">请选择</option>
+                    <option th:each="dstHospital : ${dstHospitals}" th:value="${dstHospital.id}" th:text="${dstHospital.name}"
+                            th:selected="${dstHospital.id == orderSearchConditions.dstHospitalId} ? 'true' : 'false'">
+                    </option>
+                </select>
+              </div>
+              <div class="form-group" shiro:hasPermission="field:order_orgHospital">
+                <label for="orgHospitalId">送检医院</label>
+                <select class="form-control" name="orgHospitalId" id="orgHospitalId">
+                  <option value="">请选择</option>
+                    <option th:each="orgHospital : ${orgHospitals}" th:value="${orgHospital.id}" th:text="${orgHospital.name}"
+                    th:selected="${orgHospital.id == orderSearchConditions.orgHospitalId} ? 'true' : 'false'">
+                    </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="consultationNo">病理检验号</label>
+                <input class="form-control" name="consultationNo" id="consultationNo" type="text"
+                       th:value="${orderSearchConditions.consultationNo}" placeholder="请输入诊断机构病理检验号">
+              </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <button id="search_form_submit" class="btn btn-primary center-block">搜索</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

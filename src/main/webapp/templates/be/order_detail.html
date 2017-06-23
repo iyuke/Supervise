@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <meta charset="UTF-8">
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/bootstrap/js/bootstrap-multiselect.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+  <script th:remove="all" type="text/javascript"
+          src="../../static/assets/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/common.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-fileinput/js/fileinput.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-fileinput/js/fileinput_locale_zh.js"></script>
+</head>
+<body class="skin-blue">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header" th:include="be/fragment :: header"></header>
+
+  <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>订单详情</h1>
+      <span id="page-status" class="static" th:class="'dynamic'"></span>
+      <ol class="breadcrumb" th:switch="${orderDto.order.orderType}">
+        <li th:case="'PATHOLOGY'">
+          <a href="order_list_pathology.html" th:href="@{/be/order/pathology}"></i>基础病理订单管理</a>
+        </li>
+        <li th:case="'CONSULTATION'">
+          <a href="order_list_consultation.html" th:href="@{/be/order/consultation}"></i>疑难会诊订单管理</a>
+        </li>
+        <li th:case="'GENE'">
+          <a href="order_list_gene.html" th:href="@{/be/order/gene}"></i>分子病理订单管理</a>
+        </li>
+        <li class="active">订单详情</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="box box-primary order-status-box">
+        <div class="box-header with-border">
+          <h3 class="box-title">订单状态</h3>
+          <input id="orderId" th:value="${orderDto.order.id}" type="hidden"/>
+          <input id="orderType" th:value="${orderDto.order.orderType}" type="hidden"/>
+        </div>
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-light-blue"><i class="fa fa-spinner" aria-hidden="true"></i></span>
+
+                <div class="info-box-content">
+                  <span class="info-box-text">当前状态</span>
+                  <span class="info-box-number" shiro:hasPermission="order:updateStatus">
+                    <a class="text-blue" name="orderState_btn" href="#modifyStatus"
+                       th:text="${orderDto.order.state}" data-toggle="modal">诊断中</a>
+                  </span>
+                  <div th:if="!${orderDto.finished} and ${orderDto.reportExpectDate} != ''" th:remove="tag">
+                    <span class="info-box-text">预计报告日期</span>
+                    <span class="info-box-number">
+                      <a class="text-blue" th:text="${orderDto.reportExpectDate}">2015-01-01</a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <table class="table order-status-record no-border table-condensed no-margin">
+                <tr>
+                  <th>状态</th>
+                  <th>变更时间</th>
+                  <th shiro:hasPermission="field:orderStatus_operator">
+                    操作者
+                  </th>
+                </tr>
+                <th:block th:each="state,iterStat : ${states}">
+                  <tr th:class="${iterStat.count < 4} ? '' : 'collapse'"
+                      th:name="${iterStat.count < 4 } ? '' : 'otherStatus'">
+                    <td th:text="${state.endState}">诊断中</td>
+                    <td th:text="${#dates.format(state.createTime, 'yyyy-MM-dd HH:mm:ss')}">2017-01-01</td>
+                    <td shiro:hasPermission="field:orderStatus_operator" th:if="${state.creator != null}"
+                        th:text="${state.creator.fullName}">
+                      管理员
+                    </td>
+                  </tr>
+                  <tr th:if="${iterStat.last} and ${iterStat.count} > 3" name="moreStatusInform">
+                    <td class="no-padding" colspan="3">
+                      <button class="btn btn-box-tool center-block no-padding" id="moreStatusInformBtn" type="button">
+                        <i class="fa fa-angle-down fa-2x" aria-hidden="true"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="collapse" th:if="${iterStat.last} and ${iterStat.count} > 3" name="otherStatus">
+                    <td colspan="3">
+                      <button class="btn btn-box-tool center-block" id="lessStatusInformBtn" type="button">
+                        <i class="fa fa-angle-up fa-2x" aria-hidden="true"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </th:block>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-tabs-custom order-detail-tabs" th:with="type=${orderDto.order.orderType}">
+        <ul class="nav nav-tabs">
+          <li class="active baseInformTab">
+            <a data-toggle="tab" aria-expanded="true"
+               th:href="(${type} == 'PATHOLOGY') ? '#basic_sh_inform' : ((${type} == 'CONSULTATION') ? '#base_info' : '#basic_gene_inform')">
+              基本信息
+            </a>
+          </li>
+          <li class="reportTab" shiro:hasPermission="field:order_baseReport" th:if="${type} == 'PATHOLOGY'">
+            <a id="reportTab" data-toggle="tab" href="#consult_report">诊断报告</a>
+          </li>
+          <li class="reportTab" shiro:hasPermission="field:order_dstHospReport" th:if="${type} == 'CONSULTATION'">
+            <a id="reportTab" data-toggle="tab" href="#consult_report">会诊报告</a>
+          </li>
+          <li class="reportTab" shiro:hasPermission="field:order_geneReport" th:if="${type} == 'GENE'">
+            <a id="reportTab" data-toggle="tab" href="#consult_gene_report">检测报告</a>
+          </li>
+          <li shiro:hasPermission="field:order_attachment">
+            <a id="attachmentTab" data-toggle="tab" href="#other_attaches">其它附件</a>
+          </li>
+          <li shiro:hasPermission="field:order_fee"
+              th:if="${type} == 'CONSULTATION' or ${type} == 'GENE'">
+            <a id="feeTab" data-toggle="tab" href="#finance_management">费用管理</a>
+          </li>
+          <li shiro:hasPermission="field:order_invoice">
+            <a id="invoiceTab" data-toggle="tab" href="#invoice_management">发票管理</a>
+          </li>
+          <li shiro:hasPermission="field:order_sampleReturn" th:if="${type} != 'PATHOLOGY'">
+            <a id="sampleTab" data-toggle="tab" href="#sample_return">样本返还</a>
+          </li>
+          <li shiro:hasPermission="field:order_express">
+            <a id="expressTab" data-toggle="tab" href="#express_info">物流信息</a>
+          </li>
+          <li shiro:hasPermission="field:order_log">
+            <a id="logTab" data-toggle="tab" href="#operation_log" aria-expanded="false">操作日志</a>
+          </li>
+        </ul>
+        <div class="tab-content" th:object="${orderDto}">
+          <!--tab-pane-->
+          <div class="tab-pane active" id="basic_sh_inform" th:if="${type} == 'PATHOLOGY'">
+            <a class="btn btn-primary btn-sm btn-lead-box" type="button" shiro:hasPermission="order:pathology_edit"
+               href="order_edit_consultation.html" th:href="@{/be/order/pathology/edit(orderNo=*{order.orderNo})}">
+              <i class="fa fa-edit"></i>&nbsp;编辑信息
+            </a>
+
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">患者信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>姓名</th>
+                        <td th:text="*{patient.fullName}">张三</td>
+                      </tr>
+                      <tr>
+                        <th>性别</th>
+                        <td th:text="*{patient.gender}">男</td>
+                      </tr>
+                      <tr>
+                        <th>电话</th>
+                        <td th:text="*{patient.mobilePhone}">1310000101</td>
+                      </tr>
+                      <tr>
+                        <th>籍贯</th>
+                        <td th:text="*{patient.nativePlace}">上海</td>
+                      </tr>
+                      <tr>
+                        <th>职业</th>
+                        <td th:if="*{#strings.toString(patient.career) != 'null'}" th:text="*{patient.career}">工人</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>身份证号</th>
+                        <td th:text="*{patient.idNo}">310123197001010001</td>
+                      </tr>
+                      <tr>
+                        <th>年龄</th>
+                        <td th:text="*{patient.age}">47</td>
+                      </tr>
+                      <tr>
+                        <th>婚姻状况</th>
+                        <td th:text="*{patient.marry}">已婚</td>
+                      </tr>
+                      <tr>
+                        <th>地址</th>
+                        <td th:text="*{patient.address}">浦东大道1000号</td>
+                      </tr>
+                      <tr>
+                        <th>邮编</th>
+                        <td th:text="*{patient.postcode}">201200</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">送检信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>送检医院</th>
+                        <td th:text="*{orgHospitalName}">宝山第一人民医院</td>
+                      </tr>
+                      <tr>
+                        <th>送检科室</th>
+                        <td th:text="*{departmentName}">病理科</td>
+                      </tr>
+                      <tr>
+                        <th>送检医生</th>
+                        <td th:if="*{#strings.toString(application.doctor) != 'null'}" th:text="*{application.doctor.fullName}">黄医生</td>
+                      </tr>
+                      <tr>
+                        <th>诊断机构</th>
+                        <td>
+                          <span th:each="dstHosp : *{application.dstHospitals}" th:utext="|${dstHosp.name}<br>|">衡道病理诊断中心</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>送检日期</th>
+                        <td th:text="*{application.applicationDate}">2017-01-01</td>
+                      </tr>
+                      <tr>
+                        <th>接收日期</th>
+                        <td th:text="*{materialAcceptedDate}">2017-01-01</td>
+                      </tr>
+                      <tr>
+                        <th>住院号</th>
+                        <td th:text="*{application.hospitalNo}">12345</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>床号</th>
+                        <td th:text="*{application.bedNo}">48</td>
+                      </tr>
+                      <tr>
+                        <th>手术所见</th>
+                        <td th:text="*{application.surgery}">具体内容。。。</td>
+                      </tr>
+                      <tr>
+                        <th>临床诊断</th>
+                        <td th:text="*{application.diagnosis}">具体内容。。。</td>
+                      </tr>
+                      <tr>
+                        <th>病史摘要</th>
+                        <td th:text="*{application.medicalHistory}">具体内容。。。</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">样本信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>送检样本</th>
+                        <td></td>
+                      </tr>
+                      <th:block th:each="sample : *{application.samples}">
+                        <tr>
+                          <th>样本</th>
+                          <td>采取部位&nbsp;&nbsp;<span th:text="${sample.part}">胃</span></td>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          <td>样本名称&nbsp;&nbsp;<span th:text="${sample.name}">活检样本</span></td>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          <td>采取日期&nbsp;&nbsp;<span th:text="${sample.sampleDate}">2017-01-01</span></td>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          <td>样本数量&nbsp;&nbsp;<span th:text="${sample.amount}">1</span></td>
+                        </tr>
+                      </th:block>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>固定液</th>
+                        <td th:text="${orderDto.sampleInfo.stationaryLiquid}">福尔马林</td>
+                      </tr>
+                      <span th:switch="*{sampleInfo.isGynecologySample}">
+                          <span th:case="true">
+                            <tr>
+                              <th>妇科样本</th>
+                              <td>末次月经日期&nbsp;&nbsp;<span th:text="*{sampleInfo.lastMenstruationDate}">2017-01-01</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>经量&nbsp;&nbsp;<span th:test="*{sampleInfo.menstruationBloodVolume}">正常</span>
+                              <td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>周期及持续时间&nbsp;&nbsp;<span th:text="*{sampleInfo.menstruationCycle}">正常</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>小便妊娠反应&nbsp;&nbsp;<span th:text="*{sampleInfo.urinePregnancyReaction}">正常</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>末次生产或流产日期&nbsp;&nbsp;<span th:text="*{sampleInfo.lastParturitionOrAbortion}">2017-01-01</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>刮宫日期&nbsp;&nbsp;<span th:text="*{sampleInfo.uterineCurettageDate}">2017-01-01</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>其他&nbsp;&nbsp;<span th:text="*{sampleInfo.otherInfo}">其他</span></td>
+                            </tr>
+                            <span th:switch="*{sampleInfo.isTreated}">
+                              <span th:case="true">
+                                <tr>
+                                  <th></th>
+                                  <td>是否经治疗&nbsp;&nbsp;是</td>
+                                </tr>
+                                <tr>
+                                  <th></th>
+                                  <td>治疗日期&nbsp;&nbsp;<span th:text="*{sampleInfo.treatmentDate}">2017-01-01</span></td>
+                                </tr>
+                                <tr>
+                                  <th></th>
+                                  <td>剂量&nbsp;&nbsp;<span th:text="*{sampleInfo.dosage}">常规</span></td>
+                                </tr>
+                              </span>
+                              <span th:case="false">
+                                <tr>
+                                  <th></th>
+                                  <td>是否经治疗&nbsp;&nbsp;否</td>
+                                </tr>
+                              </span>
+                            </span>
+                          </span>
+                          <span th:case="false">
+                            <tr>
+                              <th>妇科样本</th>
+                              <td>否</td>
+                            </tr>
+                          </span>
+                        </span>
+                      <span th:switch="*{sampleInfo.hasPathologyInspection}">
+                          <span th:case="true">
+                            <tr>
+                              <th>病理检验</th>
+                              <td>何处&nbsp;&nbsp;<span th:text="*{sampleInfo.inspectionPlace}">xx医院</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>何时&nbsp;&nbsp;<span th:text="*{sampleInfo.inspectionDate}">2017-01-01</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>病理号&nbsp;&nbsp;<span th:text="*{sampleInfo.pathologyNo}">0123</span></td>
+                            </tr>
+                            <tr>
+                              <th></th>
+                              <td>病理诊断&nbsp;&nbsp;<span th:text="*{sampleInfo.pathologyDiagnosis}">诊断结果</span></td>
+                            </tr>
+                          </span>
+                          <span th:case="false">
+                            <tr>
+                              <th>病理检验</th>
+                              <td>否</td>
+                            </tr>
+                          </span>
+                        </span>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">其它信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>备注</th>
+                        <td th:text="*{order.remark}">具体内容</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--/.tab-pane-->
+          <!--tab-pane-->
+          <div class="tab-pane active" id="base_info" th:if="${type} == 'CONSULTATION'">
+            <a class="btn btn-primary btn-sm btn-lead-box" type="button" shiro:hasPermission="order:consultation_edit"
+               th:href="@{/be/order/consultation/edit(orderNo=${orderDto.order.orderNo})}">
+              <i class="fa fa-edit"></i>&nbsp;编辑信息
+            </a>
+
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">送检信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>送检医院</th>
+                        <td th:text="*{orgHospitalName}">宝山第一人民医院</td>
+                      </tr>
+                      <tr>
+                        <th>送检医生</th>
+                        <td th:if="*{#strings.toString(application.doctor) != 'null'}" th:text="*{application.doctor.fullName}">黄医生</td>
+                      </tr>
+                      <tr>
+                        <th>住院/门诊号</th>
+                        <td th:text="*{application.hospitalNo}">12345</td>
+                      </tr>
+                      <tr>
+                        <th>会诊机构</th>
+                        <td>
+                          <span th:each="dstHosp : *{application.dstHospitals}" th:utext="|${dstHosp.name}<br>|">衡道病理诊断中心</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>会诊专家</th>
+                        <td th:text="*{application.specialist}">朱教授</td>
+                      </tr>
+                      <tr>
+                        <th>取材部位</th>
+                        <td th:text="*{application.part}">胃</td>
+                      </tr>
+                      <tr>
+                        <th>取材日期</th>
+                        <td th:text="*{application.sampleDate}">2017-01-01</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>送检病理号</th>
+                        <td th:text="*{order.pathologyNos}">0123</td>
+                      </tr>
+                      <tr>
+                        <th>送检日期</th>
+                        <td th:text="*{application.applicationDate}">2017-01-01</td>
+                      </tr>
+                      <tr>
+                        <th>接收日期</th>
+                        <td th:text="*{materialAcceptedDate}">2017-01-01</td>
+                      </tr>
+                      <tr>
+                        <th>材料清单</th>
+                        <td th:text="*{displaySamples}">1/2/3</td>
+                      </tr>
+                      <tr>
+                        <th>样本寄送人</th>
+                        <td th:if="*{#strings.toString(application.sampleSender) != 'null'}" th:text="*{application.sampleSender.fullName}">
+                          黄小姐
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>报告接收人</th>
+                        <td th:if="*{#strings.toString(application.reportReceiver) != 'null'}"
+                            th:text="*{application.reportReceiver.fullName}">黄医生
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">患者信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>身份证号</th>
+                        <td th:text="*{patient.idNo}">310123197001010001</td>
+                      </tr>
+                      <tr>
+                        <th>姓名</th>
+                        <td th:text="*{patient.fullName}">张三</td>
+                      </tr>
+                      <tr>
+                        <th>年龄</th>
+                        <td th:text="*{patient.age}">47</td>
+                      </tr>
+                      <tr>
+                        <th>性别</th>
+                        <td th:text="*{patient.gender}">男</td>
+                      </tr>
+                      <tr>
+                        <th>民族</th>
+                        <td th:text="*{patient.nation}">汉</td>
+                      </tr>
+                      <tr>
+                        <th>籍贯</th>
+                        <td th:text="*{patient.nativePlace}">上海</td>
+                      </tr>
+                      <tr>
+                        <th>电子邮箱</th>
+                        <td th:text="*{patient.email}">mail@example.com</td>
+                      </tr>
+                      <!--<tr>-->
+                      <!--<th>职业</th>-->
+                      <!--<td th:if="*{patient.career != null}" th:text="*{patient.career}">工人</td>-->
+                      <!--</tr>-->
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>地址</th>
+                        <td th:text="*{patient.address}">浦东大道1000号</td>
+                      </tr>
+                      <tr>
+                        <th>联系人</th>
+                        <td th:text="*{application.contactName}">张小三</td>
+                      </tr>
+                      <tr>
+                        <th>联系电话</th>
+                        <td th:text="*{application.contactPhone}">1310000101</td>
+                      </tr>
+                      <tr>
+                        <th>个人病史</th>
+                        <td th:text="*{application.medicalHistory}">具体内容。。。</td>
+                      </tr>
+                      <tr>
+                        <th>临床诊断</th>
+                        <td th:text="*{application.diagnosis}">具体内容。。。</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">其它信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>备注</th>
+                        <td th:text="*{order.remark}">备注</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.tab-pane -->
+          <!--tab-pane-->
+          <div class="tab-pane" id="consult_report" th:if="${type} == 'PATHOLOGY' or ${type} == 'CONSULTATION'">
+            <button class="btn btn-primary btn-sm btn-lead-box" data-toggle="modal" type="button"
+                    href="#uploadReportModal" shiro:hasPermission="order:upload_report">
+              <i class="fa fa-arrow-circle-up"></i>&nbsp;添加报告
+            </button>
+            <button class="btn btn-primary btn-sm btn-lead-box sendReport" data-toggle="modal" type="button"
+                    shiro:hasPermission="order:report_send" th:if="${dstReports.size()} != 0">
+              <i class="fa fa-arrow-circle-up"></i>&nbsp;发送报告
+            </button>
+            <div class="nothing-info" th:if="${dstReports.size()} == 0">
+              <h1>尚未上传诊断报告</h1>
+            </div>
+            <div class="row" th:each="dstReport,iterStat : ${dstReports}">
+              <div class="col-sm-6">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">报告摘要</h5>
+
+                    <div class="btn-group pull-right inline">
+                      <input name="reportId" th:value="${dstReport.id}" type="hidden"/>
+                      <input name="reportType" value="DST_REPORT" type="hidden" th:if="${type} == 'CONSULTATION'"/>
+                      <input name="reportType" value="BASE_DST_REPORT" type="hidden" th:if="${type} == 'PATHOLOGY'"/>
+                      <a class="btn btn-default btn-xs editUploadReportBtn" type="button" title="修改报告"
+                         shiro:hasPermission="order:report_edit">
+                        <i class="fa fa-edit"></i></a>
+                      <a class="btn btn-default btn-xs del-dst-report" type="button" title="删除报告"
+                         shiro:hasPermission="order:report_delete">
+                        <i class="fa fa-trash"></i></a>
+                    </div>
+                  </div>
+                  <div class="box-body no-padding">
+                    <table class="table report_summary">
+                      <tbody>
+                      <tr th:if="${type} == 'PATHOLOGY'">
+                        <th>送检医院</th>
+                        <td th:text="*{orgHospitalName}">宝山第一人民医院</td>
+                      </tr>
+                      <tr th:if="${type} == 'CONSULTATION'">
+                        <th>送检医院病理号</th>
+                        <td th:text="*{order.pathologyNos}">0123</td>
+                      </tr>
+                      <tr>
+                        <th>诊断机构</th>
+                        <td th:text="${dstReport.hospitalName}">复旦病理诊断中心</td>
+                      </tr>
+                      <tr>
+                        <th>病理检验号</th>
+                        <td th:text="${dstReport.consultationNo}">1234</td>
+                      </tr>
+                      <tr>
+                        <th>姓名</th>
+                        <td th:text="${dstReport.patientName}">张三</td>
+                      </tr>
+                      <tr>
+                        <th>性别</th>
+                        <td th:text="${dstReport.patientGender}">男</td>
+                      </tr>
+                      <tr>
+                        <th>报告出具日期</th>
+                        <td th:text="${dstReport.reportIssuedDate}">2017-01-01</td>
+                      </tr>
+                      <tr>
+                        <th>报告上传时间</th>
+                        <td th:text="${dstReport.reportUploadDate}">2017-01-01</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">报告附件</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="nothing-info attachment-info" th:if="${dstReport.appendixes.size()} == 0">
+                      <h1>尚未上传报告附件</h1>
+                    </div>
+                    <div class="gallery">
+                      <ul class="mailbox-attachments clearfix">
+                        <li th:each="appendix : ${dstReport.appendixes}">
+                          <input name="objId" th:value="${dstReport.id}" type="hidden"/>
+                          <input name="appendixId" th:value="${appendix.id}" type="hidden"/>
+                          <input name="attachmentType" th:value="${appendix.type}" type="hidden"/>
+                          <span class="mailbox-attachment-icon has-img" th:switch="${appendix.fileType.name()}">
+                              <a class="mailbox-attachment-icon has-img" th:href="@{|${cdnHost}${appendix.filePath}|}" th:case="'IMG'">
+                                <img th:src="@{|${cdnHost}${appendix.filePath}|}" th:alt="${appendix.type}">
+                              </a>
+                              <i class="fa fa-file-pdf-o nondisplay" th:class="'fa fa-file-pdf-o'" th:case="'DOC'"></i>
+                              <i class="fa fa-file-text-o nondisplay" th:class="'fa fa-file-text-o'" th:case="'TXT'"></i>
+                              <i class="fa fa-file-o nondisplay" th:class="'fa fa-file-o'" th:case="*"></i>
+                            </span>
+                          <div class="mailbox-attachment-info">
+                            <span class="mailbox-attachment-size">
+                             <span th:text="${appendix.type}">附件类型</span>
+                              <div class="btn-group pull-right inline">
+                                <a th:href="@{|${cdnHost}${appendix.filePath}|}"
+                                   data-th-attr="download= |${orderDto.order.orderNo}-${appendix.type}|">
+                                  <i class="fa fa-download btn btn-default btn-xs pull-right" title="下载附件" aria-hidden="true"></i>
+                                </a>
+                                <a class="del-attachment" href="javascript:;" shiro:hasPermission="order:delImages">
+                                  <i class="fa fa-trash btn btn-default btn-xs pull-right" title="删除附件"></i>
+                                </a>
+                              </div>
+                            </span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.tab-pane -->
+          <!--tab-pane-->
+          <div class="tab-pane active" id="basic_gene_inform" th:if="${type} == 'GENE'">
+            <a class="btn btn-primary btn-sm btn-lead-box" type="button" shiro:hasPermission="order:gene_edit"
+               th:href="@{/be/order/gene/edit(orderNo=${orderDto.order.orderNo})}">
+              <i class="fa fa-edit"></i>&nbsp;编辑信息
+            </a>
+
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">送检单位信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>送检医院</th>
+                        <td th:text="*{orgHospitalName}">宝山第一人民医院</td>
+                      </tr>
+                      <tr>
+                        <th>送检科室</th>
+                        <td th:text="*{departmentName}">病理科</td>
+                      </tr>
+                      <tr>
+                        <th>送检医生</th>
+                        <td th:if="*{#strings.toString(application.doctor) != 'null'}" th:text="*{application.doctor.fullName}">黄医生</td>
+                      </tr>
+                      <tr>
+                        <th>联系电话</th>
+                        <td th:text="*{application.doctor.mobilePhone}">13100000101</td>
+                      </tr>
+                      <tr>
+                        <th>送检病理号</th>
+                        <td th:text="*{order.pathologyNos}">0123</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr shiro:hasPermission="field:order_geneDstHospital">
+                        <th>诊断机构</th>
+                        <td>
+                          <span th:each="dstHosp : *{application.dstHospitals}" th:utext="|${dstHosp.name}<br>|">衡道病理诊断中心</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>病历编号</th>
+                        <td th:text="*{application.caseHistoryNo}">123456</td>
+                      </tr>
+                      <tr>
+                        <th>住院/门诊号</th>
+                        <td th:text="*{application.hospitalNo}">123456</td>
+                      </tr>
+                      <tr>
+                        <th>采集日期</th>
+                        <td th:text="*{application.sampleDate}">2017-01-01</td>
+                      </tr>
+                      <tr>
+                        <th>送检日期</th>
+                        <td th:text="*{application.applicationDate}">2017-01-01</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">申请人信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>身份证号</th>
+                        <td th:text="*{patient.idNo}">310123197001010001</td>
+                      </tr>
+                      <tr>
+                        <th>姓名</th>
+                        <td th:text="*{patient.fullName}">张三</td>
+                      </tr>
+                      <tr>
+                        <th>年龄</th>
+                        <td th:text="*{patient.age}">47</td>
+                      </tr>
+                      <tr>
+                        <th>性别</th>
+                        <td th:text="*{patient.gender}">男</td>
+                      </tr>
+                      <tr>
+                        <th>民族</th>
+                        <td th:text="*{patient.nation}">汉</td>
+                      </tr>
+                      <tr>
+                        <th>籍贯</th>
+                        <td th:text="*{patient.nativePlace}">上海</td>
+                      </tr>
+                      <tr>
+                        <th>电子邮箱</th>
+                        <td th:text="*{patient.email}">mail@example.com</td>
+                      </tr>
+                      <tr>
+                        <th>地址</th>
+                        <td th:text="*{patient.address}">xx省xx市xx路xx号</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>联系人</th>
+                        <td th:text="*{application.contactName}">张小三</td>
+                      </tr>
+                      <tr>
+                        <th>联系电话</th>
+                        <td th:text="*{application.contactPhone}">1310000101</td>
+                      </tr>
+                      <tr>
+                        <th>TMN分型</th>
+                        <td th:text="*{application.tnmType}">T1M0N0</td>
+                      </tr>
+                      <tr>
+                        <th>癌症类型</th>
+                        <td th:text="*{application.cancerType}">胃癌</td>
+                      </tr>
+                      <tr>
+                        <th>个人病史</th>
+                        <td th:text="*{application.medicalHistory}">具体内容。。。</td>
+                      </tr>
+                      <tr>
+                        <th>临床诊断</th>
+                        <td th:text="*{application.diagnosis}">具体内容。。。</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">送检样本信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>送检样本</th>
+                        <td th:text="*{displaySamples}">白片10片</td>
+                      </tr>
+                      <tr>
+                        <th>样本寄送人</th>
+                        <td th:if="*{#strings.toString(application.sampleSender) != 'null'}" th:text="*{application.sampleSender.fullName}">
+                          黄小姐
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>报告接收人</th>
+                        <td th:if="*{#strings.toString(application.reportReceiver) != 'null'}"
+                            th:text="*{application.reportReceiver.fullName}">黄医生
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>接收日期</th>
+                        <td th:text="*{materialAcceptedDate}">2017-01-01</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>检测类型</th>
+                        <td th:text="*{displayTestType}">靶向药</td>
+                      </tr>
+                      <tr>
+                        <th>检测项目</th>
+                        <td th:text="*{displayTestItem}">贝伐单抗</td>
+                      </tr>
+                      <tr>
+                        <th>检测内容</th>
+                        <td th:text="*{displayTestGene}">ERCC1</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">其它信息</h5>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <table class="table no-border">
+                      <tr>
+                        <th>备注</th>
+                        <td th:text="*{order.remark}">备注</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--/.tab-pane-->
+          <!--tab-pane-->
+          <div class="tab-pane" id="consult_gene_report" shiro:hasPermission="field:order_geneReport"
+               th:if="${type} == 'GENE'">
+            <button class="btn btn-primary btn-sm btn-lead-box" data-toggle="modal" type="button"
+                    href="#uploadGeneReportModal" shiro:hasPermission="order:upload_report">
+              <i class="fa fa-arrow-circle-up"></i>&nbsp;添加报告
+            </button>
+            <button class="btn btn-primary btn-sm btn-lead-box sendReport" data-toggle="modal" type="button"
+                    shiro:hasPermission="order:report_send" th:if="${geneReports.size()} != 0">
+              <i class="fa fa-arrow-circle-up"></i>&nbsp;发送报告
+            </button>
+            <div class="nothing-info" th:if="${geneReports.size()} == 0">
+              <h1>尚未上传检测报告</h1>
+            </div>
+            <div class="row" th:each="geneReport : ${geneReports}">
+              <div class="col-sm-6">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">报告摘要</h5>
+
+                    <div class="btn-group pull-right inline">
+                      <input name="reportId" th:value="${geneReport.id}" type="hidden"/>
+                      <input name="reportType" value="GENE_REPORT" type="hidden"/>
+                      <a class="btn btn-default btn-xs editUploadGeneReportBtn" type="button" title="修改报告"
+                         shiro:hasPermission="order:report_edit">
+                        <i class="fa fa-edit"></i></a>
+                      <a class="btn btn-default btn-xs del-dst-report" type="button" title="删除报告"
+                         shiro:hasPermission="order:report_delete">
+                        <i class="fa fa-trash"></i></a>
+                    </div>
+                  </div>
+                  <div class="box-body no-padding">
+                    <table class="table report_summary">
+                      <tbody>
+                      <tr>
+                        <th>送检医院</th>
+                        <td th:text="${geneReport.orgHospitalName}">xx医院</td>
+                      </tr>
+                      <tr>
+                        <th>病历编号</th>
+                        <td th:text="${geneReport.caseHistoryNo}">123456</td>
+                      </tr>
+                      <tr>
+                        <th>癌症类型</th>
+                        <td th:text="${geneReport.cancerType}">胃癌</td>
+                      </tr>
+                      <tr>
+                        <th>姓名</th>
+                        <td th:text="${geneReport.fullName}">张三</td>
+                      </tr>
+                      <tr>
+                        <th>性别</th>
+                        <td th:text="${geneReport.gender}">男</td>
+                      </tr>
+                      <tr>
+                        <th>报告出具日期</th>
+                        <td th:text="${geneReport.reportIssuedDate}">2017-01-01</td>
+                      </tr>
+                      <tr>
+                        <th>报告上传时间</th>
+                        <td th:text="${geneReport.reportUploadDate}">2017-01-01</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">报告附件</h5>
+                  </div>
+                  <div class="box-body">
+                    <div class="nothing-info attachment-info" th:if="${geneReport.appendixes.size() == 0}">
+                      <h1>尚未上传报告附件</h1>
+                    </div>
+                    <div class="gallery">
+                      <ul class="mailbox-attachments clearfix">
+                        <li th:each="appendix : ${geneReport.appendixes}">
+                          <input name="objId" th:value="${geneReport.id}" type="hidden"/>
+                          <input name="appendixId" th:value="${appendix.id}" type="hidden"/>
+                          <input name="attachmentType" th:value="${appendix.type}" type="hidden"/>
+                          <span class="mailbox-attachment-icon has-img" th:switch="${appendix.fileType.name()}">
+                              <a class="mailbox-attachment-icon has-img" th:href="@{|${cdnHost}${appendix.filePath}|}" th:case="'IMG'">
+                                <img th:src="@{|${cdnHost}${appendix.filePath}|}" th:alt="${appendix.type}">
+                              </a>
+                              <i class="fa fa-file-pdf-o nondisplay" th:class="'fa fa-file-pdf-o'" aria-hidden="true" th:case="'DOC'"></i>
+                              <i class="fa fa-file-text-o nondisplay" th:class="'fa fa-file-text-o'" aria-hidden="true" th:case="'TXT'"></i>
+                              <i class="fa fa-file-o nondisplay" th:class="'fa fa-file-o'" aria-hidden="true" th:case="*"></i>
+                            </span>
+                          <div class="mailbox-attachment-info">
+                            <span class="mailbox-attachment-size">
+                             <span th:text="${appendix.type}">附件类型</span>
+                              <div class="btn-group pull-right inline">
+                                <a th:href="@{|${cdnHost}${appendix.filePath}|}"
+                                   data-th-attr=" download = |${orderDto.order.orderNo}-${appendix.type}|">
+                                  <i class="fa fa-download btn btn-default btn-xs pull-right" title="下载附件"></i>
+                                </a>
+                                <a class="del-attachment" href="javascript:;" shiro:hasPermission="order:delImages">
+                                  <i class="fa fa-trash btn btn-default btn-xs pull-right" title="删除附件"></i>
+                                </a>
+                              </div>
+                            </span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--tab-pane-->
+          <div class="tab-pane" id="other_attaches">
+            <button class="btn btn-primary btn-sm btn-lead-box" data-toggle="modal" type="button" href="#uploadModal"
+                    shiro:hasPermission="order:upload_attachment">
+              <i class="fa fa-arrow-circle-up"></i>&nbsp;添加附件
+            </button>
+            <div class="nothing-info" th:if="${appendixes.size()} == 0">
+              <h1>尚未上传附件</h1>
+            </div>
+            <div class="gallery">
+              <ul class="mailbox-attachments clearfix">
+                <li th:each="appendix : ${appendixes}">
+                  <input name="objId" th:value="${appendix.objId}" type="hidden"/>
+                  <input name="appendixId" th:value="${appendix.id}" type="hidden"/>
+                  <input name="attachmentType" th:value="${appendix.type}" type="hidden"/>
+                  <span class="mailbox-attachment-icon has-img" th:switch="${appendix.fileType}">
+                    <a class="mailbox-attachment-icon has-img" href="#" th:href="@{|${cdnHost}${appendix.filePath}|}" th:case="IMG">
+                      <img th:src="@{|${cdnHost}${appendix.filePath}|}" th:alt="${appendix.type}">
+                    </a>
+                    <i class="fa fa-file-pdf-o nondisplay" th:class="'fa fa-file-pdf-o'" aria-hidden="true" th:case="DOC"></i>
+                    <i class="fa fa-file-text-o nondisplay" th:class="'fa fa-file-text-o'" aria-hidden="true" th:case="TXT"></i>
+                    <i class="fa fa-file-o nondisplay" th:class="'fa fa-file-o'" aria-hidden="true" th:case="*"></i>
+                </span>
+
+                  <div class="mailbox-attachment-info">
+                  <span class="mailbox-attachment-size">
+                    <span th:text="${appendix.type}">附件类型</span>
+                    <div class="btn-group pull-right inline">
+                      <a th:href="@{|${cdnHost}${appendix.filePath}|}"
+                         data-th-attr=" download = |${orderDto.order.orderNo}-${appendix.type}|">
+                        <i class="fa fa-download btn btn-default btn-xs" aria-hidden="true" title="下载附件"></i>
+                      </a>
+                      <a class="del-attachment-tab" href="javascript:;" shiro:hasPermission="order:delImages">
+                        <i class="fa fa-trash btn btn-default btn-xs" title="删除附件"></i>
+                      </a>
+                    </div>
+                  </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.tab-pane -->
+          <!--tab-pane-->
+          <div class="tab-pane" id="finance_management" shiro:hasPermission="field:order_fee"
+               th:if="${type} == 'CONSULTATION' or ${type} == 'GENE'">
+            <button class="btn btn-primary btn-sm btn-lead-box" id="refundUploadBtn" type="button" shiro:hasPermission="order:fee_refund"
+                    th:if="*{feeStatus} == 'REFUNDING'">
+              <i class="fa fa-money" aria-hidden="true"></i>&nbsp;订单退款
+            </button>
+            <button class="btn btn-primary btn-sm btn-lead-box" id="arrearsUploadBtn" type="button" shiro:hasPermission="order:fee_arrears"
+                    th:if="*{feeStatus} == 'PAYING'">
+              <i class="fa fa-money" aria-hidden="true"></i>&nbsp;订单补款
+            </button>
+            <button class="btn btn-primary btn-sm btn-lead-box" id="feeClearedBtn" type="button"
+                    shiro:hasPermission="order:fee_cleared" th:if="*{feeStatus} == 'UNCONFIRMED'">
+              <i class="fa fa-money"></i>&nbsp;确认结清
+            </button>
+            <div class="box box-solid">
+              <form class="form-horizontal" id="financeForm" action="#" th:aciton="@{/be/order/fee/edit}"
+                    method="post" th:object="${orderPriceDto}">
+                <input name="orderNo" th:value="${orderDto.order.orderNo}" type="hidden"/>
+
+                <div class="box-header with-border">
+                  <h5 class="box-title">费用信息</h5>
+
+                  <div class="btn-group pull-right inline">
+                <span class="btn btn-default btn-xs" id="resetEdit" type="button" title="取消编辑">
+                  <i class="fa fa-undo" aria-hidden="true"></i></span>
+                    <span class="btn btn-default btn-xs" id="editFinanceBtn" type="button" title="编辑财务信息"
+                          shiro:hasPermission="order:fee_edit">
+                  <i class="fa fa-edit"></i></span>
+                  </div>
+                </div>
+                <div class="box-body">
+                  <div class="row order-detail-base">
+                    <div class="col-md-2">
+                      <div class="info-box">
+                        <span class="info-box-text">当前财务状态</span>
+                        <span class="info-box-number status-label no-margin" th:text="*{status}">已预付</span>
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <div class="form-group">
+                        <label class="col-md-4 control-label" for="receivablePrice">
+                          <a class="text-red">*</a>&nbsp;预付金额
+                        </label>
+
+                        <div class="col-md-8">
+                          <input class="form-control" id="receivablePrice" type="text" th:field="*{receivablePrice}"/>
+                          <label class="control-label" th:text="*{receivablePrice}">2400</label>
+                        </div>
+                      </div>
+                      <div class=form-group>
+                        <label class="col-md-4 control-label" for="paymentDate">
+                          <a class="text-red">*</a>&nbsp;预付日期
+                        </label>
+
+                        <div class="col-md-8">
+                          <input class="form-control paymentDate" id="paymentDate" name="paymentDate" type="text"
+                                 th:field="*{paymentDate}"/>
+                          <label class="control-label" th:text="*{paymentDate}">2017-01-01</label>
+                        </div>
+                      </div>
+                      <div class=form-group>
+                        <label class="col-md-4 control-label" for="paymentType">
+                          <a class="text-red">*</a>&nbsp;预付方式
+                        </label>
+
+                        <div class="col-md-8">
+                          <select class="form-control" id="paymentType" th:field="*{paymentType}">
+                            <option value="">请选择预付方式</option>
+                            <option th:each="paymentType : ${paymentTypes}" th:value="${paymentType}"
+                                    th:text="${paymentType.desc}"></option>
+                          </select>
+                          <label class="control-label" th:text="*{paymentType} == null ? '' : *{paymentType.desc}"></label>
+                        </div>
+                      </div>
+                      <div class=form-group>
+                        <label class="col-md-4 control-label" for="orderPrice">实际发生费用</label>
+
+                        <div class="col-md-8">
+                          <input class="form-control" id="orderPrice" type="text" th:field="*{orderPrice}"/>
+                          <label class="control-label" th:text="*{orderPrice}">2400</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <!--todo:若为分子病理类型的订单则不显示服务费-->
+                      <div class=form-group>
+                        <label class="col-md-4 control-label" for="serviceFee">服务费</label>
+
+                        <div class="col-md-8">
+                          <input class="form-control" id="serviceFee" type="text" th:field="*{serviceFee}"/>
+                          <label class="control-label" th:text="*{serviceFee}">800</label>
+                        </div>
+                      </div>
+                      <div class=form-group>
+                        <label class="col-md-4 control-label" name="refund">已退款费用</label>
+
+                        <div class="col-md-8">
+                          <label class="control-label" th:text="*{refund}">0</label>
+                        </div>
+                      </div>
+                      <div class=form-group>
+                        <label class="col-md-4 control-label" name="arrears">已补款费用</label>
+
+                        <div class="col-md-8">
+                          <label class="control-label" th:text="*{arrears}">0</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box-footer">
+                  <input type="submit" class="btn btn-primary center-block" value="提交"/>
+                </div>
+              </form>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h5 class="box-title">变更日志</h5>
+              </div>
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-11 col-lg-offset-1">
+                    <table class="table order-status-record no-border table-condensed no-margin">
+                      <tr>
+                        <th>状态</th>
+                        <th>变更信息</th>
+                        <th>变更时间</th>
+                        <th>操作者</th>
+                      </tr>
+                      <th:block th:each="feeLog,iterStat : ${feeLogs}">
+                        <tr th:class="${iterStat.count < 4 } ? '' : 'collapse'"
+                            th:name="${iterStat.count < 4 } ? '' : 'otherFinance'">
+                          <td th:text="${feeLog.feeStatus}">已预付</td>
+                          <td th:utext="${feeLog.detail}">预付2400元</td>
+                          <td th:text="${#dates.format(feeLog.createTime, 'yyyy-MM-dd HH:mm:ss')}">2017-01-01 12:00:00</td>
+                          <td th:text="${feeLog.creatorName}">管理员</td>
+                        </tr>
+                      </th:block>
+                      <tr class="collapse" name="otherFinance">
+                        <td colspan="4">
+                          <button class="btn btn-box-tool center-block" id="lessFinanceInformBtn" type="button">
+                            <i class="fa fa-angle-up fa-2x" aria-hidden="true"></i></button>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.tab-pane -->
+
+          <!--tab-pane-->
+          <div class="tab-pane" id="invoice_management" shiro:hasPermission="field:order_invoice">
+            <div class="box box-solid invoice-box">
+              <div class="box-header with-border">
+                <h5 class="box-title">添加发票</h5>
+                <div class="btn-group pull-right inline resetInvoiceEdit">
+                  <span class="btn btn-default btn-xs" id="resetInvoiceEdit" type="button" title="取消编辑">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                  </span>
+                </div>
+              </div>
+              <form class="form-horizontal" action="#" th:action="@{/be/invoice/save}" id="invoiceForm" enctype="multipart/form-data"
+                    method="post">
+                <input type="hidden" th:value="${orderDto.order.orderNo}" name="orderNo"/>
+                <input id="editInvoiceId" type="hidden" name="id" />
+                <div class="box-body" shiro:hasAllPermissions="order:invoice_save, order:invoice_edit">
+                  <div class="row order-detail-base">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label col-md-3" for="invoiceNo" style="font-weight: normal">
+                          <span class="text-red">*&nbsp;</span>发票编号</label>
+                        <div class="col-md-9">
+                          <input class="form-control daterange with-margin background-color-hint" type="text" id="invoiceNo"
+                                 name="invoiceNo" placeholder="请填写发票编号"/>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label col-md-3" for="invoiceDate" style="font-weight: normal">
+                          <span class="text-red">*&nbsp;</span>开票日期</label>
+                        <div class="col-md-9">
+                          <input class="form-control with-margin invoiceDate background-color-hint" type="text" id="invoiceDate"
+                                 name="invoiceDate" placeholder="请填写开票日期"/>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label col-md-3" for="appendix" style="font-weight: normal">扫描件</label>
+                        <div class="col-md-9">
+                          <input class="input-upload" type="file" id="appendix" name="appendix"
+                                 placeholder="请上传扫描件" multiple/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label col-md-3" for="invoiceStatus" style="font-weight: normal">
+                          <span class="text-red">*&nbsp;</span>发票状态</label>
+                        <div class="col-md-9">
+                          <select class="form-control with-margin background-color-hint" id="invoiceStatus" name="invoiceStatus">
+                            <option value="NORMAL">正常</option>
+                            <option value="ABNORMAL">异常</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label col-md-3" for="remark" style="font-weight: normal">
+                          <span class="text-red">&nbsp;&nbsp;</span>备注</label>
+                        <div class="col-md-9">
+                          <input class="form-control with-margin background-color-hint" type="text" id="remark" name="remark"
+                                 placeholder="备注"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box-footer" shiro:hasAllPermissions="order:invoice_save, order:invoice_edit">
+                  <input type="submit" id="invoice_btn" class="btn btn-primary center-block" value="添加"/>
+                </div>
+              </form>
+            </div>
+            <div class="row" th:each="invoice : ${invoices}">
+              <div class="col-md-6">
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h5 class="box-title">发票信息</h5>
+                    <div class="btn-group pull-right inline">
+                      <input type="hidden" class="invoiceId" th:value="${invoice.id}"/>
+                      <a class="btn btn-default btn-xs editInvoiceStatus" type="button" title="修改发票状态"
+                         shiro:hasPermission="order:invoice_edit">
+                        <i class="fa fa-edit"></i></a>
+                      <a class="btn btn-default btn-xs del-invoice" type="button" title="删除发票"
+                         shiro:hasPermission="order:invoice_delete">
+                        <i class="fa fa-trash"></i></a>
+                    </div>
+                  </div>
+                  <div class="box-body no-padding">
+                    <div class="nothing-info" th:if="${#lists.isEmpty(invoices)}">
+                      <h1>尚未添加发票信息</h1>
+                    </div>
+                    <table class="table report_summary no-margin no-padding">
+                      <tr>
+                        <th>发票编号</th>
+                        <td th:text="${invoice.invoiceNo}">201705080024</td>
+                      </tr>
+                      <tr>
+                        <th>开票日期</th>
+                        <td th:text="${#dates.format(invoice.invoiceDate,'yyyy-MM-dd')}">2017-5-8</td>
+                      </tr>
+                      <tr>
+                        <th>发票状态</th>
+                        <td th:text="${invoice.invoiceStatus.status}">异常</td>
+                      </tr>
+                      <tr>
+                        <th>备注</th>
+                        <td th:text="${#strings.isEmpty(invoice.remark) ? '无' : invoice.remark}">无</td>
+                      </tr>
+                      <tr>
+                        <th>添加时间</th>
+                        <td th:text="${#dates.format(invoice.createTime,'yyyy-MM-dd')}">2017-5-8 14:00</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="box box-solid">
+                  <div class="nothing-info attachment-info" th:if="${#lists.isEmpty(invoice.appendixes)}">
+                    <h1>尚未上传发票附件</h1>
+                  </div>
+                  <div class="gallery" th:each="appendix : ${invoice.appendixes}">
+                    <ul class="mailbox-attachments clearfix">
+                      <li>
+                        <input type="hidden" name="objId" th:value="${invoice.id}"/>
+                        <input type="hidden" name="appendixId" th:value="${appendix.id}"/>
+                        <input type="hidden" name="attachmentType" th:value="${appendix.type}"/>
+                        <span class="mailbox-attachment-icon has-img" th:switch="${appendix.fileType}">
+                          <a class="mailbox-attachment-icon has-img" th:case="'IMG'">
+                            <img th:src="@{|${cdnHost}${appendix.filePath}|}" alt="">
+                          </a>
+                          <i class="fa fa-file-pdf-o nondisplay" th:class="'fa fa-file-pdf-o'" aria-hidden="true" th:case="'DOC'"></i>
+                          <i class="fa fa-file-text-o nondisplay" th:class="'fa fa-file-text-o'" aria-hidden="true" th:case="'TXT'"></i>
+                          <i class="fa fa-file-o nondisplay" th:class="'fa fa-file-o'" aria-hidden="true" th:case="*"></i>
+                        </span>
+                        <div class="mailbox-attachment-info">
+                          <span class="mailbox-attachment-size">
+                           <span>附件类型</span>
+                            <div class="btn-group pull-right inline">
+                              <a th:href="@{|${cdnHost}${appendix.filePath}|}"
+                                 data-th-attr="download= |${orderDto.order.orderNo}-${appendix.type}|">
+                                <i class="fa fa-download btn btn-default btn-xs pull-right" title="下载附件"></i>
+                              </a>
+                              <a class="del-attachment-invoice" href="javascript:;">
+                                <i class="fa fa-trash btn btn-default btn-xs pull-right" title="删除附件"></i>
+                              </a>
+                            </div>
+                          </span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.tab-pane -->
+
+          <!--tab-pane-->
+          <div class="tab-pane" id="sample_return" shiro:hasPermission="field:order_sampleReturn">
+            <button class="btn btn-primary btn-sm btn-lead-box" data-toggle="modal" data-target="#sampleReturnModal"
+                    type="button" shiro:hasPermission="sampleReturn:create">
+              <i class="fa fa-arrow-circle-up"></i>&nbsp;添加样本返还
+            </button>
+            <div class="box box-solid">
+              <form class="form-horizontal" id="sampleForm">
+                <div class="box-header with-border">
+                  <h5 class="box-title">样本信息</h5>
+                </div>
+                <div class="box-body">
+                  <div class="row order-detail-base">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="col-md-3 control-label">样本数量</label>
+
+                        <div class="col-md-9">
+                          <th:block th:each="sample : ${orderDto.application.samples}"><!-- 蜡块-->
+                            <th:block th:each="sampleType : ${sampleTypes}"
+                                      th:if="${sample.sampleType == sampleType.name()} and ${sample.sampleType} == 'PARAFFIN'">
+                              <label class="control-label" th:text="|${sampleType.name}：${sample.amount}${sampleType.unit}|"></label>
+                              <br>
+                            </th:block>
+                          </th:block>
+                          <th:block th:each="sample : ${orderDto.application.samples}"><!-- 免疫组化片-->
+                            <th:block th:each="sampleType : ${sampleTypes}"
+                                      th:if="${sample.sampleType == sampleType.name()} and ${sample.sampleType} == 'IHC'">
+                              <label class="control-label" th:utext="|${sampleType.name}：${sample.amount}${sampleType.unit}|"></label>
+                              <br/>
+                            </th:block>
+                          </th:block>
+                          <th:block th:each="sample : ${orderDto.application.samples}"><!-- HE染色片-->
+                            <th:block th:each="sampleType : ${sampleTypes}"
+                                      th:if="${sample.sampleType == sampleType.name()} and ${sample.sampleType} == 'HE'">
+                              <label class="control-label" th:utext="|${sampleType.name}：${sample.amount}${sampleType.unit}|"></label>
+                              <br/>
+                            </th:block>
+                          </th:block>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="col-md-3 control-label">返还数量</label>
+
+                        <div class="col-md-9">
+                          <th:block th:if="${orderDto.paraffinTotalNum} > 0">
+                            <label class="control-label" th:text="|蜡块：${orderDto.paraffinTotalNum}块|">蜡块：1块</label>
+                            <br/>
+                          </th:block>
+                          <th:block th:if="${orderDto.ihcTotalNum} > 0">
+                            <label class="control-label" th:text="|免疫组化片：${orderDto.ihcTotalNum}片|">免疫组化：5片</label>
+                            <br/>
+                          </th:block>
+                          <th:block th:if="${orderDto.heTotalNum > 0}">
+                            <label class="control-label"
+                                   th:text="|HE片：${orderDto.heTotalNum}片|">HE片：10片</label>
+                            <br/>
+                          </th:block>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="box box-solid">
+              <div class="box-header with-border">
+                <h4 class="box-title">返还记录</h4>
+              </div>
+              <div class="box-body">
+                <div class="nothing-info" th:if="${sampleReturnRecords.size()} == 0">
+                  <h1>尚未添加样本返还</h1>
+                </div>
+                <div class="row" th:if="${sampleReturnRecords.size()} != 0">
+                  <div class="col-md-11 col-lg-offset-1">
+                    <table class="table order-status-record no-border table-condensed no-margin">
+                      <tr>
+                        <th>物流单号</th>
+                        <th>返还样本</th>
+                        <th>备注信息</th>
+                        <th>添加时间</th>
+                        <th>操作者</th>
+                        <th></th>
+                      </tr>
+                      <tr th:each="record : ${sampleReturnRecords}">
+                        <td th:text="${record.expressNo}">201701010123</td>
+                        <td class="sampleReturnRecordAmount">
+                          <span th:if="${record.paraffinNum} > 0"
+                                th:text="|蜡块：${record.paraffinNum}块；|">蜡块：1块；<br></span>
+                          <span th:if="${record.ihcNum > 0}"
+                                th:text="|免疫组化片：${record.ihcNum}片；|">免疫组化片：5片<br></span>
+                          <span th:if="${record.heNum > 0}"
+                                th:text="|HE片：${record.heNum}片；|">HE片：10片<br></span>
+                          <span th:if="${record.geneReportNum > 0}"
+                                th:text="|分子报告：${record.geneReportNum}份；|">分子报告：1份<br></span>
+                          <span th:if="${record.consultationReportNum > 0}"
+                                th:text="|会诊报告：${record.consultationReportNum}份；|">会诊报告：1份<br></span>
+                          <span th:if="${record.orgHospReportNum > 0}"
+                                th:text="|送检报告：${record.orgHospReportNum}份；|">送检报告：1份<br></span>
+                          <span th:if="${record.medicalHistoryNum > 0}"
+                                th:text="|病史资料：${record.medicalHistoryNum}份；|">病史资料：1份<br></span>
+                          <span th:if="${record.receiptNum > 0}"
+                                th:text="|发票：${record.receiptNum}份；|">发票：1份<br></span>
+                          <span th:if="${record.otherMaterials != ''}"
+                                th:text="|其他资料：${record.otherMaterials}；|">其他资料：1份<br></span>
+                        </td>
+                        <td th:text="${record.remark}">备注</td>
+                        <td th:text="${#dates.format(record.createTime, 'yyyy-MM-dd HH:mm:ss')}">
+                          2017-01-01 12:00:00
+                        </td>
+                        <td th:text="${record.creator.fullName}">管理员</td>
+                        <td><a class="btn btn-default btn-sm sampleReturnBtn" id="delete_btn" title="删除"
+                               data-th-attr="recordId= ${record.id},expressNo= ${record.expressNo}">
+                          <i class="fa fa-trash"></i>
+                        </a>
+                        </td>
+                      </tr>
+                      <tr class="collapse" name="otherSampleReturn">
+                        <td colspan="6">
+                          <button class="btn btn-box-tool center-block" id="lessSampleReturnInformBtn" type="button">
+                            <i class="fa fa-angle-up fa-2x" aria-hidden="true"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.tab-pane -->
+          <!--tab-pane-->
+          <div class="tab-pane" id="express_info" shiro:hasPermission="field:order_express">
+            <button class="btn btn-primary btn-sm btn-lead-box expressBtn" data-toggle="modal" type="button"
+                    href="#createExpressModal" shiro:hasPermission="order:express_create">
+              <i class="fa fa-arrow-circle-up"></i>&nbsp;添加物流信息
+            </button>
+            <div id="expressBody">
+              <div class="nothing-info" th:if="${expresses.size()} == 0">
+                <h1>尚未添加物流信息</h1>
+              </div>
+              <table class="table" th:if="${expresses.size()} != 0">
+                <thead>
+                <tr>
+                  <th>类型</th>
+                  <th>单号</th>
+                  <th>公司</th>
+                  <th>内容描述</th>
+                  <th>起始地</th>
+                  <th>目的地</th>
+                  <th>寄件日期</th>
+                  <th>创建时间</th>
+                  <th>当前状态</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr name="express" th:each="express : ${expresses}">
+                  <input name="expressId" th:value="${express.id}" type="hidden"/>
+                  <td th:text="${express.expressType.desc}">收样</td>
+                  <td>
+                    <a data-placement="right"
+                       th:href="@{http://www.kuaidi100.com/chaxun(com=${express.expressCompany.code},nu=${express.expressNo})}"
+                       target="_blank" th:text="${express.expressNo}">SF201701010001</a>
+                  </td>
+                  <td th:text="${express.expressCompany.desc}">顺丰</td>
+                  <td th:text="${express.expressDesc}">样本</td>
+                  <td th:text="${express.expressStartPlace}">宝山</td>
+                  <td th:text="${express.expressEndPlace}">徐汇</td>
+                  <td th:text="${express.expressDate}">2017-01-01</td>
+                  <td th:text="${express.createDate}">2017-01-01 12:00:00</td>
+                  <td name="newest-express">物流详细信息</td>
+                  <td>
+                    <a class="del-express-btn" name="del-express-btn" href="javascript:;" shiro:hasPermission="order:express_delete">
+                      <i class="fa fa-trash btn-default btn-sm" title="删除物流信息"></i></a>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- /.tab-pane -->
+          <!--tab-pane-->
+          <div class="tab-pane" id="operation_log" shiro:hasPermission="field:order_log">
+            <ul class="timeline">
+              <li class="time-label" th:remove="all">
+                    <span class="bg-light-blue">
+                      2017-01-01
+                    </span>
+              </li>
+              <li th:remove="all">
+                <i class="fa fa-gear"></i>
+
+                <div class="timeline-item">
+                        <span class="time"><i class="fa fa-wrench" aria-hidden="true"></i>
+                          &nbsp;管理员&nbsp;<i class="fa fa-clock-o"></i>&nbsp;2017-01-01 12:00:00
+                    </span>
+
+                  <h3 class="timeline-header"><a>创建订单</a></h3>
+
+                  <div class="timeline-body">
+                    订单修改内容详情
+                  </div>
+                </div>
+              </li>
+              <th:block th:each="logsByTime : ${logTimeHash}">
+                <li class="time-label" hidden th:hidden="false">
+                    <span class="bg-light-blue" th:text="${#dates.format(logsByTime.key, 'yyyy-MM-dd')}">
+                      2017-01-01
+                    </span>
+                </li>
+                <th:block th:each="log : ${logsByTime.value}">
+                  <li hidden th:hidden="false">
+                    <i class="fa fa-gear"></i>
+
+                    <div class="timeline-item">
+                        <span class="time"><i class="fa fa-wrench" aria-hidden="true"></i>
+                          &nbsp;<span th:text="${log.creatorName}">管理员</span>&nbsp;
+                          <i class="fa fa-clock-o"></i>&nbsp;<span th:text="${#dates.format(log.createTime, 'yyyy-MM-dd HH:mm:ss')}"/>2017-01-01 12:00:00</span>
+                      </span>
+                      <h3 class="timeline-header"><a th:text="${log.action}">创建订单</a></h3>
+
+                      <div class="timeline-body" th:utext="${log.detail}">
+                        订单修改内容详情
+                      </div>
+                    </div>
+                  </li>
+                </th:block>
+              </th:block>
+              <li class="text-center" id="loadMoreLog" th:if="${logNum >= logPageSize}"><a href="javascript:;">加载更多...</a></li>
+              <li>
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
+              </li>
+              <!--<li class="time-label">
+                <span class="bg-light-blue">dateLabel</span>
+              </li>-->
+              <!--<li>
+                <i class="fa fa-gear"></i>
+                <div class="timeline-item">
+                  <span class="time">
+                    <i class="fa fa-wrench" aria-hidden="true"></i>&nbsp;log.creatorName&nbsp;
+                    <i class="fa fa-clock-o"></i>&nbsp;dateFormat(createTime, 'isoTime')
+                  </span>
+                  <h3 class="timeline-header">
+                    <a href="#">log.action</a>
+                  </h3>
+                  <div class="timeline-body">
+                    log.detail
+                  </div>
+                </div>
+              </li>-->
+            </ul>
+            <input id="logCurrentPage" th:value="${logCurrentPage}" hidden/>
+            <input id="logPageSize" th:value="${logPageSize}" hidden/>
+          </div>
+          <!-- /.tab-pane -->
+        </div>
+        <!-- /.tab-content -->
+      </div>
+    </section>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+</div>
+<!-- ./wrapper -->
+<div th:replace="be/modal/modal_modify_status :: modifyStatusModal"></div>
+<div th:replace="be/modal/modal_modify_status :: modifyStatusScript"></div>
+
+<div th:replace="be/modal/modal_upload_report :: uploadReportModal"></div>
+<div th:replace="be/modal/modal_upload_report :: uploadGeneReportModal"></div>
+<div th:replace="be/modal/modal_upload_report :: uploadModal"></div>
+<div th:replace="be/modal/modal_upload_report :: editUploadReportModal"></div>
+<div th:replace="be/modal/modal_upload_report :: editUploadGeneReportModal"></div>
+<div th:replace="be/modal/modal_upload_report :: uploadReportScript"></div>
+
+<div th:replace="be/modal/modal_fee :: refundModal"></div>
+<div th:replace="be/modal/modal_fee :: arrearsModal"></div>
+<div th:replace="be/modal/modal_fee :: feeModalScript"></div>
+
+<div th:replace="be/modal/modal_sample_return_record :: sampleReturnModal"></div>
+<div th:replace="be/modal/modal_sample_return_record :: deleteSampleReturnRecordModal"></div>
+<div th:replace="be/modal/modal_sample_return_record :: sampleReturnRecordModalScript"></div>
+
+<div th:replace="be/modal/modal_express :: createExpressModal"></div>
+<div th:replace="be/modal/modal_express :: expressModalScript"></div>
+
+<!--展示其他附件-->
+<div class="blueimp-gallery blueimp-gallery-controls" id="blueimp-gallery">
+  <div class="slides"></div>
+  <h3 class="title"></h3>
+  <a class="prev">‹</a>
+  <a class="next">›</a>
+  <a class="close">×</a>
+  <ol class="indicator"></ol>
+</div>
+<script data-th-inline="javascript">
+  /*<![CDATA[*/
+  var orderNo = /*[[${orderDto.order.orderNo}]]*/ '20170101120000123';
+  var activeTab = /*[[${activeTab}]]*/ 'logTab';
+  /*]]>*/
+</script>
+<script src="../../static/assets/js/order_detail.js" th:src="@{/assets/js/order_detail.js}"></script>
+</body>
+</html>

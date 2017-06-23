@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <meta charset="UTF-8">
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  <script th:remove="all" type="text/javascript"  src="../../static/assets/plugins/layer/layer.js"></script>
+</head>
+
+<body class="skin-blue">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header" th:include="be/fragment :: header"></header>
+
+  <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <span id="page-status" class="static"></span>
+    <section class="content-header">
+      <h1>
+        省级收费管理
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">各省级收费表</h3>
+          <div class="pull-right">
+            <a class="btn btn-success" id="pathologyTestPriceCreateBtn" href="test_price_update.html?type=create"
+               th:href="@{/be/pathology-test/create}">
+              <i class="fa fa-pencil-square-o"></i>&nbsp;添加省级收费
+            </a>
+            <a class="btn btn-success" id="pathologyTestPriceEditBtn" href="test_price_update.html?type=edit"
+               th:href="@{/be/pathology-test/edit(provinceId=${provinceId})}">
+              <i class="fa fa-pencil-square-o"></i>&nbsp;编辑省级收费
+            </a>
+            <button class="btn btn-success" id="testPriceSearchBtn">
+              <i class="fa fa-search-plus"></i>&nbsp;搜索项目
+            </button>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="dropdown inline-block" id="provinceDropdown" style="margin-bottom: 10px;">
+            <!--<i class="fa fa-search-plus "></i> %parame% <span class="caret"></span>-->
+            <button class="btn btn-success dropdown-toggle" id="provinceDropdownBtn" type="button"
+                    data-toggle="dropdown">
+              <i class="fa fa-search-plus " th:text="${provinceName}">上海市</i><span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <th:block th:each="province, status : ${provinceList}">
+              <li>
+                <a class="province_select" href="pathology_testprice_groupby_province.html" th:href="${url} + '&provinceId=' + ${province.id}"
+                   target="pathologyTestPriceGroupByProvince" th:value="${province.id}" th:text="${province.name}">
+                  安徽省</a>
+              </li>
+              </th:block>
+            </ul>
+          </div>
+          <iframe class="iframe-default" id="pathologyTestPriceGroupByProvince" scrolling="yes" name="pathologyTestPriceGroupByProvince"
+                  src="pathology_testprice_groupby_province.html" th:src="${searchUrl}"></iframe>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- Main Footer -->
+  <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+</div>
+<!-- /.content -->
+<div th:replace="be/modal/modal_pathology_testprice :: testContentDetailModal"></div>
+<div th:replace="be/modal/modal_pathology_testprice :: testPriceSearchModal"></div>
+<script src="../../static/assets/js/pathology_testprice.js" th:src="@{/assets/js/pathology_testprice.js}"></script>
+</body>
+</html>

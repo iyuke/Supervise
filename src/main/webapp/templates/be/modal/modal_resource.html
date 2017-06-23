@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<!-- Modal -->
+<div id="createModal" class="modal fade" th:fragment="createModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span>×</span>
+        </button>
+        <h4 class="modal-title">添加资源</h4>
+      </div>
+      <div class="modal-body">
+        <form th:action="@{/be/resource/create}" id="createForm" th:object="${createSysResourceDto}" method="post">
+          <div class="box-body">
+            <div class="form-group ">
+              <label>基本信息</label>
+              <input class="form-control" name="resourceName" th:field="*{resourceName}" type="text" placeholder="请输入资源名称"/>
+            </div>
+            <div class="form-group ">
+              <label>资源类型</label>
+              <select class="form-control" name="resourceType">
+                <option value="">资源类型</option>
+                <option th:each="rType : ${resourceTypeList}" th:value="${rType.code}" th:text="${rType.desc}"></option>
+              </select>
+            </div>
+            <div class="form-group ">
+              <label>资源描述</label>
+              <input class="form-control" name="resourceDescription" th:field="*{resourceDescription}" type="text"
+                     placeholder="请输入资源描述"/>
+            </div>
+            <div class="form-group ">
+              <label>URL</label>
+              <input class="form-control" name="url" th:field="*{url}" type="text" placeholder="请输入URL"/>
+            </div>
+            <div shiro:hasPermission="resource:create" class="box-footer">
+              <input class="btn btn-primary center-block" id="create_confirm" type="submit" value="添加">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="editModal" th:fragment="editModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span>×</span>
+        </button>
+        <h4 class="modal-title">编辑资源</h4>
+      </div>
+      <div class="modal-body">
+        <form id="editForm" action="#" th:action="@{/be/resource/edit}" th:object="${editSysResourceDto}" method="post">
+          <div class="box-body">
+            <div class="form-group ">
+              <label>基本信息</label>
+              <input class="form-control" name="resourceName" id="resourceName_edit" type="text" value="登录" th:field="*{resourceName}"
+                     placeholder="请输入资源名称"/>
+            </div>
+            <div class="form-group ">
+              <label>资源类型</label>
+              <select class="form-control" name="resourceType" id="resourceType_edit" th:field="*{resourceType}">
+                <option value="">资源类型</option>
+                <option th:each="rType : ${resourceTypeList}" th:value="${rType.code}" th:text="${rType.desc}" selected>通用</option>
+              </select>
+            </div>
+            <div class="form-group ">
+              <label>资源描述</label>
+              <input class="form-control" name="resourceDescription" id="resourceDescription_edit" type="text" th:field="*{resourceDescription}"
+                     placeholder="请输入资源描述"/>
+            </div>
+            <div class="form-group ">
+              <label>URL</label>
+              <input class="form-control" name="url" id="url_edit" type="text" th:field="*{url}" value="be/index" placeholder="请输入URL"/>
+            </div>
+            <div shiro:hasPermission="resource:edit" class="box-footer">
+              <input class="btn btn-primary center-block" id="edit_confirm" type="submit" value="修改">
+            </div>
+          </div>
+          <input name="id" id="id_edit" type="hidden" th:field="*{id}"/>
+        </form>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
+<!-- 搜索 -->
+<div id="searchModal" class="modal fade" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>×</span>
+        </button>
+        <h4 class="modal-title">资源搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form id="search_form" th:action="@{/be/resource/index}" method="get" th:object="${resourceSearchConditions}">
+          <div class="box-body">
+            <div class="form-group ">
+              <label>资源类型</label>
+              <select class="form-control" name="resourceType" th:field="*{resourceType}">
+                <option value="">资源类型</option>
+                  <option th:each="rType : ${resourceTypeList}" th:value="${rType.code}"
+                          th:selected="${rType.code == resourceSearchConditions.resourceType} ? 'true' : 'false'" th:text="${rType.desc}">
+                  </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="resourceName_search">资源名称</label>
+              <input class="form-control" type="text" name="resourceName" id="resourceName_search" th:field="*{resourceName}"
+                     placeholder="请输入资源名称"/>
+            </div>
+            <div class="form-group">
+              <label for="url_search">资源URL</label>
+              <input class="form-control" name="url" id="url_search" type="text" th:field="*{url}" placeholder="请输入资源URL"/>
+            </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <button class="btn btn-primary center-block" id="search_form_submit">搜索</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<th:block th:fragment="resourceScript">
+  <script src="../../../static/assets/js/modal/modal_resource.js" th:src="@{/assets/js/modal/modal_resource.js}"></script>
+</th:block>
+</body>
+</html>
+

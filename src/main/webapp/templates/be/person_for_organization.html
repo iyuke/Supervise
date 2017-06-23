@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <meta charset="UTF-8">
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  <title>Title</title>
+</head>
+<body class="skin-blue">
+<!-- Main content -->
+  <div class="box" style="border: 0">
+    <div class="box-header">
+      <div class="pull-right" style="margin-bottom: 10px;">
+        <button class="btn btn-success" id="orderSearchBtn">
+          <i class="fa fa-search-plus"></i>&nbsp;搜索员工
+        </button>
+      </div>
+    </div><!-- /.box-header -->
+      <div class="box-body table-responsive" id="printDiv">
+        <table class="table table-bordered table-striped" id="order_datatable" style="margin-bottom: 30px;">
+          <tbody>
+          <tr>
+            <th style="width: 60px">#</th>
+            <th>工号</th>
+            <th>职位</th>
+            <th>姓名</th>
+            <th>岗位职责</th>
+            <th>分管上级</th>
+            <th>操作</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>601</td>
+            <td>经理</td>
+            <td>张三</td>
+            <td>市场推广、分析与调配</td>
+            <td>张小三</td>
+            <td>
+              <div class="btn-group">
+                <a class="btn btn-default btn-sm" title="订单详情">
+                  <i class="fa fa-info fa-fw"></i>
+                </a>
+                <a class="btn btn-default btn-sm" title="客户管理">
+                  <i class="fa fa-user-o fa-fw"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>601</td>
+            <td>经理</td>
+            <td>张三</td>
+            <td>市场推广、分析与调配</td>
+            <td th:text="${orderDto.application.contactName}">张小三</td>
+            <td>
+              <div class="btn-group">
+                <a shiro:hasPermission="order:consultation_index" class="btn btn-default btn-sm"
+                   href="order_detail.html?type=consultation"
+                   th:href="@{/be/order/consultation/detail(orderNo=${orderDto.order.orderNo})}" title="订单详情">
+                  <i class="fa fa-info fa-fw"></i>
+                </a>
+                <a shiro:hasPermission="order:consultation_edit" class="btn btn-default btn-sm" href="order_edit_consultation.html"
+                   th:href="@{/be/order/consultation/edit(orderNo=${orderDto.order.orderNo})}" title="编辑订单">
+                  <i class="fa fa-edit fa-fw"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>601</td>
+            <td>经理</td>
+            <td>张三</td>
+            <td>市场推广、分析与调配</td>
+            <td th:text="${orderDto.application.contactName}">张小三</td>
+            <td>
+              <div class="btn-group">
+                <a shiro:hasPermission="order:consultation_index" class="btn btn-default btn-sm"
+                   href="order_detail.html?type=consultation"
+                   th:href="@{/be/order/consultation/detail(orderNo=${orderDto.order.orderNo})}" title="订单详情">
+                  <i class="fa fa-info fa-fw"></i>
+                </a>
+                <a shiro:hasPermission="order:consultation_edit" class="btn btn-default btn-sm" href="order_edit_consultation.html"
+                   th:href="@{/be/order/consultation/edit(orderNo=${orderDto.order.orderNo})}" title="编辑订单">
+                  <i class="fa fa-edit fa-fw"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="box-footer clearfix"><!-- 分页 -->
+        <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+        </ul>
+      </div>
+    </div>
+</div>
+<script data-th-inline="javascript">
+  /*<![CDATA[*/
+  var currentPage= /*[[${pagination.currentPage}]]*/ '1';//当前页面
+  var pageSize= /*[[${pagination.pageSize}]]*/'5';
+  var totalPages=/*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+  /*]]>*/
+</script>
+<script src="../../static/assets/js/person_for_organization.js" th:src="@{/assets/js/person_for_organization.js}"></script>
+</body>
+</html>

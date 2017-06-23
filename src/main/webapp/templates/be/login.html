@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>后台监测管理系统</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- Bootstrap 3.3.2 -->
+    <link rel="stylesheet" href="../../static/assets/bootstrap/css/bootstrap.min.css"
+          th:href="@{/assets/bootstrap/css/bootstrap.min.css}" />
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="../../static/assets/font-awesome/css/font-awesome.min.css"
+          th:href="@{/assets/font-awesome/css/font-awesome.min.css}" />
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../static/assets/dist/css/AdminLTE.css"
+          th:href="@{/assets/dist/css/AdminLTE.css}" />
+    <link rel="stylesheet" href="../../static/assets/dist/css/skins/skin-blue.min.css"
+          th:href="@{/assets/dist/css/skins/skin-blue.min.css}" />
+    <!-- REQUIRED JS SCRIPTS -->
+    <!-- jQuery 2.1.3 -->
+    <link rel="stylesheet" href="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"
+          th:href="@{/assets/plugins/jQuery/jQuery-2.1.3.min.js}" />
+    <!-- Bootstrap 3.3.2 JS -->
+    <link rel="stylesheet" href="../../static/assets/bootstrap/js/bootstrap.min.js"
+          th:href="@{/assets/bootstrap/js/bootstrap.min.js}" />
+    <link rel="stylesheet" href="../../static/assets/plugins/jQuery-ajaxform/jquery.form.min.js"
+          th:href="@{/assets/plugins/jQuery-ajaxform/jquery.form.min.js}" />
+    <link rel="stylesheet" href="../../static/assets/plugins/iCheck/icheck.min.js"
+          th:href="@{/assets/plugins/iCheck/icheck.min.js}" />
+    <!-- AdminLTE App -->
+    <link rel="stylesheet" href="../../static/assets/dist/js/app.min.js"
+          th:href="@{/assets/dist/js/app.min.js}" />
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="login-page">
+<div class="login-box">
+    <div class="login-logo">
+        <img src="../../static/assets/dist/img/logo1.jpg" th:src="@{/assets/dist/img/logo1.jpg}"
+             style="width: 90px;margin-right: 10px;">
+        <b>后台监测管理系统</b>
+    </div><!-- /.login-logo -->
+    <div class="login-box-body" style="box-shadow:3px 3px 3px;">
+        <p class="login-box-msg"></p>
+        <form action="#" th:action="@{/be/login}" th:object="${loginForm}" method="post">
+            <div class="form-group has-feedback">
+                <input type="text" th:field="*{userName}" class="form-control" placeholder="请输入用户名"/>
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" th:field="*{password}" class="form-control" placeholder="请输入密码"/>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="checkbox icheck">
+                        <label>
+                            <!--<a href="#">忘记密码？</a><br>-->
+                        </label>
+                    </div>
+                </div><!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+                </div><!-- /.col -->
+            </div>
+            <div th:if="${error} != null" class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <p th:each="err :${error}" th:text="${err}">error</p>
+            </div>
+        </form>
+
+    </div><!-- /.login-box-body -->
+</div><!-- /.login-box -->
+
+</body>
+</html>

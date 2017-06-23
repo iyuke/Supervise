@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <meta charset="UTF-8">
+    <link th:remove="all" type="text/css" rel="stylesheet" href="../../static/assets/dist/css/app.css"/>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/common.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/bootstrap/js/bootstrap-multiselect.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+  </head>
+  <body class="skin-blue">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <span id="page-status" class="static" th:class="dynamic"></span>
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            统计报表
+          </h1>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+          <div shiro:hasPermission="statistics:export-order" class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">导出清单</h3>
+            </div>
+            <form id="orderExport" th:action="@{/be/statistics/export-order}" method="post">
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group top-margin">
+                      <select class="form-control" id="orderType" name="orderType">
+                        <option value="">请选择订单类型</option>
+                        <option th:each="orderType : ${orderTypes}" th:if="${orderType.desc} != '基础病理'" th:value="${orderType}"
+                                th:text="${orderType.desc}">
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group top-margin">
+                      <input class="form-control daterange" type="text" id="applicationDateRange" name="applicationDateRange"
+                             placeholder="请选择送检日期"/>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group top-margin">
+                      <div class="row">
+                        <div class="col-md-4 location-select with-padding-left">
+                          <select class="form-control provinceId" name="provinceId">
+                            <option value="">省/直辖市</option>
+                            <option th:each="province : ${provinces}" th:value="${province.id}" th:text="${province.name}"></option>
+                          </select>
+                        </div>
+                        <div class="col-md-4 location-select">
+                          <select class="form-control cityId" name="cityId">
+                            <option value="">市/区</option>
+                          </select>
+                        </div>
+                        <div class="col-md-4 location-select">
+                          <select class="form-control districtId" name="districtId">
+                            <option value="">县</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group top-margin">
+                      <input class="btn btn-success center-block" type="submit" value="导出"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- 销售金额 start -->
+          <div shiro:hasPermission="statistics:order-statistics" class="box" id="sale_money">
+            <div class="box-header with-border">
+              <h3 class="box-title">销售金额</h3>
+            </div>
+            <div class="box-body">
+              <div class="form-group inline-block">
+                <!--<option value="%year">%year年</option>-->
+                <select class="form-control rangeStartYear" name="rangeStartYear">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <!--<option value="%month">%month月</option>-->
+                <select class="form-control rangeStartMonth" name="rangeStartMonth">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <span>—</span>
+              </div>
+              <div class="form-group inline-block">
+                <!--<option value="%year">%year年</option>-->
+                <select class="form-control rangeEndYear" name="rangeEndYear">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <!--<option value="%month">%month月</option>-->
+                <select class="form-control rangeEndMonth" name="rangeEndMonth">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control provinceId" name="provinceId" multiple="multiple" multi-text="省">
+                  <option th:each="province : ${provinces}" th:value="${province.id}" th:text="${province.name}">安徽省</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control cityId" name ="cityId" multiple="multiple" multi-text="市">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control districtId" name ="districtId" multiple="multiple" multi-text="区／县">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control orgHospitalId" name="orgHospitalId" multiple="multiple" multi-text="送检医院">
+                  <option th:remove="all" value="1">
+                    六安市人民医院
+                  </option>
+                </select>
+              </div>
+              <div class="chart" id="orderFeeStatisticGroupByMonth"></div>
+              <div class="chart" id="orderAmountStatisticGroupByMonth"></div>
+            </div>
+          </div>
+          <!-- 销售金额 end -->
+          <div shiro:hasPermission="statistics:order-gene-statistics" class="box" id ="sale_money_summary">
+            <div class="box-header with-border">
+              <h3 class="box-title">销售金额总表</h3>
+            </div>
+            <div class="box-body">
+              <div class="form-group inline-block">
+                <!--<option value="%year">%year年</option>-->
+                <select class="form-control rangeStartYear" name="rangeStartYear">
+                  <option value="">送检年份</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <!--<option value="%month">%month月</option>-->
+                <select class="form-control rangeStartMonth" name="rangeStartMonth">
+                  <option value="">送检月份</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <span>—</span>
+              </div>
+              <div class="form-group inline-block">
+                <!--<option value="%year">%year年</option>-->
+                <select class="form-control rangeEndYear" name="rangeEndYear">
+                  <option value="">送检年份</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <!--<option value="%month">%month月</option>-->
+                <select class="form-control rangeEndMonth" name="rangeEndMonth">
+                  <option value="">送检月份</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control" name="orderType" id="orderType_search">
+                  <option value="">订单类型</option>
+                  <option value="CONSULTATION">疑难会诊</option>
+                  <option value="GENE">分子病理</option>
+                  <option value="PATHOLOGY">基础病理</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control provinceId" name="provinceId" multiple="multiple" multi-text="省">
+                  <option th:each="province : ${provinces}" th:value="${province.id}" th:text="${province.name}"></option>
+                  <option th:remove="all" value="ANHUI" selected>安徽省</option>
+                  <option th:remove="all" value="JIANGXI" selected>江西省</option>
+                  <option th:remove="all" value="ZHEJIANG">浙江省</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control cityId" name ="cityId" multiple="multiple" multi-text="市">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control districtId" name ="districtId" multiple="multiple" multi-text="区／县">
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control orgHospitalId" name="orgHospitalId" multiple="multiple" multi-text="送检医院">
+                  <option th:remove="all" value="1">
+                    六安市人民医院
+                  </option>
+                  <option th:remove="all" value="2">
+                    安庆市人民医院
+                  </option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control departmentId" name="departmentId" multiple="multiple" multi-text="送检科室">
+                  <option th:remove="all" value="1">
+                    病理科
+                  </option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <button class="btn btn-info" id="ensure">确认</button>
+              </div>
+              <div class="chart" id="chartOrderFeeSummaryStatistic"></div>
+            </div>
+          </div>
+          <div shiro:hasPermission="statistics:order-gene-statistics" class="box" id ="gene_sale">
+            <div class="box-header with-border">
+              <h3 class="box-title">分子订单销售量（按科室）</h3>
+            </div>
+            <div class="box-body">
+              <div class="form-group inline-block">
+                <!--<option value="%year">%year年</option>-->
+                <select class="form-control applicationStartYear" name="applicationStartYear" id="applicationStartYear">
+                  <option value="">送检年份</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <!--<option value="%month">%month月</option>-->
+                <select class="form-control applicationStartMonth" name="applicationStartMonth" id="applicationStartMonth">
+                  <option value="">送检月份</option>
+                </select>
+              </div>
+              <div class="form-group inline-block">
+                <select class="form-control orgHospitalId" id ="orgHospitalId">
+                  <option th:each="orgHospital : ${orgHospitals}" th:value="${orgHospital.id}" th:text="${orgHospital.name}">
+                    六安市人民医院
+                  </option>
+                </select>
+              </div>
+              <span class="text-red" id="inform-message"></span>
+              <div class="chart" id="orderAmountStatisticGroupByDepartment"></div>
+            </div>
+          </div>
+          <!-- 销售量 end -->
+        </section><!-- /.content -->
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+    <!--Echarts -->
+    <script src="../../static/assets/plugins/echarts/echarts.min.js" th:src="@{/assets/plugins/echarts/echarts.min.js}"></script>
+    <script src="../../static/assets/js/statistics.js" th:src="@{/assets/js/statistics.js}"></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+    <style type="text/css">
+      body {
+        background-color: #daecee;
+      }
+      #error {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -303px;
+        margin-left: -303px;
+      }
+      #error404-image {
+        width:150px;
+        height: 140px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="error">
+      <img src="../../static/assets/dist/img/404.png" th:src="@{/assets/dist/img/404.png}" alt="404 page not found" id="error404-image">
+      未找到页面!&nbsp;&nbsp;请点击<a href="#" onclick="javascript :history.go(-1);">这里</a>返回!
+    </div>
+  </body>
+</html>

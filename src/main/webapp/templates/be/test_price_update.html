@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <meta charset="UTF-8">
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/bootstrap/js/bootstrap-multiselect.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/common.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+</head>
+<body class="skin-blue">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header" th:include="be/fragment :: header"></header>
+
+  <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        创建／编辑省级收费表
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box">
+        <span id="page-status" class="static" th:class="dynamic"></span>
+        <form id="testPriceCreateForm" action="#" th:action="@{/be/pathology-test/create}" method="post">
+          <div class="box-body">
+            <div class="col-md-2 no-padding">
+              <div class="form-group ">
+                <select class="form-control selectpicker show-tick" id="province" name="province"
+                        data-live-search="true" data-th-attr="data-live-search= true">
+                  <option value="">请选择省份</option>
+                  <!--todo: 这里仅显示尚未创建收费项目的省份-->
+                  <option th:each="province : ${provinceList}"
+                          th:value="${province.id}"
+                          th:text="${province.name}"
+                          th:selected="true">
+                    上海市
+                  </option>
+                </select>
+              </div>
+            </div>
+            <table class="table">
+              <thead>
+              <th><input class="allOption checkbox" type="checkbox" checked></th>
+              <th>编号／医保代码</th>
+              <th>内容名称</th>
+              <th>检测方法</th>
+              <th>样本要求</th>
+              <th width="200px">报告时间</th>
+              <th>收费</th>
+              <th>详情</th>
+              </thead>
+              <tbody>
+              <th:block th:each="content, status : ${pathologyContentList}">
+              <tr>
+                <input name="id" type="hidden" value="0" th:value="${content.id}">
+                <input name="pathologyTestContentId" type="hidden" value="0" th:value="${content.pathologyTestContentId}">
+                <td><input class="contentList checkbox" name="checks" th:value="${status.count}" type="checkbox" checked></td>
+                <td>
+                  <div class="form-group">
+                    <input class="contentPrice checkbox" name="priceCode" value="20170811"
+                           th:value="${content.priceCode}">
+                  </div>
+                </td>
+                <td th:text="${content.pathologyTestContentName}">内镜组织活检检测与诊断</td>
+                <td th:text="${content.method}">H-E染色</td>
+                <td th:text="${content.sampleRequirement}">10%中心缓冲福尔马林浸泡送检</td>
+                <td width="200px" th:text="${content.reportRequirement}">3个工作日，如遇需重新取材、制片，特殊染色，疑难病例需全科讨论等，顺延1-2个工作日</td>
+                <td>
+                  <div class="form-group">
+                    <input class="contentPrice checkbox" name="price" value="60"
+                           th:value="${#numbers.formatDecimal(content.price, 3, 0, 'COMMA')}">
+                  </div>
+                </td>
+                <td>
+                  <a th:if="${content.id == null}" class="btn btn-default btn-sm viewTestContentDetail" title="内容详情"
+                     th:id="${content.pathologyTestContentId}" value="create" name="detail_btn">
+                    <i class="fa fa-info fa-fw"></i>
+                  </a>
+                  <a th:if="${content.id != null}" class="btn btn-default btn-sm viewTestContentDetail" title="内容详情"
+                     th:id="${content.id}" value="edit" name="detail_btn">
+                    <i class="fa fa-info fa-fw"></i>
+                  </a>
+                </td>
+              </tr>
+              </th:block>
+              </tbody>
+            </table>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" type="submit" value="提交"/>
+          </div>
+        </form>
+      </div>
+    </section><!-- /.content-wrapper -->
+  </div>
+
+  <!-- Main Footer -->
+  <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+</div><!-- ./wrapper -->
+<div th:replace="be/modal/modal_pathology_testprice :: testContentDetailModal"></div>
+</body>
+<script src="../../static/assets/js/test_price_update.js" th:src="@{/assets/js/test_price_update.js}"></script>
+</html>

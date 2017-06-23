@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="../../../static/assets/bootstrap/css/bootstrap.min.css" th:remove="all"/>
+  <script type="text/javascript" src="../../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/datepicker/bootstrap-datepicker.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/formValidation.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/language/zh_CN.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js" th:remove="all"></script>
+</head>
+<body>
+
+<div id="createExpressModal" class="modal fade" th:fragment="createExpressModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">添加物流信息</h4>
+      </div>
+      <form id="createExpressForm" th:action="@{/be/express/create}" th:object="${expressDto}">
+        <input name="orderId" th:value="${orderDto.order.id}" hidden/>
+        <div class="modal-body">
+          <div class="form-group">
+            <input class="form-control" id="expressNo" th:field="*{expressNo}" type="text" placeholder="运单号" />
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="expressCompany" th:field="*{expressCompany}">
+              <option value="">物流公司</option>
+              <option th:each="company : ${expressCompanies}"
+                      th:value="${company}" th:text="${company.desc}">顺丰</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="expressType" th:field="*{expressType}">
+              <option value="">类型</option>
+              <option th:each="type : ${expressTypes}"
+                      th:value="${type}" th:text="${type.desc}">接收</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="text" placeholder="起始地" th:field="*{expressStartPlace}"/>
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="text" placeholder="目的地" th:field="*{expressEndPlace}"/>
+          </div>
+          <div class="form-group">
+            <input class="form-control datepicker" type="text" placeholder="寄件日期" th:field="*{expressDate}"/>
+          </div>
+          <div class="form-group">
+            <textarea class="form-control" th:field="*{expressDesc}" rows="3" placeholder="物流内容描述"></textarea>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" type="submit" value="添加"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<th:block th:fragment="expressModalScript">
+  <script type="text/javascript" src="../../static/assets/js/modal/modal_express.js" th:src="@{/assets/js/modal/modal_express.js}"></script>
+</th:block>
+</body>
+</html>

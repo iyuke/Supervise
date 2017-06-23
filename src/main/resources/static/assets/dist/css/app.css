@@ -1,0 +1,314 @@
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > thead > tr > th {
+    vertical-align: middle;
+}
+
+/*
+  modal打开时，datepicker的z-index需要大于modal的z-index(1040)，
+  这样modal中的datepicker组件才能正常显示
+*/
+body.modal-open .datepicker {
+    z-index: 1050 !important;
+}
+
+.detail-item {
+    padding: 10px 10px;
+    border-left: 3px solid #3c8dbc;
+    border-right: none;
+    margin: 25px 0px;
+    background-color: #fafafa;
+}
+
+.box-solid .box-header {
+    border-left: 2px solid #d2d6de;
+    background-color: #fafafa;
+}
+
+.box-solid .box-header .box-title {
+    font-size: 14px;
+}
+
+.table.report_summary th {
+    width: 50%;
+    font-weight: normal;
+    padding-right: 50px;
+    text-align: right;
+}
+
+.mailbox-attachments > li {
+    width: 170px;
+}
+
+.mailbox-attachments {
+    display: inline;
+}
+
+.mailbox-attachment-icon.has-img > img {
+    height: 190px;
+    width: 100%;
+    font-size: 14px;
+    line-height: 200px;
+}
+
+.mailbox-attachment-icon.has-img > i {
+    height: 190px;
+    width: 100%;
+    line-height: 200px;
+}
+
+.nav-tabs-custom.order-detail-tabs > .nav-tabs > li > a {
+    font-size: 16px;
+}
+
+.box.order-status-box .box-title {
+    font-size: 16px;
+}
+
+.table.order-status-record tr > th {
+    font-weight: normal;
+}
+
+.table.order-status-record tr > td {
+    color: #999;
+    font-size: small;
+}
+
+.order-status-box .info-box {
+    box-shadow: none;
+}
+
+.order-detail-base .table {
+    margin-bottom: 0;
+}
+
+.order-detail-base .table tr > th {
+    width: 30%;
+    text-align: right;
+    font-weight: normal;
+    padding-right: 30px;
+}
+
+.btn-lead-box {
+    margin-bottom: 10px;
+}
+
+.info-box-icon {
+    display: table;
+}
+
+.no-top-border {
+    border-top: 0px;
+}
+
+.info-box-icon > i {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.nothing-info {
+    width: 100%;
+    color: #e1e3e9;
+    text-align: center;
+}
+
+.errorInfo {
+    text-align: center;
+}
+
+.with-margin {
+    margin-bottom: 15px;
+}
+
+.control-label {
+    font-weight: normal;
+}
+
+.no-button-margin {
+    margin-bottom: 0px;
+}
+
+.attachment-info {
+    margin-top: 100px;
+    margin-bottom: 100px
+}
+
+.timeline-body .table {
+    table-layout: fixed;
+}
+
+.timeline-body .table tr > th {
+    width: 30%;
+}
+
+.order-detail-base .info-box {
+    box-shadow: none;
+}
+
+.btn-search {
+    width: 100%;
+}
+
+.text-orange {
+    color: #DDAA00;
+}
+
+.label-orange {
+    background-color: #DDAA00;
+}
+
+.text-red {
+    color: #dd4b39;
+}
+
+.chart {
+    width: 100%;
+    height: 400px;
+    margin-bottom: 20px;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.top-margin {
+    margin-top: 15px;
+}
+
+.without-padding {
+    padding: 0px;
+}
+
+.without-padding-right {
+    padding-right: 0px;
+}
+
+.location-select {
+    padding: 2px;
+}
+
+.location-select.with-padding-left {
+    padding-left: 15px;
+}
+
+.nondisplay {
+    display: none;
+}
+
+@media screen and (max-width: 992px) {
+    .location-select {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+.non-li-list-style > ul {
+    padding-left: 20px;
+}
+
+.non-li-list-style > a > li {
+    list-style-type: none;
+}
+
+.font-normal {
+    font-style: normal;
+}
+
+.sale-detail-base .table tr > th {
+    width: 22.5%;
+    text-align: right;
+    font-weight: normal;
+    padding-right: 30px;
+}
+
+.text-necessary {
+    color: #dd4b39;
+}
+
+.label-transition {
+    background-color: #DDAA00;
+}
+
+.table-with-head-color > thead tr {
+    background-color: #f9f9f9;
+}
+
+.iframe-default {
+    width: 100%;
+    border: 0;
+}
+
+.table-default .table {
+    margin-bottom: 0;
+}
+
+.table-default .table tr > th {
+    width: 30%;
+    text-align: right;
+    font-weight: normal;
+    padding-right: 30px;
+}
+
+.table-default .table .nondisplay > td {
+    padding-left: 30px;
+}
+
+.collapse-group .panel-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 14px;
+    color: inherit;
+    font-weight: normal;
+}
+
+.contentPrice {
+    width: 40px;
+    text-align: center;
+}
+
+.with-right-padding {
+    padding-right: 15px;
+}
+
+.with-left-margin {
+    margin-left: 5px;
+}
+
+.with-left-padding {
+    padding-left: 15px;
+}
+
+.no-border {
+    border: 0;
+}
+
+#container {
+    text-align: left;
+}
+
+#center-container {
+    background-color: white;
+    width: 100%;
+    left: 0;
+    text-align: left;
+}
+
+#infovis {
+    width: 100%;
+    text-align: left;
+}
+
+html, body {
+    text-align: left;
+}
+
+@keyframes invoice-hint {
+    25% { background-color: rgba(6, 6, 6, 0.07); }
+    100% { background-color: #fff; }
+}
+.invoice-hint {
+    animation: 2s invoice-hint;
+}

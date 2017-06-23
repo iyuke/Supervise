@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="../../../static/assets/bootstrap/css/bootstrap.min.css" th:remove="all"/>
+  <script type="text/javascript" src="../../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/datepicker/bootstrap-datepicker.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/formValidation.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/language/zh_CN.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js" th:remove="all"></script>
+</head>
+<body>
+
+<!--上传基础病理诊断报告-->
+<div id="uploadReportModal" class="modal fade" th:fragment="uploadReportModal">
+  <div class="modal-dialog">
+    <div class="modal-content" th:with="orderType=${orderDto.order.orderType}">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button" aria-label="Close"><span aria-hidden="true">×
+        </span></button>
+        <h4 class="modal-title" th:if="${orderType} == 'CONSULTATION'">上传会诊报告</h4>
+        <h4 class="modal-title" th:if="${orderType} == 'PATHOLOGY'">上传诊断报告</h4>
+      </div>
+      <form id="uploadReportForm" name="uploadForm" action="#" th:action="@{/be/order/upload}" enctype="multipart/form-data"
+            method="post">
+        <input name="orderId" th:value="${orderDto.order.id}" hidden/>
+        <input name="type" value="DST_REPORT" hidden="hidden" th:if="${orderType} == 'CONSULTATION'"/>
+        <input name="type" value="BASE_DST_REPORT" hidden="hidden" th:if="${orderType} == 'PATHOLOGY'"/>
+        <div class="modal-body">
+          <div class="form-group" th:if="${orderType} == 'CONSULTATION'">
+            <select class="form-control multiselect" name="orgPathologyNos" id="orgPathologyNos" multiple = "multiple" multi-text="请选择送检病理号">
+              <option th:each="pathologyNo : ${orderDto.pathologyNos}"
+                      th:value="${pathologyNo}" th:text="${pathologyNo}">20170101120000123</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="dstHospitalId" name="dstHospitalId">
+              <option value="">请选择诊断机构</option>
+              <option th:each="dstHospital : ${dstHospitals}"
+                      th:value="${dstHospital.id}" th:text="${dstHospital.name}">xx医院</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input class="form-control" id="consultationNo" name="consultationNo" type="text" placeholder="病理检验号"/>
+          </div>
+          <div class="form-group">
+            <input class="form-control datepicker1" name="reportIssuedDate" type="text" placeholder="报告出具日期"/>
+          </div>
+          <div class="form-group">
+            <input class="input-upload" name="files" type="file" placeholder="上传会诊报告" multiple/>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" type="submit" value="提交"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--上传分子病理检测报告-->
+<div class="modal fade uploadGeneModal" id="uploadGeneReportModal" th:fragment="uploadGeneReportModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button" aria-label="Close"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">上传检测报告</h4>
+      </div>
+      <form id="uploadGeneReportForm" name="uploadForm" action="#"
+            th:action="@{/be/order/upload}" enctype="multipart/form-data" method="post">
+        <input name="orderId" th:value="${orderDto.order.id}" hidden/>
+        <input name="type" value="GENE_REPORT" hidden/>
+        <div class="modal-body">
+          <div class="form-group">
+            <input class="form-control datepicker4" name="reportIssuedDate" type="text" placeholder="报告出具日期"/>
+          </div>
+          <div class="form-group">
+            <input class="input-upload" name="files" type="file" multiple/>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" type="submit" value="提交"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--上传其它附件-->
+<div class="modal fade" id="uploadModal" th:fragment="uploadModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">上传附件</h4>
+      </div>
+      <form id="uploadForm" name="uploadForm" action="#" th:action="@{/be/order/upload}" enctype="multipart/form-data"
+            method="post">
+        <input name="orderId" th:value="${orderDto.order.id}" type="hidden"/>
+        <div class="modal-body">
+          <div class="form-group">
+            <select class="form-control" id="attachType" name="type">
+              <option value="">请选择附件类型</option>
+              <option th:each="attachmentType : ${attachmentTypes}"
+                      th:value="${attachmentType}" th:text="${attachmentType.desc}">病理会诊申请单</option>
+            </select>
+          </div>
+          <div id="orgReportFields" style="display: none;">
+            <div class="form-group">
+              <select class="form-control multiselect" name="orgPathologyNos" multiple="multiple">
+                <option th:each="pathologyNo : ${orderDto.pathologyNos}"
+                        th:value="${pathologyNo}" th:text="${pathologyNo}">20170101120000123</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <input class="input-upload" name="files" type="file" multiple/>
+          </div>
+        </div>
+        <div class="box-footer">
+          <input class="btn btn-primary center-block" type="submit" value="提交"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--修改病理报告附件-->
+<div class="modal fade" id="editUploadReportModal" th:fragment="editUploadReportModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">修改病理报告</h4>
+      </div>
+      <form id="editUploadReportForm" name="uploadForm" action="#" th:action="@{/be/order/report/edit}"
+            enctype="multipart/form-data" method="post">
+        <input name="reportId" value="" hidden/>
+        <input name="type" value="DST_REPORT" hidden th:if="${orderDto.order.orderType} == 'CONSULTATION'" />
+        <input name="type" value="BASE_DST_REPORT" hidden th:if="${orderDto.order.orderType} == 'PATHOLOGY'" />
+        <div class="modal-body">
+          <div class="form-group" th:if="${orderDto.order.orderType} == 'CONSULTATION'">
+            <label>送检病理号</label>
+            <select class="form-control multiselect" name="orgPathologyNos" multiple = "multiple" multi-text="请选择送检病理号">
+              <option th:each="pathologyNo : ${orderDto.pathologyNos}"
+                      th:value="${pathologyNo}" th:text="${pathologyNo}">123456</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>诊断机构</label>
+            <select class="form-control" name="dstHospitalId">
+              <option value="">请选择诊断机构</option>
+              <option th:each="dstHospital : ${dstHospitals}"
+                      th:value="${dstHospital.id}" th:text="${dstHospital.name}">复旦病理诊断中心<option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>病理检验号</label>
+            <input class="form-control" name="consultationNo" type="text" placeholder="请填写病理检验号"/>
+          </div>
+          <div class="form-group">
+            <input class="form-control datepicker2" name="reportIssuedDate" type="text" placeholder="报告出具日期"/>
+          </div>
+          <div class="form-group">
+            <label>报告附件</label>
+            <input class="input-upload" name="files" type="file" multiple/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input class="btn btn-primary center-block" type="submit" value="提交"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--修改分子病理检测报告-->
+<div class="modal fade uploadGeneModal" id="editUploadGeneReportModal" th:fragment="editUploadGeneReportModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button" aria-label="Close"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">修改检测报告</h4>
+      </div>
+      <form id="editUploadGeneReportForm" name="uploadForm" action="#" th:action="@{/be/order/report/edit}"
+            enctype="multipart/form-data" method="post">
+        <input name="reportId" value="" hidden/>
+        <input name="type" value="GENE_REPORT" hidden/>
+        <div class="modal-body">
+          <div class="form-group">
+            <input class="form-control datepicker3" name="reportIssuedDate" type="text" placeholder="报告出具日期"/>
+          </div>
+          <div class="form-group">
+            <input class="input-upload" name="files" type="file" multiple/>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" type="submit" value="提交"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<th:block th:fragment="uploadReportScript">
+  <script src="../../static/assets/js/modal/modal_upload_report.js" th:src="@{/assets/js/modal/modal_upload_report.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="../../../static/assets/bootstrap/css/bootstrap.min.css" th:remove="all"/>
+  <script type="text/javascript" src="../../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/datepicker/bootstrap-datepicker.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/formValidation.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/language/zh_CN.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js" th:remove="all"></script>
+</head>
+<body>
+<!-- 搜索销售人员 -->
+<div id="searchModal" class="modal fade" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">销售人员搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form id="search_form" action="#" th:action="@{/be/seller/index}" class="form-horizontal tab-content form-endpoint"
+              method="get" th:object="${sellerSearchConditions}">
+          <div class="box-body">
+            <div class="form-group">
+              <label for="name_search">姓名</label>
+              <input type="text" class="form-control" id="name_search" name="name"
+                     th:value="*{name}" placeholder="请输入销售姓名"/>
+            </div>
+            <div class="form-group">
+              <label for="phone_search">电话</label>
+              <input type="text" class="form-control" id="phone_search" name="phone"
+                     th:value="*{phone}" placeholder="请输入销售电话"/>
+            </div>
+            <div class="form-group">
+              <label for="departmentIds_search">所属部门</label>
+              <select class="form-control" id="departmentIds_search" name="departmentId" multi-text="请选择所属部门">
+                <option value="">请选择所属部门</option>
+                <option th:each="department : ${departmentList}" th:value="${department.id}" th:text="${department.name}"
+                        th:selected="${department.id == sellerSearchConditions.departmentId} ? 'true' : 'false'">
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="chargePlace_search">负责区域</label>
+              <input type="text" class="form-control" id="chargePlace_search" name="chargePlace"
+                     th:value="*{chargePlace}" placeholder="请输入负责区域"/>
+            </div>
+            <div class="form-group">
+              <label for="workStatus_search">在职状态</label>
+              <select class="form-control" id="workStatus_search" name="workStatus">
+                <option value="">请选择在职状态</option>
+                <option value="IN_SERVICE"
+                        th:selected="${sellerSearchConditions.workStatus != null && 'IN_SERVICE' == sellerSearchConditions.workStatus.name()} ? 'true' : 'false'">在职
+                </option>
+                <option value="LEAVE"
+                        th:selected="${sellerSearchConditions.workStatus != null && 'LEAVE' == sellerSearchConditions.workStatus.name()} ? 'true' : 'false'">离职
+                </option>
+              </select>
+            </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <input id="search_form_submit" type="submit" class="btn btn-primary center-block"  value="搜索">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="../../../static/assets/js/modal/modal_search_salesman.js" th:src="@{/assets/js/modal/modal_search_salesman.js}"></script>
+</div>
+</body>
+</html>

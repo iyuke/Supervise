@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="../../../static/assets/bootstrap/css/bootstrap.min.css" th:remove="all"/>
+  <script type="text/javascript" src="../../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/datepicker/bootstrap-datepicker.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/formValidation.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/language/zh_CN.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js" th:remove="all"></script>
+</head>
+<body>
+
+<!--上传样本返还记录-->
+<div class="modal fade" id="sampleReturnModal" th:fragment="sampleReturnModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span></button>
+        <h4 class="modal-title">填写样本返还记录</h4>
+      </div>
+      <form id="sampleReturnForm" action="#" th:action="@{/be/sample/return/create}" enctype="multipart/form-data"
+            method="post">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <input name="orderNo" type="text" th:value="${orderDto.order.orderNo}" hidden/>
+              <div class="form-group">
+                <label><a class="text-red">*</a>&nbsp;物流单号</label>
+                <input class="form-control" name="sampleReturnRecord.expressNo" type="text" placeholder="请输入物流单号"/>
+              </div>
+              <div class="form-group">
+                <label>
+                  <a class="text-red" th:if="${orderDto.order.orderType} == 'CONSULTATION'">*</a>&nbsp;
+                  病理号
+                </label>
+                <select class="form-control" name="sampleReturnRecord.pathologyNo">
+                  <option value="">请选择病理号</option>
+                  <option th:each="pathologyNo : ${orderDto.pathologyNos}"
+                          th:value="${pathologyNo}" th:text="${pathologyNo}">123456</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>蜡块</label>
+                <input class="form-control" name="sampleReturnRecord.paraffinNum" type="text"
+                       placeholder="请输入蜡块数量"/>
+              </div>
+              <div class="form-group">
+                <label>HE片</label>
+                <input class="form-control" name="sampleReturnRecord.heNum" type="text" placeholder="请输入HE片数量"/>
+              </div>
+              <div class="form-group">
+                <label>组化片</label>
+                <input class="form-control" name="sampleReturnRecord.ihcNum" type="text" placeholder="请输入组化片数量"/>
+              </div>
+              <div class="form-group" th:if="${orderDto.order.orderType} == 'GENE'">
+                <label>分子报告</label>
+                <input class="form-control" name="sampleReturnRecord.geneReportNum" type="text"
+                       placeholder="请输入分子报告数量"/>
+              </div>
+              <div class="form-group" th:if="${orderDto.order.orderType} == 'CONSULTATION'">
+                <label>会诊报告</label>
+                <input class="form-control" name="sampleReturnRecord.consultationReportNum" type="text"
+                       placeholder="请输入会诊报告数量"/>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>原病理报告</label>
+                <input class="form-control" name="sampleReturnRecord.orgHospReportNum" type="text"
+                       placeholder="请输入原病理报告数量"/>
+              </div>
+              <div class="form-group">
+                <label>病史资料</label>
+                <input class="form-control" name="sampleReturnRecord.medicalHistoryNum" type="text"
+                       placeholder="请输入病史数量"/>
+              </div>
+              <div class="form-group">
+                <label>发票</label>
+                <input class="form-control" name="sampleReturnRecord.receiptNum" type="text"
+                       placeholder="请输入发票数量"/>
+              </div>
+              <div class="form-group">
+                <label>其他资料</label>
+                <input class="form-control" name="sampleReturnRecord.otherMaterials" type="text"
+                       placeholder="请输入其他资料"/>
+              </div>
+              <div class="form-group">
+                <label>备注</label>
+                <input class="form-control" name="sampleReturnRecord.remark" type="text" placeholder="备注"/>
+              </div>
+              <div class="form-group">
+                <input name="total" type="hidden" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-footer">
+          <input class="btn btn-primary center-block" id="sampleReturnBtn" type="submit" value="提交"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- delete modal -->
+<div class="modal fade" id="deleteSampleReturnRecordModal" th:fragment="deleteSampleReturnRecordModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span></button>
+        <h4 class="modal-title">删除</h4>
+      </div>
+      <div class="modal-body">
+        <h4 class="modal-title" id="deleteDesc"></h4>
+        <input id="deleteRecordId" type="hidden"/>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary btn-danger" id="delete_confirm" data-dismiss="modal" type="button">确认</button>
+        <button class="btn btn-default" data-dismiss="modal" type="button">取消</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<th:block th:fragment="sampleReturnRecordModalScript">
+  <script src="../../static/assets/js/modal/modal_sample_return_record.js" th:src="@{/assets/js/modal/modal_sample_return_record.js}"></script>
+</th:block>
+
+<!--导出EXCEL模板-->
+<div class="modal fade" id="excelTemplateDownloadModal" th:fragment="exportTemplateModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span></button>
+        <h4 class="modal-title">导出EXCEL模板</h4>
+      </div>
+      <div class="modal-body">
+        <form id="excelTemplateDownloadForm" action="#" th:action="@{/be/sample/return/export-template}"
+              enctype="multipart/form-data" method="post">
+          <div class="box-body">
+            <div class="form-group">
+              <label>送检医院</label>
+              <select class="form-control" name="orgHospitalId" >
+                <option value="">请选择</option>
+                <option th:each="orgHospital,iterStat : ${orgHospitals}"
+                        th:value="${orgHospital.id}"
+                        th:text="${orgHospital.name}">XXX医院</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="applicationDateRange">送检日期区间</label>
+              <input class="form-control daterange" id="applicationDateRange" name="applicationDateRange"
+                     type="text" placeholder="请输入日期区间">
+            </div>
+          </div>
+        </form>
+        <div class="box-footer">
+          <button class="btn btn-primary center-block" id="export">导出EXCEL模板</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 记录搜索 -->
+<div class="modal fade" id="searchModal" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span></button>
+        <h4 class="modal-title">记录搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form id="search_form" action="#" th:action="@{/be/sample/return/index}" method="get">
+          <div class="box-body">
+            <div class="form-group">
+              <label>送检医院</label>
+              <select class="form-control" id="orgHospitalId" name="orgHospitalId">
+                <option value="">请选择</option>
+                <option th:each="orgHospital,iterStat : ${orgHospitals}"
+                        th:value="${orgHospital.id}"
+                        th:text="${orgHospital.name}"
+                        th:selected="${orgHospital.id == sampleReturnRecordSearchConditions.orgHospitalId} ? true : false">
+                  XXX医院</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="dateRange">返还日期</label>
+              <input class="form-control daterange" id="dateRange" name="dateRange" type="text"
+                     th:value="${sampleReturnRecordSearchConditions.dateRange}" placeholder="请输入日期">
+            </div>
+            <div class="form-group">
+              <label for="expressNo">物流单号</label>
+              <input class="form-control" id="expressNo" name ="expressNo" type="text"
+                     th:value="${sampleReturnRecordSearchConditions.expressNo}" placeholder="请输入物流单号">
+            </div>
+            <div class="form-group">
+              <label for="creatorName">操作人员</label>
+              <input class="form-control" id="creatorName" name ="creatorName" type="text"
+                     th:value="${sampleReturnRecordSearchConditions.creatorName}" placeholder="请输入操作人员真实姓名">
+            </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <button class="btn btn-primary center-block">搜索</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--导入返还记录-->
+<div class="modal fade" id="uploadModal" th:fragment="uploadModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" type="button"><span>×</span></button>
+        <h4 class="modal-title">导入返还记录</h4>
+      </div>
+      <form id="uploadForm" action="#" th:action="@{/be/sample/return/import}" enctype="multipart/form-data"
+            method="post">
+        <div class="modal-body">
+          <div class="box-body">
+            <div class="form-group">
+              <label>EXCEL文件：</label>
+              <input class="input-upload" name="files" accept="application/vnd.ms-excel" type="file">
+            </div>
+          </div>
+          <div class="box-footer">
+            <input class="btn btn-primary center-block" type="submit" value="导入">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<th:block th:fragment="sampleReturnModalScript">
+  <script src="../../static/assets/js/modal/modal_sample_return.js" th:src="@{/assets/js/modal/modal_sample_return.js}"></script>
+</th:block>
+
+</body>
+</html>

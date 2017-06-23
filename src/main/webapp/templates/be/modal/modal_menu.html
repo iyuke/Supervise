@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="../../../static/assets/bootstrap/css/bootstrap.min.css" th:remove="all"/>
+  <script type="text/javascript" src="../../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/datepicker/bootstrap-datepicker.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/formValidation.min.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/language/zh_CN.js" th:remove="all"></script>
+  <script type="text/javascript" src="../../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js" th:remove="all"></script>
+</head>
+<body>
+
+<!-- modal -->
+<div id="createModal" class="modal fade" th:fragment="createModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>×</span>
+        </button>
+        <h4 class="modal-title">添加菜单</h4>
+      </div>
+      <div class="modal-body">
+        <form action="#" th:action="@{/be/menu/create}" id="createForm" th:object="${createMenuDto}" method="post">
+          <div class="box-body">
+            <div class="form-group">
+              <label>菜单名称</label>
+              <input name="name" id="name_create" type="text" th:field="*{name}" class="form-control" placeholder="请输入菜单名称"/>
+            </div>
+            <div class="form-group">
+              <label>菜单代码</label>
+              <input name="code" id="code_create" type="text" th:field="*{code}" class="form-control" placeholder="请输入菜单代码"/>
+            </div>
+            <div class="form-group">
+              <label>菜单级别：</label>
+              <select id="level_create" name="level" th:field="*{level}">
+                <option value="">请选择菜单级别</option>
+                <option th:each="ll : ${levelList}" th:value="${ll}" th:text="${ll}"></option>
+              </select>
+              <select id="parents_create" name="parentId" th:field="*{parentId}" style="display: none" class="form-control">
+                <option value="">请选择父菜单</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>菜单优先级：</label>
+              <input type="text" name="priority" id="priority_create" th:field="*{priority}" class="form-control" placeholder="请输入菜单优先级"/>
+            </div>
+            <div class="form-group">
+              <label>菜单描述</label>
+              <input name="description" id="description_create" type="text" th:field="*{description}" class="form-control" placeholder="请输入菜单描述"/>
+            </div>
+            <div class="form-group">
+              <label>是否为链接:</label>
+              <input name="isLink" type="radio" th:field="*{isLink}" value="true">是
+              <input name="isLink" type="radio" th:field="*{isLink}" value="false" checked>否
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">链接设置</h3>
+              </div>
+              <div class="panel-body">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                  <ul id="tabTitleCreate" class="nav nav-tabs">
+                    <li th:each="ptd,iterStat : ${sysResourceGroupDtoList}" class="active" th:class="${iterStat.first} ? 'active' : ''">
+                      <a th:href="'#create_' + ${iterStat.count}" data-toggle="tab"
+                                          aria-expanded="true" th:text="${ptd.resourceTypeName}">通用权限</a></li>
+                  </ul>
+                  <div id="tabContentCreate" class="tab-content">
+                    <div th:each="ptd,iterStat : ${sysResourceGroupDtoList}" name="tabId" class="tab-pane active"
+                         th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" id="create_1" th:id="'create_' + ${iterStat.count}">
+                      <div class="form-group">
+                        <div th:each="dto : ${ptd.sysResourceDtoList}" class="checkbox">
+                          <label>
+                            <input type="radio" name="href" th:value="${dto.id}"/>
+                            <label th:text="${dto.resourceName}"></label>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-lg-6">
+                        <div class="input-group">
+                          <span style="display: none">
+                          <span class="input-group-addon">
+                              <input id="href0_create" name="href" value="0" type="radio"
+                                     aria-label="Radio button for following text input">
+                          </span>
+                          <input id="href_create" name="href" type="text" class="form-control"
+                                 placeholder="请输入url">
+                          </span>
+                        </div><!-- /input-group -->
+                      </div>
+                    </div>
+                  </div><!-- /.tab-content -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box-footer">
+            <input type="submit" id="create_confirm" class="btn btn-primary center-block" value="添加"/>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div><!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+
+<div id="editModal" class="modal fade" th:fragment="editModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">修改菜单</h4>
+      </div>
+      <div class="modal-body">
+        <form action="#" th:action="@{/be/menu/edit}" id="editForm" th:object="${editMenuDto}" method="post">
+          <input name="id" id="id_edit" type="hidden" th:field="*{id}"/>
+          <div class="box-body">
+            <div class="form-group">
+              <label>菜单名称</label>
+              <input name="name" id="name_edit" type="text" th:field="*{name}" class="form-control" placeholder="请输入菜单名称"/>
+            </div>
+            <div class="form-group">
+              <label>菜单代码</label>
+              <input name="code" id="code_edit" type="text" th:field="*{code}" class="form-control" placeholder="请输入菜单代码"/>
+            </div>
+            <div class="form-group">
+              <label>菜单级别：</label>
+              <select id="level_edit" name="level" th:field="*{level}">
+                <option value="">请选择菜单级别</option>
+                <option th:each="ll : ${levelList}" th:value="${ll}" th:text="${ll}"></option>
+              </select>
+              <select id="editParents" name="parentId" th:field="*{parentId}" style="display: inline" class="form-control">
+                <option value="">请选择父菜单</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>菜单优先级：</label>
+              <input type="text" id="priority_edit" name="priority" th:field="*{priority}" class="form-control" placeholder="请输入菜单优先级"/>
+            </div>
+            <div class="form-group">
+              <label>菜单描述</label>
+              <input id="description_edit" name="description" th:field="*{description}" type="text" class="form-control"
+                     placeholder="请输入菜单描述"/>
+            </div>
+            <div class="form-group">
+              <label>是否为链接:</label>
+              <input name="isLink" type="radio" th:field="*{isLink}" value="true">是
+              <input name="isLink" type="radio" th:field="*{isLink}" value="false">否
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">链接设置</h3>
+              </div>
+              <div class="panel-body">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                  <ul id="tabTitleEdit" class="nav nav-tabs">
+                    <li th:each="ptd,iterStat : ${sysResourceGroupDtoList}" class="active" th:class="${iterStat.first}? 'active' : ''">
+                      <a href="#edit_1" th:href="'#edit_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.resourceTypeName}"></a>
+                    </li>
+                  </ul>
+                  <div id="tabContentEdit" class="tab-content">
+                    <div th:each="ptd,iterStat : ${sysResourceGroupDtoList}" name="tabId"
+                         class="tab-pane active" th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'"
+                         id="edit_1" th:id="'edit_' + ${iterStat.count}">
+                      <div class="form-group">
+                          <div th:each="dto : ${ptd.sysResourceDtoList}" class="checkbox">
+                            <label>
+                              <input type="radio" name="href" th:field="*{href}" th:value="${dto.id}"/>
+                              <label th:text="${dto.resourceName}"></label>
+                            </label>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-lg-6">
+                        <div class="input-group">
+                          <span style="display: none">
+                          <span class="input-group-addon">
+                              <input id="href0_edit" name="href" value="0" type="radio"
+                                     aria-label="Radio button for following text input">
+                          </span>
+                              <input id="href_edit" name="href" type="text" class="form-control"
+                                          placeholder="请输入url"/>
+                          </span>
+                        </div><!-- /input-group -->
+                      </div>
+                    </div>
+                  </div><!-- /.tab-content -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box-footer">
+            <input type="submit" id="edit_confirm" class="btn btn-primary center-block" value="修改"/>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- /.modal-content -->
+</div>
+<th:block th:fragment="menuModalScript">
+  <script src="../../../static/assets/js/modal/modal_menu.js" th:src="@{/assets/js/modal/modal_menu.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+  <head th:include="be/fragment :: head">
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  </head>
+  <body class="skin-blue">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <header class="main-header" th:include="be/fragment :: header"></header>
+
+      <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">菜单列表</h3>
+                <div shiro:hasPermission="menu:create" class="pull-right" style="margin-bottom: 10px;">
+                  <button class="btn btn-success" id="menuCreateBtn">
+                    添加菜单
+                  </button>
+                </div>
+            </div><!-- /.box-header -->
+            <div id="table" class="box-body table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead>
+                   <tr>
+                     <th style="width: 80px">菜单级别</th>
+                     <th style="width: 220px">菜单名称</th>
+                     <th>菜单优先级</th>
+                     <th>菜单代码</th>
+                     <th>菜单链接</th>
+                     <th style="width: 120px">操作</th>
+                   </tr>
+                </thead>
+                <th:block th:each="menu,iterStat : ${menus}">
+                  <tbody id="body1-1" th:id="${iterStat.count}">
+                  <tr>
+                    <td align="left" th:text="${menu.level}"></td>
+                    <td><a name="menuId" th:value="${menu.id}" data-toggle="collapse"
+                           th:if="${menu.subMenus.size() != 0}" th:href="'.level2-' + ${iterStat.count}"
+                           th:text="${menu.name}"></a>
+                      <a name="menuId" th:value="${menu.id}" data-toggle="collapse"
+                         th:if="${menu.subMenus.size() == 0}" th:text="${menu.name}"></a>
+                    </td>
+                    <td th:text="${menu.priority}"></td>
+                    <td th:text="${menu.code}"></td>
+                    <td th:text="${menu.href}"></td>
+                    <td><button class="btn btn-primary btn-xs editBtn" th:id="${menu.id}" data-th-attr="menuName=${menu.name}" name="edit">编
+                      辑</button>
+                      <button class="btn btn-danger btn-xs deleteBtn" th:id="${menu.id}" data-th-attr="menuName=${menu.name}" name="delete">删
+                        除</button>
+                    </td>
+                  </tr>
+                  </tbody>
+                  <tbody>
+                    <th:block th:each="menuChild1,iterStat2 : ${menu.subMenus}">
+                    <tr th:class="'level2-' + ${iterStat.count} + ' collapse in level2'"
+                        data-toggle="collapse" th:id="'level2-' + ${iterStat2.count}">
+                      <td align="center" th:text="${menuChild1.level}"></td>
+                      <td><a name="menuId" th:value="${menuChild1.id}" data-toggle="collapse"
+                             th:if="${menuChild1.subMenus.size() != 0}" th:href="'.level3-' + ${iterStat2.count}"
+                             style="padding-left: 15px" th:text="${menuChild1.name}"></a>
+                        <span th:if="${menuChild1.subMenus.size() == 0}" style="padding-left: 15px" th:text="${menuChild1.name}"></span>
+                      </td>
+                      <td th:text="${menuChild1.priority}"></td>
+                      <td th:text="${menuChild1.code}"></td>
+                      <td th:text="${menuChild1.href}"></td>
+                      <td><button class="btn btn-primary btn-xs editBtn" th:id="${menuChild1.id}" data-th-attr="menuName=${menuChild1.name}"
+                                  name="edit">编 辑</button>
+                        <button class="btn btn-danger btn-xs deleteBtn" th:id="${menuChild1.id}" data-th-attr="menuName=${menuChild1.name}"
+                                name="delete">删 除</button>
+                      </td>
+                    </tr>
+                    <tr th:each="menuChild2,iterStat3 : ${menuChild1.subMenus}"
+                        th:class="'clickable level3-' + ${iterStat2.count} + ' collapse level3'"
+                        data-toggle="collapse" th:id="'level3-' + ${iterStat3.count}">
+                      <td align="right" th:text="${menuChild2.level}"></td>
+                      <td><span name="menuId" th:value="${menuChild2.id}" data-toggle="collapse"
+                                style="padding-left: 15px" th:text="${menuChild2.name}"></span>
+                      </td>
+                      <td th:text="${menuChild2.priority}"></td>
+                      <td th:text="${menuChild2.code}"></td>
+                      <td th:text="${menuChild2.href}"></td>
+                      <td><button class="btn btn-primary btn-xs editBtn" th:id="${menuChild2.id}" data-th-attr="menuName=${menuChild2.name}"
+                                  name="edit">编 辑</button>
+                        <button class="btn btn-danger btn-xs deleteBtn" th:id="${menuChild2.id}" data-th-attr="menuName=${menuChild2.name}"
+                                name="delete">删 除</button>
+                      </td>
+                    </tr>
+                    </th:block>
+                  </tbody>
+                </th:block>
+              </table>
+            </div><!-- /.box-body -->
+          </div>
+          <!-- Your Page Content Here -->
+        </section>
+      </div><!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+    </div><!-- ./wrapper -->
+    <div th:replace="be/modal/modal_menu :: createModal"></div>
+    <div th:replace="be/modal/modal_menu :: editModal"></div>
+    <div th:replace="be/modal/modal_menu :: menuModalScript"></div>
+  </body>
+  <script src="../../static/assets/js/menu.js" th:src="@{/assets/js/menu.js}"></script>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<!-- Modal -->
+<div id="createModal" class="modal fade" th:fragment="createModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal">
+          <span>×</span>
+        </button>
+        <h4 class="modal-title">添加权限</h4>
+      </div>
+      <div class="modal-body">
+        <form th:action="@{/be/permission/create}" id="createForm" th:object="${createPermissionDto}" method="post">
+          <div class="box-body">
+            <div class="form-group">
+              <label>基本信息</label>
+              <input class="form-control" name="name" type="text" th:field="*{name}" placeholder="请输入权限名称"/>
+            </div>
+            <div class="form-group">
+              <label>权限类型</label>
+              <select class="form-control" name="permissionType" id="permissionType" th:field="*{permissionType}">
+                <option value="">权限类型</option>
+                <option th:each="rType : ${permissionTypeList}" th:value="${rType.code}" th:text="${rType.desc}"></option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>权限代码</label>
+              <input class="form-control" id="code" name="code" type="text" th:field="*{code}" placeholder="请输入权限代码"/>
+            </div>
+            <div class="form-group ">
+              <label>权限描述</label>
+              <input class="form-control" id="permissionDescription" name="permissionDescription" type="text"
+                     th:field="*{permissionDescription}" placeholder="请输入权限描述"/>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">资源设置</h3>
+              </div>
+              <div class="panel-body">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                  <ul class="nav nav-tabs" id="tabTitleCreate">
+                    <li th:each="ptd,iterStat : ${sysResourceGroupDtoList}" class="active" th:class="${iterStat.first} ? 'active' : ''">
+                      <a th:href="'#create_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.resourceTypeName}">通用</a>
+                    </li>
+                  </ul>
+                  <div class="tab-content" id="tabContentCreate">
+                    <div th:each="ptd,iterStat : ${sysResourceGroupDtoList}" class="tab-pane active"
+                         th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" th:id="'create_' + ${iterStat.count}" name="tabId">
+                      <div class="checkbox">
+                        <label>
+                          <input class="allOption" name="allOption" type="checkbox">
+                          <strong>全选</strong>
+                        </label>
+                      </div>
+                      <div class="form-group">
+                        <div th:each="dto : ${ptd.sysResourceDtoList}" class="checkbox">
+                          <label>
+                            <input class="resourceIdList" type="checkbox" name="resourceIdList" th:value="${dto.id}"/>
+                            <span th:text="${dto.resourceName}">登录</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div><!-- /.tab-content -->
+                </div>
+              </div>
+            </div>
+            <shiro:hasPermission name="permission:create">
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" id="create_confirm" type="submit" value="添加"/>
+              </div>
+            </shiro:hasPermission>
+          </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+
+<div id="editModal" class="modal fade" th:fragment="editModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">编辑权限</h4>
+      </div>
+      <div class="modal-body">
+        <form action="#" th:action="@{/be/permission/edit}" id="editForm" th:object="${editPermissionDto}" method="post">
+          <div class="box-body">
+            <div class="form-group ">
+              <label>基本信息</label>
+              <input class="form-control" name="name" id="name_edit" th:field="*{name}" type="text" placeholder="请输入权限名称"/>
+            </div>
+            <div class="form-group ">
+              <label>权限类型</label>
+              <select class="form-control" name="permissionType" id="permissionType_edit" th:field="*{permissionType}">
+                <option value="">权限类型</option>
+                <option th:each="rType : ${permissionTypeList}" th:value="${rType.code}" th:text="${rType.desc}"></option>
+              </select>
+            </div>
+            <div class="form-group ">
+              <label>权限代码</label>
+              <input class="form-control" name="code" id="code_edit" type="text" th:field="*{code}" placeholder="请输入权限代码"/>
+            </div>
+            <div class="form-group ">
+              <label>权限描述</label>
+              <input class="form-control" name="permissionDescription" id="permissionDescription_edit" type="text"
+                     th:field="*{permissionDescription}" placeholder="请输入权限描述"/>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">权限设置</h3>
+              </div>
+              <div class="panel-body">
+                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
+                  <ul class="nav nav-tabs" id="tabTitleEdit">
+                    <li th:each="ptd,iterStat : ${sysResourceGroupDtoList}" class="active" th:class="${iterStat.first} ? 'active' : ''">
+                      <a th:href="'#' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.resourceTypeName}">通用</a>
+                    </li>
+                  </ul>
+                  <div id="tabContentEdit" class="tab-content">
+                    <div th:each="ptd,iterStat : ${sysResourceGroupDtoList}" class="tab-pane active"
+                     th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" th:id="${iterStat.count}" name="tabId">
+                      <div class="checkbox">
+                        <label>
+                          <input class="allOption" name="allOption" type="checkbox">
+                          <strong>全选</strong>
+                        </label>
+                      </div>
+                      <div class="form-group">
+                        <div class="checkbox" th:each="dto : ${ptd.sysResourceDtoList}">
+                          <label>
+                            <input class="resourceIdList" type="checkbox" name="resourceIdList" th:value="${dto.id}"/>
+                            <span th:text="${dto.resourceName}">登录</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div><!-- /.tab-content -->
+                </div>
+              </div>
+            </div>
+            <input name="id" id="id_edit" th:field="*{id}" type="hidden"/>
+              <div shiro:hasPermission="permission:edit" class="box-footer">
+                <input class="btn btn-primary center-block" id="edit_confirm" type="submit" value="修改">
+              </div>
+          </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+
+<!-- 搜索 -->
+<div id="searchModal" class="modal fade" th:fragment="searchModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" type="button" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">权限搜索</h4>
+      </div>
+      <div class="modal-body">
+        <form id="search_form" th:action="@{/be/permission/index}" method="get"
+                   th:object="${permissionSearchConditions}">
+          <div class="box-body">
+            <div class="form-group ">
+              <label>权限类型</label>
+              <select class="form-control" name="permissionType">
+                <option value="">权限类型</option>
+                  <option th:each="rType : ${permissionTypeList}" th:value="${rType.code}"
+                          th:selected="${rType.code == permissionSearchConditions.permissionType} ? 'true' : 'false'"
+                          th:text="${rType.desc}">
+                  </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="name_search">权限名称</label>
+              <input class="form-control" type="text" name="name" id="name_search" th:field="*{name}" placeholder="请输入权限名称"/>
+            </div>
+            <div class="form-group">
+              <label for="code_search">权限代码</label>
+              <input class="form-control" name="code" id="code_search" th:filed="*{code}" type="text" placeholder="请输入权限代码"/>
+            </div>
+          </div>
+          <input name="currentPage" hidden>
+          <input name="pageSize" hidden>
+          <div class="box-footer">
+            <button class="btn btn-primary center-block" id="search_form_submit">搜索</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<th:block th:fragment="permissionScript">
+  <script src="../../../static/assets/js/modal/modal_permission.js" th:src="@{/assets/js/modal/modal_permission.js}"></script>
+</th:block>
+</body>
+</html>
+

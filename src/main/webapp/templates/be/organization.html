@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <!-- embed example -->
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+</head>
+<body class="skin-blue">
+  <div class="wrapper">
+
+    <!-- Main Header -->
+    <header class="main-header" th:include="be/fragment :: header"></header>
+
+    <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <span id="page-status" class="static" th:class="dynamic"></span>
+      <!-- Main content -->
+      <section class="content-header">
+        <h1>
+          机构管理
+        </h1>
+      </section>
+      <!-- Main content -->
+      <section class="content">
+        <div class="box">
+          <div class="box-header">
+
+            <h3 class="box-title"> 机构列表</h3>
+            <div class="pull-right" style="margin-bottom: 10px;">
+              <button shiro:hasPermission="organization:index" class="btn btn-success searchBtn" name="search">
+                <i class="fa fa-search-plus" ></i>搜索机构</button>
+              <button shiro:hasPermission="organization:create" class="btn btn-success createBtn">
+                创建机构
+              </button>
+            </div>
+          </div><!-- /.box-header -->
+          <div class="box-body table-responsive">
+            <table class="table table-bordered table-striped">
+              <tbody>
+                <tr>
+                  <th style="width: 60px">#</th>
+                  <th>机构名称</th>
+                  <th>机构类型</th>
+                  <th>所属地区</th>
+                  <th>操作</th>
+                </tr>
+                <th:block th:each="org,status : ${organizations}">
+                  <tr>
+                    <td th:text="${(pagination.currentPage - 1)* 10 + status.count}">1</td>
+                    <td>
+                      <a th:if="${org.subOrg != null}" class="parent_href" id="1" th:id="${org.id}" name="parent_href" href="javascript:;"
+                         th:text="${org.name}">
+                        合肥市人民医院
+                      </a>
+                    </td>
+                    <td>
+                      <span th:text="${org.companyType.desc}">送检医院</span>
+                    </td>
+                    <td th:text="${org.province == null} ? '' : |${org.province.name}${org.city.name}${org.district.name}|">安徽省合肥市蜀山区</td>
+                    <td>
+                      <button shiro:hasPermission="organization:detail" class="btn btn-primary btn-xs editBtn" th:id="${org.id}" name="edit">
+                        详情
+                      </button>
+                      <button shiro:hasPermission="organization:delete" class="btn btn-danger btn-xs deleteBtn" th:id="${org.id}"
+                              th:value="${org.name}">
+                        删除
+                      </button>
+                    </td>
+                  </tr>
+                  <tr th:each="child : ${org.subOrg}" class="collapse" name="child_1" th:name ="'child_' + ${child.parent.id}">
+                    <td>└</td>
+                    <td th:text="${child.name}">病理科</td>
+                    <td>
+                      <span th:text="${child.companyType.desc}">科室</span>
+                    </td>
+                    <td>
+                      <span th:text="${child.province == null} ? '' : |${child.province.name}${child.city.name}${child.district.name}|">
+                      安徽省合肥市蜀山区
+                      </span>
+                    </td>
+                    <td>
+                      <button shiro:hasPermission="organization:detail" class="btn btn-primary btn-xs editBtn" th:id="${child.id}"
+                              name="edit">
+                        详情
+                      </button>
+                      <button shiro:hasPermission="organization:delete" class="btn btn-danger btn-xs deleteBtn" th:id="${child.id}"
+                              th:value="${child.name}">
+                        删除
+                      </button>
+                    </td>
+                  </tr>
+                </th:block>
+              </tbody>
+            </table>
+          </div><!-- /.box-body -->
+          <!-- Your Page Content Here -->
+          <div class="box-footer clearfix"><!-- 分页 -->
+            <ul class="pagination pagination-sm no-margin pull-right" id="PaginatorUl">
+            </ul>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- Main Footer -->
+    <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+  </div>
+  <div th:replace="be/modal/modal_organization :: createModal"></div>
+  <div th:replace="be/modal/modal_organization :: editModal"></div>
+  <div th:replace="be/modal/modal_organization :: searchModal"></div>
+  <div th:replace="be/modal/modal_organization :: informModal"></div>
+  <div th:replace="be/modal/modal_organization :: organizationScript"></div>
+  <script data-th-inline="javascript">
+    /*<![CDATA[*/
+    var currentPage= /*[[${pagination.currentPage}]]*/ '1';//当前页面
+    var pageSize= /*[[${pagination.pageSize}]]*/'5';
+    var totalPages=/*[[${pagination.totalPage == 0 ? 1 : pagination.totalPage}]]*/'10'
+    /*]]>*/
+  </script>
+  <script src="../../static/assets/js/organization.js" th:src="@{/assets/js/organization.js}"></script>
+</body>
+</html>

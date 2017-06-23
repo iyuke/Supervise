@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <meta charset="UTF-8">
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/bootstrap/js/bootstrap-multiselect.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/daterangepicker/daterangepicker.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/common.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/framework/bootstrap.min.js"></script>
+</head>
+<body class="skin-blue">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header" th:include="be/fragment :: header"></header>
+
+  <aside class="main-sidebar" th:include="be/fragment :: sidebar"></aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        医院详情
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="box box-default">
+        <div class="box-body">
+          <div class="box box-solid" id="viewBasicInfo">
+            <div class="box-header with-border">
+              <h5 class="box-title">基本信息</h5>
+              <div class="btn-group pull-right inline">
+                <a class="btn btn-default btn-xs" id="editBasicInfoBtn" type="button" title="编辑基本信息"
+                   shiro:hasPermission="hospital:basicInfoEdit">
+                  <i class="fa fa-edit"></i>
+                </a>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="row table-default">
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>医院名称</th>
+                      <td th:text="${hospital.name}">安徽省六安市人民医院人民医院</td>
+                    </tr>
+                    <tr>
+                      <th>医院级别</th>
+                      <td th:text="${null == hospital.hospitalLevel ? '' : hospital.hospitalLevel.desc}">二级甲等</td>
+                    </tr>
+                    <tr>
+                      <th>所属地区</th>
+                      <td th:text="${hospital.provinceName+hospital.cityName+hospital.districtName}">安徽省六安市</td>
+                    </tr>
+                    <tr>
+                      <th>地址</th>
+                      <td th:text="${hospital.address}">安徽省六安市金安区皖西西路21号医技楼五楼</td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>医院负责人</th>
+                      <td th:text="${hospital.directorName}">张四</td>
+                    </tr>
+                    <tr>
+                      <th>联系电话</th>
+                      <td th:text="${hospital.directorPhone}">131****0101</td>
+                    </tr>
+                    <tr>
+                      <th>病理科负责人</th>
+                      <td th:text="${hospital.contactName}">张三</td>
+                    </tr>
+                    <tr>
+                      <th>联系电话</th>
+                      <td th:text="${hospital.contactPhone}">131****0101</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box box-solid nondisplay" id="editBasicInfo" shiro:hasPermission="hospital:basicInfoEdit">
+            <form class="form-horizontal" id="editBasicInfoForm">
+              <input type="hidden" value="1" name="flag"/>
+              <input type="hidden" th:value="${hospital.id}" name="id"/>
+              <div class="box-header with-border">
+                <h5 class="box-title">基本信息</h5>
+                <div class="btn-group pull-right inline">
+                  <a class="btn btn-default btn-xs" id="resetBasicInfoEditBtn" type="button" title="取消编辑">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="box-body">
+                <div class="row table-default">
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="name_edit" class="col-md-3 control-label font-normal">
+                        <span class="text-red">*&nbsp;</span>医院名称</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="name_edit" name="name" type="text" th:value="${hospital.name}" placeholder="医院名称"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="hospitalLevel_edit" class="col-md-3 control-label font-normal">医院级别</label>
+                      <div class="col-md-9">
+                        <select class="form-control" id="hospitalLevel_edit" name="hospitalLevel" th:field="${hospital.hospitalLevel}">
+                          <option value="">请选择医院级别</option>
+                          <option value="THREE_A">三级甲等</option>
+                          <option value="THREE_B">三级乙等</option>
+                          <option value="TWO_A">二级甲等</option>
+                          <option value="TWO_B">二级乙等</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group" id="org_region_edit">
+                      <label for="provinceId_edit" class="col-md-3 control-label font-normal">
+                        <span class="text-red">*&nbsp;</span>所属地区</label>
+                      <div class="col-md-9">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <input id="current_province" type="hidden" th:value="${hospital.provinceId}"/>
+                            <select class="form-control" id="provinceId_edit" name="provinceId">
+                              <option value="">省/直辖市</option>
+                              <option value="上海市" th:remove="all">上海市</option>
+                            </select>
+                          </div>
+                          <div class="col-md-4">
+                            <input id="current_city" type="hidden" th:value="${hospital.cityId}"/>
+                            <select class="form-control" id="cityId_edit" name="cityId">
+                              <option value="">市/区</option>
+                              <option value="上海市" th:remove="all">上海市</option>
+                            </select>
+                          </div>
+                          <div class="col-md-4">
+                            <input id="current_district" type="hidden" th:value="${hospital.districtId}"/>
+                            <select class="form-control" id="districtId_edit" name="districtId">
+                              <option value="">县</option>
+                              <option value="徐汇区">徐汇区</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="address_edit" class="col-md-3 control-label font-normal">地址</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="address_edit" name="address" type="text" th:value="${hospital.address}"
+                               placeholder="地址"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="directorName_edit" class="col-md-3 control-label font-normal">医院负责人</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="directorName_edit" name="directorName" type="text"
+                               th:value="${hospital.directorName}" placeholder="医院负责人"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="directorPhone_edit" class="col-md-3 control-label font-normal">联系电话</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="directorPhone_edit" name="directorPhone" type="text"
+                               th:value="${hospital.directorPhone}" placeholder="医院负责人联系电话"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="contactName_edit" class="col-md-3 control-label font-normal">病理科联系人</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="contactName_edit" name="contactName" type="text" th:value="${hospital.contactName}"
+                               placeholder="病理科联系人"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="contactPhone_edit" class="col-md-3 control-label font-normal">联系电话</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="contactPhone_edit" name="contactPhone" type="text"
+                               th:value="${hospital.contactPhone}"
+                               placeholder="病理科联系人联系电话"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" type="submit" value="提交"/>
+              </div>
+            </form>
+          </div>
+          <div class="box box-solid" id="viewResearchInfo">
+            <div class="box-header with-border">
+              <h5 class="box-title">调研信息</h5>
+              <div class="btn-group pull-right inline">
+                <a class="btn btn-default btn-xs" id="editResearchInfoBtn" type="button" title="编辑调研信息"
+                   shiro:hasPermission="hospital:surveyEdit">
+                  <i class="fa fa-edit"></i>
+                </a>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="row table-default">
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>常驻人口总数</th>
+                      <td th:text="${hospital.amountOfResidentPopulation}">9733万</td>
+                    </tr>
+                    <tr>
+                      <th>门诊量</th>
+                      <td th:text="${hospital.amountOfTreatment}">62153万</td>
+                    </tr>
+                    <tr>
+                      <th>手术人次</th>
+                      <td th:text="${hospital.amountOfSurgeries}">50000</td>
+                    </tr>
+                    <tr>
+                      <th>床位数</th>
+                      <td th:text="${hospital.amountOfBeds}">2000</td>
+                    </tr>
+                    <tr>
+                      <th>常规病理量</th>
+                      <td th:text="${hospital.amountOfRoutinePathology}">4000</td>
+                    </tr>
+                    <tr>
+                      <th>液基细胞</th>
+                      <td th:text="${hospital.amountOfTCT}">2000</td>
+                    </tr>
+                    <tr>
+                      <th>HPV</th>
+                      <td th:text="${hospital.amountOfHPV}">2600</td>
+                    </tr>
+                    <tr>
+                      <th>免疫组化</th>
+                      <td th:text="${hospital.amountOfIHC}">2700</td>
+                    </tr>
+                    <tr>
+                      <th>疑难病理</th>
+                      <td th:text="${hospital.amountOfConsultation}">2800</td>
+                    </tr>
+                    <tr>
+                      <th>冰冻石蜡</th>
+                      <td th:text="${hospital.amountOfFrozenAndParaffin}">34000</td>
+                    </tr>
+                    <tr>
+                      <th>内镜检查人数</th>
+                      <td th:text="${hospital.amountOfEndoscope}">34000</td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>就诊量</th>
+                      <td th:text="${hospital.amountOfTreatment}">4000</td>
+                    </tr>
+                    <tr>
+                      <th>出院人数</th>
+                      <td th:text="${hospital.amountOfTreatment}">3000</td>
+                    </tr>
+                    <tr>
+                      <th>与第三方合作</th>
+                      <td th:text="${#bools.isTrue(hospital.hasThirdParty) ? '是' : '否'}"></td>
+                    </tr>
+                    <tr th:if="${#bools.isTrue(hospital.hasThirdParty)}">
+                      <th></th>
+                      <td><span class="with-right-padding">第三方名称</span><span th:text="${hospital.aneOfThirdParty}">迪安</span></td>
+                    </tr>
+                    <tr th:if="${#bools.isTrue(hospital.hasThirdParty)}">
+                      <th></th>
+                      <td><span class="with-right-padding" th:text="${hospital.cooperationContent}">合作内容</span><span>疑难病理</span></td>
+                    </tr>
+                    <tr th:if="${#bools.isTrue(hospital.hasThirdParty)}">
+                      <th></th>
+                      <td><span class="with-right-padding" th:text="${hospital.cooperationMethod}">合作方式</span><span>外包</span></td>
+                    </tr>
+                    <tr>
+                      <th>分子项目</th>
+                      <td th:text="${hospital.moleculeItem}">EGFR</td>
+                    </tr>
+                    <tr>
+                      <th>分子数量</th>
+                      <td th:text="${hospital.amountOfMolecule}">900</td>
+                    </tr>
+                    <tr>
+                      <th>常见肿瘤</th>
+                      <td th:text="${hospital.commonTumors}">肺癌</td>
+                    </tr>
+                    <tr>
+                      <th>用药习惯</th>
+                      <td th:text="${hospital.medicationHabits}">2700</td>
+                    </tr>
+                    <tr>
+                      <th>外送第三方数量</th>
+                      <td th:text="${hospital.amountOfOutgoing}">2800</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box box-solid nondisplay" id="editResearchInfo" shiro:hasPermission="hospital:surveyEdit">
+            <form class="form-horizontal" id="editSearchInfoForm">
+              <input type="hidden" value="2" name="flag"/>
+              <input type="hidden" th:value="${hospital.id}" name="id"/>
+              <div class="box-header with-border">
+                <h5 class="box-title">调研信息</h5>
+                <div class="btn-group pull-right inline">
+                  <a class="btn btn-default btn-xs" id="resetResearchInfoEditBtn" type="button" title="取消编辑">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="box-body">
+                <div class="row table-default">
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="amountOfResidentPopulation_edit" class="col-md-3 control-label font-normal">常驻人口总数</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfResidentPopulation_edit" name="amountOfResidentPopulation" type="text"
+                               th:value="${hospital.amountOfResidentPopulation}" placeholder="常驻人口总数"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfOutpatients_edit" class="col-md-3 control-label font-normal">门诊量</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfOutpatients_edit" name="amountOfOutpatients" type="text"
+                               th:value="${hospital.amountOfTreatment}" placeholder="门诊量"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfSurgeries_edit" class="col-md-3 control-label font-normal">手术人次</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfSurgeries_edit" name="amountOfSurgeries" type="text"
+                               th:value="${hospital.amountOfSurgeries}" placeholder="手术人次"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfBeds_edit" class="col-md-3 control-label font-normal">床位数</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfBeds_edit" name="amountOfBeds" type="text"
+                               th:value="${hospital.amountOfBeds}" placeholder="床位数"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfRoutinePathology_edit" class="col-md-3 control-label font-normal">常规病理量</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfRoutinePathology_edit" name="amountOfRoutinePathology" type="text"
+                               th:value="${hospital.amountOfRoutinePathology}" placeholder="常规病理量"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfTCT_edit" class="col-md-3 control-label font-normal">液基细胞(TCT)</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfTCT_edit" name="amountOfTCT" type="text"
+                               th:value="${hospital.amountOfTCT}" placeholder="液基细胞(TCT)"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfHPV_edit" class="col-md-3 control-label font-normal">HPV</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfHPV_edit" name="amountOfHPV" type="text"
+                               th:value="${hospital.amountOfHPV}" placeholder="HPV"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfIHC_edit" class="col-md-3 control-label font-normal">免疫组化</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfIHC_edit" name="amountOfIHC" type="text"
+                               th:value="${hospital.amountOfIHC}" placeholder="免疫组化"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfConsultation_edit" class="col-md-3 control-label font-normal">疑难病理</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfConsultation_edit" name="amountOfConsultation" type="text"
+                               th:value="${hospital.amountOfConsultation}" placeholder="疑难病理"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfFrozenAndParaffin_edit" class="col-md-3 control-label font-normal">冰冻石蜡</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfFrozenAndParaffin_edit" name="amountOfFrozenAndParaffin" type="text"
+                               th:value="${hospital.amountOfFrozenAndParaffin}" placeholder="冰冻石蜡"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfEndoscope_edit" class="col-md-3 control-label font-normal">内镜检查人数</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfEndoscope_edit" name="amountOfEndoscope" type="text"
+                               th:value="${hospital.amountOfEndoscope}" placeholder="内镜检查人数"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="amountOfTreatment_edit" class="col-md-3 control-label font-normal">就诊量</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfTreatment_edit" name="amountOfTreatment" type="text"
+                               th:value="${hospital.amountOfTreatment}" placeholder="就诊量"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfDischarged_edit" class="col-md-3 control-label font-normal">出院人数</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfDischarged_edit" name="amountOfDischarged" type="text"
+                               th:value="${hospital.amountOfTreatment}" placeholder="出院人数"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="hasThirdParty_edit" class="col-md-3 control-label font-normal">与第三方合作</label>
+                      <div class="col-md-9">
+                        <div class="input-group" style="padding-top: 5px">
+                          <input class="hasThirdParty" id="hasThirdParty_edit" name="hasThirdParty" type="radio" value="true"
+                                 th:checked="${#bools.isTrue(hospital.hasThirdParty)}"/>是&nbsp;
+                          <input class="hasThirdParty" id="hasThirdParty_edit" name="hasThirdParty" type="radio" value="false"
+                                 th:checked="${#bools.isFalse(hospital.hasThirdParty)}"/>否
+                        </div>
+                      </div>
+                    </div>
+                    <div class="hasThirdPartyCollapse" th:classappend="${#bools.isTrue(hospital.hasThirdParty) ? '' : 'nondisplay'}">
+                      <div class="form-group no-button-margin">
+                        <div class="col-md-9 col-lg-offset-3">
+                          <div class="input-group with-margin">
+                            <span class="input-group-addon">第三方名称</span>
+                            <input class="form-control" id="aneOfThirdParty_edit" name="aneOfThirdParty" type="text"
+                                   th:value="${hospital.aneOfThirdParty}" placeholder="第三方名称"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group no-button-margin">
+                        <div class="col-md-9 col-lg-offset-3">
+                          <div class="input-group with-margin">
+                            <span class="input-group-addon">合作内容</span>
+                            <input class="form-control" id="cooperationContent_edit" name="cooperationContent" type="text"
+                                   th:value="${hospital.cooperationContent}" placeholder="合作内容"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group no-button-margin">
+                        <div class="col-md-9 col-lg-offset-3">
+                          <div class="input-group with-margin">
+                            <span class="input-group-addon">合作方式</span>
+                            <input class="form-control" id="cooperationMethod_edit" name="cooperationMethod" type="text"
+                                   th:value="${hospital.cooperationMethod}" placeholder="合作方式"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="moleculeItem_edit" class="col-md-3 control-label font-normal">分子项目</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="moleculeItem_edit" name="moleculeItem" type="text"
+                               th:value="${hospital.moleculeItem}" placeholder="分子项目"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfMolecule_edit" class="col-md-3 control-label font-normal">分子数量</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfMolecule_edit" name="amountOfMolecule" type="text"
+                               th:value="${hospital.amountOfMolecule}" placeholder="分子数量"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="commonTumors_edit" class="col-md-3 control-label font-normal">常见肿瘤</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="commonTumors_edit" name="commonTumors" type="text"
+                               th:value="${hospital.commonTumors}" placeholder="常见肿瘤"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="medicationHabits_edit" class="col-md-3 control-label font-normal">用药习惯</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="medicationHabits_edit" name="medicationHabits" type="text"
+                               th:value="${hospital.medicationHabits}" placeholder="用药习惯"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="amountOfOutgoing_edit" class="col-md-3 control-label font-normal">外送第三方数量</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="amountOfOutgoing_edit" name="amountOfOutgoing" type="text"
+                               th:value="${hospital.amountOfOutgoing}" placeholder="外送第三方数量"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" type="submit" value="提交"/>
+              </div>
+            </form>
+          </div>
+          <div class="box box-solid" id="viewItemInfo">
+            <div class="box-header with-border">
+              <h5 class="box-title">合作项目</h5>
+              <div class="btn-group pull-right inline">
+                <a class="btn btn-default btn-xs" id="editItemInfoBtn" type="button" title="编辑项目信息"
+                   shiro:hasPermission="hospital:cooperationItemAdd">
+                  <i class="fa fa-edit"></i>
+                </a>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="row table-default">
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>基础病理</th>
+                      <td><span class="with-right-padding">结算比例（%）</span><span th:text="${hospital.pathologySettlementRatio}">50</span></td>
+                    </tr>
+                    <tr>
+                      <th></th>
+                      <td><span class="with-right-padding">会诊服务费</span><span th:text="${hospital.consultationServicePrice}">50</span>元</td>
+                    </tr>
+                    <tr>
+                      <th></th>
+                      <td>
+                        <div class="panel panel-default">
+                          <div class="panel-heading" role="tab">
+                            <h4 class="panel-title">
+                              <a role="button">
+                                合作项目
+                              </a>
+                            </h4>
+                          </div>
+                          <div class="panel-collapse">
+                            <div class="panel-body">
+                              <table class="table" id="pathologyTestItem_detail">
+                                <tr>
+                                  <td>项目名称</td>
+                                  <td>项目价格</td>
+                                </tr>
+                                <tr th:each="pathologyItem : ${hospital.pathologyTestItems}">
+                                  <input class="current_pathologyItem" type="hidden" th:attr="id=${pathologyItem.id}"/>
+                                  <td th:text="${pathologyItem.name}">检测项目A</td>
+                                  <td th:text="${pathologyItem.price}">50</td>
+                                </tr>
+                                <tr th:remove="all">
+                                  <td>检测项目B</td>
+                                  <td>100</td>
+                                </tr>
+                                <tr th:remove="all">
+                                  <td>检测项目C</td>
+                                  <td>50</td>
+                                </tr>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>分子病理</th>
+                      <td><span class="with-right-padding">结算比例（%）</span><span th:text="${hospital.geneSettlementRatio}">50</span></td>
+                    </tr>
+                    <tr>
+                      <th></th>
+                      <td>
+                        <div class="panel panel-default" style="margin-top: 36px">
+                          <div class="panel-heading" role="tab">
+                            <h4 class="panel-title">
+                              <a role="button">
+                                合作项目
+                              </a>
+                            </h4>
+                          </div>
+                          <div class="panel-collapse">
+                            <div class="panel-body">
+                              <table class="table" id="testGene_detail">
+                                <tr>
+                                  <td>项目名称</td>
+                                  <td>项目价格</td>
+                                </tr>
+                                <tr th:each="testGene : ${hospital.testGenes}">
+                                  <input class="current_testGene" type="hidden" th:attr="id=${testGene.id}"
+                                         th:attrappend="price=${testGene.price}"/>
+                                  <td th:text="${testGene.name}">检测项目A</td>
+                                  <td th:text="${testGene.price}">50</td>
+                                </tr>
+                                <tr th:remove="all">
+                                  <td>检测项目B</td>
+                                  <td>100</td>
+                                </tr>
+                                <tr th:remove="all">
+                                  <td>检测项目C</td>
+                                  <td>50</td>
+                                </tr>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box box-solid nondisplay" id="editItemInfo" shiro:hasPermission="hospital:cooperationItemAdd">
+            <form class="form-horizontal" id="editItemInfoForm">
+              <input type="hidden" value="3" name="flag"/>
+              <input type="hidden" th:value="${hospital.id}" name="id"/>
+              <div class="box-header with-border">
+                <h5 class="box-title">项目信息</h5>
+                <div class="btn-group pull-right inline">
+                  <a class="btn btn-default btn-xs" id="resetItemInfoEditBtn" type="button" title="取消编辑">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="col-md-3 control-label font-normal">基础病理</label>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="col-md-3 control-label font-normal">分子病理</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group no-button-margin">
+                      <div class="col-md-9 col-lg-offset-3">
+                        <div class="input-group with-margin">
+                          <span class="input-group-addon">结算比例（%）</span>
+                          <input class="form-control" id="pathologySettlementRatio_edit" name="pathologySettlementRatio" type="text"
+                                 th:value="${hospital.pathologySettlementRatio}" placeholder="结算给医院的比例（%）"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group no-button-margin">
+                      <div class="col-md-9 col-lg-offset-3">
+                        <div class="input-group with-margin">
+                          <span class="input-group-addon">会诊服务费</span>
+                          <input class="form-control" id="consultationServicePrice_edit" name="consultationServicePrice" type="text"
+                                 th:value="${hospital.consultationServicePrice}" placeholder="会诊服务费"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <div class="col-md-9 col-lg-offset-3">
+                        <div class="panel-group collapse-group" id="testPathologyItem">
+                          <div class="panel panel-default" th:each="pathologyTestItemClass : ${pathologyTestItemClasses}">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#routine"
+                                   th:href="|#${pathologyTestItemClass.key}|" th:text="${pathologyTestItemClass.key.desc}">
+                                  常规病理
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="routine" th:id="${pathologyTestItemClass.key}" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr th:each="pathologyTestItem : ${pathologyTestItemClass.value}">
+                                    <th><input class="itemList pathologyItem" th:classappend="|pathologyItem${pathologyTestItem.id}|"
+                                               type="checkbox" th:value="${pathologyTestItem.id}"></th>
+                                    <td th:text="${pathologyTestItem.name}">检测项目A</td>
+                                    <td th:text="${pathologyTestItem.price}">50</td>
+                                  </tr>
+                                  <tr th:remove="all">
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td>100</td>
+                                  </tr>
+                                  <tr th:remove="all">
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td>50</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="panel panel-default" th:remove="all">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#gell_gynecology">
+                                  细胞学（妇科)
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="gell_gynecology" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目A</td>
+                                    <td>50</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td>100</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td>50</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="panel panel-default" th:remove="all">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#gell">
+                                  细胞学（非妇科)
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="gell" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目A</td>
+                                    <td>50</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td>100</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td>50</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="panel panel-default" th:remove="all">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#hpv">
+                                  HPVDNA-HC2
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="hpv" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目A</td>
+                                    <td>50</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td>100</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td>50</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="panel panel-default" th:remove="all">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#landing_gynecology">
+                                  兰丁细胞学检测
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="landing_gynecology" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目A</td>
+                                    <td>50</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td>100</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td>50</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="panel panel-default" th:remove="all">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testPathologyItem" href="#consultation">
+                                  疑难会诊
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="consultation" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目A</td>
+                                    <td>50</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td>100</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td>50</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group no-button-margin">
+                      <div class="col-md-9 col-lg-offset-3">
+                        <div class="input-group with-margin">
+                          <span class="input-group-addon">结算比例（%）</span>
+                          <input class="form-control" id="geneSettlementRatio_edit" name="geneSettlementRatio" type="text"
+                                 th:value="${hospital.geneSettlementRatio}" placeholder="结算给医院的比例（%）"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-md-9 col-lg-offset-3">
+                        <div class="panel-group collapse-group" id="testGeneItem">
+                          <div class="panel panel-default" th:each="testGeneClass : ${testGeneClasses}">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testGeneItem" href="#chemotherapy"
+                                   th:href="|#${testGeneClass.key}|" th:text="${testGeneClass.key.desc}">
+                                  化疗用药检测
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="chemotherapy" th:id="${testGeneClass.key}" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr th:each="testGene : ${testGeneClass.value}">
+                                    <th><input class="itemList testGene" th:classappend="|testGene${testGene.id}|" type="checkbox"
+                                               th:value="${testGene.id}"></th>
+                                    <td th:text="${testGene.name}">检测项目A</td>
+                                    <td><input class="itemList price" value="50"
+                                               th:value="${testGene.price}"></td>
+                                  </tr>
+                                  <tr th:remove="all">
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td><input class="itemList" name="price" value="100"></td>
+                                  </tr>
+                                  <tr th:remove="all">
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td><input class="itemList" name="price" value="50"></td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="panel panel-default" th:remove="all">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testGeneItem" href="#target_drug">
+                                  靶向用药检测
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="target_drug" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目A</td>
+                                    <td><input class="itemList" name="price" value="50"></td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td><input class="itemList" name="price" value="100"></td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td><input class="itemList" name="price" value="50"></td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="panel panel-default" th:remove="all">
+                            <div class="panel-heading" role="tab">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#testGeneItem" href="#tumor_prognosis">
+                                  肿瘤预后检测
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="tumor_prognosis" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                <table class="table">
+                                  <tr>
+                                    <th class="no-border"><input class="allOption" type="checkbox"></th>
+                                    <td class="no-border">项目名称</td>
+                                    <td class="no-border">项目价格</td>
+                                  </tr>
+                                  <tr>
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目A</td>
+                                    <td><input class="itemList" name="price" value="50"></td>
+                                  </tr>
+                                  <tr th:remove="all">
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目B</td>
+                                    <td><input class="itemList" name="price" value="100"></td>
+                                  </tr>
+                                  <tr th:remove="all">
+                                    <th><input class="itemList" type="checkbox"></th>
+                                    <td>检测项目C</td>
+                                    <td><input class="itemList" name="price" value="50"></td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" type="submit" value="提交"/>
+              </div>
+            </form>
+          </div>
+          <div class="box box-solid" id="viewCooperationInfo">
+            <div class="box-header with-border">
+              <h5 class="box-title">合作信息</h5>
+              <div class="btn-group pull-right inline">
+                <a class="btn btn-default btn-xs" id="editCooperationInfoBtn" type="button" title="编辑合作信息"
+                   shiro:hasPermission="hospital:cooperationInfoEdit">
+                  <i class="fa fa-edit"></i>
+                </a>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="row table-default">
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>合作状态</th>
+                      <td th:text="${null == hospital.cooperationState ? '' : hospital.cooperationState.desc}">已拜访</td>
+                    </tr>
+                    <tr>
+                      <th>报告要求</th>
+                      <td th:text="${hospital.reportRequirement}">三天之内要报告</td>
+                    </tr>
+                    <tr>
+                      <th>结算周期</th>
+                      <td
+                          th:text="${hospital.invoiceCycle == null ? '' : #strings.concat('每月',hospital.invoiceCycle,'号')}">每月6号
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>发票抬头</th>
+                      <td th:text="${hospital.invoiceTitle}">上海观然医疗科技有限公司</td>
+                    </tr>
+                    <tr>
+                      <th>合作期限</th>
+                      <td th:text="${hospital.contractDate}">
+                        一年
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>预计产量</th>
+                      <td th:text="${null == hospital.output ? '' : #strings.concat(hospital.output, '元/月')}">2000元／月</td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>外勤服务周期</th>
+                      <td>
+                        <span th:each="service : ${hospital.serviceCycles}" th:text="${service.desc}">周三</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>服务时间</th>
+                      <td th:text="${hospital.serviceFormat}">8:00 -9:00</td>
+                    </tr>
+                    <tr>
+                      <th>回款周期</th>
+                      <td th:text="|${hospital.paymentCycle}个月|">半年</td>
+                    </tr>
+                    <tr>
+                      <th>基础病理结算方式</th>
+                      <td th:text="${null == hospital.pathologySettlementType ? '': hospital.pathologySettlementType.desc}">月结</td>
+                    </tr>
+                    <tr>
+                      <th>分子病理结算方式</th>
+                      <td th:text="${null == hospital.geneSettlementType ? '' : hospital.geneSettlementType.desc}">月结</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a name="editCooperationInfoHash"></a>
+          <div class="box box-solid nondisplay" id="editCooperationInfo" shiro:hasPermission="hospital:cooperationInfoEdit">
+            <form class="form-horizontal" id="editCooperationInfoForm">
+              <input type="hidden" value="4" name="flag"/>
+              <input type="hidden" th:value="${hospital.id}" name="id"/>
+              <div class="box-header with-border">
+                <h5 class="box-title">合作信息</h5>
+                <div class="btn-group pull-right inline">
+                  <a class="btn btn-default btn-xs" id="resetCooperationInfoEditBtn" type="button" title="取消编辑">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="box-body">
+                <div class="row order-detail-base">
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="cooperationState_edit" class="col-md-3 control-label font-normal">合作状态</label>
+                      <div class="col-md-9">
+                        <select class="form-control" id="cooperationState_edit" name="cooperationState"
+                                th:field="${hospital.cooperationState}">
+                          <option value="VISITED">已拜访</option>
+                          <option value="UNSIGNED">未签约有合作</option>
+                          <option value="SIGNED">已签约</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="reportRequirement_edit" class="col-md-3 control-label font-normal">报告要求</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="reportRequirement_edit" name="reportRequirement" type="text"
+                               th:value="${hospital.reportRequirement}" placeholder="报告要求"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="invoiceCycle_edit" class="col-md-3 control-label font-normal">结算周期</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="invoiceCycle_edit" name="invoiceCycle" type="text"
+                               th:value="${hospital.invoiceCycle}" placeholder="结算周期填写每个月几号"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="invoiceTitle_edit" class="col-md-3 control-label font-normal">发票抬头</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="invoiceTitle_edit" name="invoiceTitle" type="text"
+                               th:value="${hospital.invoiceTitle}" placeholder="发票抬头"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="contractDateRange_edit" class="col-md-3 control-label font-normal">合作期限</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="contractDateRange_edit" name="contractDateRange"
+                               type="text" th:value="${hospital.contractDate}" placeholder="合作期限"/>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="output_edit" class="col-md-3 control-label font-normal">预计产量</label>
+                      <div class="col-md-9">
+                        <input class="form-control" id="output_edit" name="output" type="text" th:value="${hospital.output}"
+                               placeholder="预计产量（元／月）"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="serviceCycle_edit" class="col-md-3 control-label font-normal">外勤服务周期</label>
+                      <div class="col-md-9">
+                        <label class="hide" id="current_serviceCycles">
+                          <i th:text="${service}" th:each="service : ${hospital.serviceCycles}"></i>
+                        </label>
+                        <select class="form-control" id="serviceCycle_edit" name="serviceCycles" multiple="multiple"
+                                data-th-attr="multi-text ='请选择外勤服务周期'" th:field="${hospital.serviceCycles}">
+                          <option value="MON">周一</option>
+                          <option value="TUE">周二</option>
+                          <option value="WED">周三</option>
+                          <option value="THU">周四</option>
+                          <option value="FRI">周五</option>
+                          <option value="STA">周六</option>
+                          <option value="SUN">周日</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label class="col-md-3 control-label font-normal">服务时间</label>
+                      <div class="col-md-9">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <select class="form-control" id="serviceStartDate_edit" name="serviceStart" th:field="${hospital.serviceStart}">
+                              <option value="">起始时间点</option>
+                              <option value="0700">07:00</option>
+                              <option value="0730">07:30</option>
+                              <option value="0800">08:00</option>
+                              <option value="0830">08:30</option>
+                              <option value="0900">09:00</option>
+                              <option value="0930">09:30</option>
+                              <option value="1000">10:00</option>
+                              <option value="1030">10:30</option>
+                              <option value="1100">11:00</option>
+                              <option value="1130">11:30</option>
+                              <option value="1200">12:00</option>
+                              <option value="1230">12:30</option>
+                              <option value="1300">13:00</option>
+                              <option value="1330">13:30</option>
+                              <option value="1400">14:00</option>
+                              <option value="1430">14:30</option>
+                              <option value="1500">15:00</option>
+                              <option value="1530">15:30</option>
+                              <option value="1600">16:00</option>
+                              <option value="1630">16:30</option>
+                              <option value="1700">17:00</option>
+                              <option value="1730">17:30</option>
+                              <option value="1800">18:00</option>
+                              <option value="1830">18:30</option>
+                              <option value="1900">19:00</option>
+                              <option value="1930">19:30</option>
+                              <option value="2000">20:00</option>
+                            </select>
+                          </div>
+                          <div class="col-md-4">
+                            <select class="form-control" id="serviceEndDate_edit" name="serviceEnd" th:field="${hospital.serviceEnd}">
+                              <option value="">结束时间点</option>
+                              <option value="0700">07:00</option>
+                              <option value="0730">07:30</option>
+                              <option value="0800">08:00</option>
+                              <option value="0830">08:30</option>
+                              <option value="0900">09:00</option>
+                              <option value="0930">09:30</option>
+                              <option value="1000">10:00</option>
+                              <option value="1030">10:30</option>
+                              <option value="1100">11:00</option>
+                              <option value="1130">11:30</option>
+                              <option value="1200">12:00</option>
+                              <option value="1230">12:30</option>
+                              <option value="1300">13:00</option>
+                              <option value="1330">13:30</option>
+                              <option value="1400">14:00</option>
+                              <option value="1430">14:30</option>
+                              <option value="1500">15:00</option>
+                              <option value="1530">15:30</option>
+                              <option value="1600">16:00</option>
+                              <option value="1630">16:30</option>
+                              <option value="1700">17:00</option>
+                              <option value="1730">17:30</option>
+                              <option value="1800">18:00</option>
+                              <option value="1830">18:30</option>
+                              <option value="1900">19:00</option>
+                              <option value="1930">19:30</option>
+                              <option value="2000">20:00</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="paymentCycle_edit" class="col-md-3 control-label font-normal">回款周期</label>
+                      <div class="col-md-9">
+                        <select class="form-control" id="paymentCycle_edit" name="paymentCycle" th:field="${hospital.paymentCycle}">
+                          <option value="">回款周期</option>
+                          <option value="1">一个月</option>
+                          <option value="2">两个月</option>
+                          <option value="3">三个月</option>
+                          <option value="6">半年</option>
+                          <option value="12">一年</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="pathologyPaymentType_edit" class="col-md-3 control-label font-normal">基础病理结算方式</label>
+                      <div class="col-md-9">
+                        <div class="input-group" style="padding-top: 5px">
+                          <input class="hasThirdParty" id="pathologyPaymentType_edit" name="pathologySettlementType" type="radio"
+                                 value="MONTHLY" th:checked="${#bools.isTrue(hospital.pathologySettlementType)}"/>月结&nbsp;
+                          <input class="hasThirdParty" id="pathologyPaymentType_edit" name="pathologySettlementType" type="radio"
+                                 value="ORDER" th:checked="${#bools.isTrue(hospital.pathologySettlementType)}"/>单结
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group ">
+                      <label for="genePaymentType_edit" class="col-md-3 control-label font-normal">分子病理结算方式</label>
+                      <div class="col-md-9">
+                        <div class="input-group" style="padding-top: 5px">
+                          <input class="hasThirdParty" id="genePaymentType_edit" name="geneSettlementType" type="radio"
+                                 value="MONTHLY" th:checked="${#bools.isTrue(hospital.geneSettlementType)}"/>月结&nbsp;
+                          <input class="hasThirdParty" id="genePaymentType_edit" name="geneSettlementType" type="radio"
+                                 value="ORDER" th:checked="${#bools.isTrue(hospital.geneSettlementType)}"/>单结
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" type="submit" value="提交"/>
+              </div>
+            </form>
+          </div>
+          <div class="box box-solid" id="viewOtherInfo">
+            <div class="box-header with-border">
+              <h5 class="box-title">其他</h5>
+              <div class="btn-group pull-right inline">
+                <a class="btn btn-default btn-xs" id="editOtherInfoBtn" type="button" title="编辑调研信息"
+                   shiro:hasPermission="hospital:otherInfoEdit">
+                  <i class="fa fa-edit"></i>
+                </a>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="row table-default">
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>销售人员</th>
+                      <td th:text="${hospital.sellerName}">张三</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="row table-default">
+                <div class="col-md-6">
+                  <table class="table no-border">
+                    <tr>
+                      <th>备注</th>
+                      <td th:text="${hospital.remark}">无</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="box box-solid nondisplay" id="editOtherInfo" shiro:hasPermission="hospital:otherInfoEdit">
+            <form class="form-horizontal" id="editOtherInfoForm">
+              <input type="hidden" value="5" name="flag"/>
+              <input type="hidden" th:value="${hospital.id}" name="id"/>
+              <div class="box-header with-border">
+                <h5 class="box-title">其他</h5>
+                <div class="btn-group pull-right inline">
+                  <a class="btn btn-default btn-xs" id="resetOtherInfoEditBtn" type="button" title="取消编辑">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label for="seller_edit" class="col-md-3 control-label font-normal">销售人员</label>
+                      <div class="col-md-9">
+                        <select class="form-control selectpicker show-tick" id="seller_edit" name="sellerId"
+                                data-live-search="true" data-th-attr="data-live-search= true" th:field="${hospital.sellerId}">
+                          <option value="">请选择销售人员</option>
+                          <option value="张三" th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName}">张三</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group ">
+                      <label class="control-label col-md-3" for="remark" style="font-weight:normal">备注</label>
+                      <div class="col-md-9">
+                        <textarea class="form-control" id="remark" name="remark" rows="3" th:value="${hospital.remark}"
+                                  placeholder="备注"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="box-footer">
+                <input class="btn btn-primary center-block" type="submit" value="提交"/>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div><!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer" th:include="be/fragment :: footer"></footer>
+
+</div><!-- ./wrapper -->
+<script src="../../static/assets/js/hospital_detail.js" th:src="@{/assets/js/hospital_detail.js}"></script>
+<script data-th-inline="javascript">
+  /*<![CDATA[*/
+  var currentUrlSet = /*[[${activeMenuUrl}]]*/ '';
+  /*]]>*/
+</script>
+</body>
+</html>

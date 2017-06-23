@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+    <style type="text/css">
+      body {
+        background-color: #daecee;
+      }
+      #error {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -303px;
+        margin-left: -303px;
+      }
+      #error-image {
+        width:150px;
+        height: 140px;
+      }
+    </style>
+  </head>
+  <!--<body th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">-->
+  <body>
+    <div id="error">
+      <img src="../../static/assets/dist/img/error.png" th:src="@{/assets/dist/img/error.png}" alt="error page not found" id="error-image">
+      数据异常!&nbsp;&nbsp;请点击<a href="#" onclick="javascript :history.go(-1);">这里</a>返回!
+      <!--<h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>-->
+      <!--<p th:utext="${errorMessage}">Error java.lang.NullPointerException</p>-->
+      <!--<a href="index.html" th:href="@{/index.html}">Back to Home Page</a>-->
+    </div>
+  </body>
+</html>

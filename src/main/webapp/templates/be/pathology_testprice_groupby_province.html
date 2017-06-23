@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="be/fragment :: head">
+  <meta charset="UTF-8">
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/formValidation.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/formValidation/js/language/zh_CN.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/thymol/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../static/assets/plugins/hd-common/thymol.configuration.js"></script>
+</head>
+<body>
+<div class="table-responsive">
+  <table class="table table-bordered table-with-head-color">
+    <thead>
+    <tr>
+      <th rowspan="3">#</th>
+      <th rowspan="3">检测项目</th>
+      <th rowspan="3">所属类型</th>
+      <th rowspan="3">收费</th>
+      <th colspan="6" style="text-align: center">检测内容</th>
+      <th rowspan="3">操作</th>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th>编号／医保代码</th>
+      <th>内容名称</th>
+      <th>检测方法</th>
+      <th>样本要求</th>
+      <th width="200px">报告时间</th>
+      <th>收费</th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="pathology, iterStat : ${pathologyTestPrice}">
+    <tr th:with="contentSize=${pathology.pathologyTestContentAndPriceRelationDtos.size()}">
+      <td rowspan="2" th:rowspan="${contentSize}" th:text="${iterStat.count}">1</td>
+      <td rowspan="2" th:rowspan="${contentSize}" th:text="${pathology.pathologyTestItemName}">胃镜活检标本</td>
+      <td rowspan="2" th:rowspan="${contentSize}" th:text="${pathology.pathologyType == null} ? '' : ${pathology.pathologyType.desc}">常规病理</td>
+      <td rowspan="2" th:rowspan="${contentSize}" th:text="${pathology.totalPrice}">68</td>
+      <th:block th:each="content, status : ${pathology.pathologyTestContentAndPriceRelationDtos}">
+      <td th:if="${status.count == 1}" th:text="${content.priceCode}">20170809</td>
+      <td th:if="${status.count == 1}" th:text="${content.name}">内镜组织活检检测与诊断</td>
+      <td th:if="${status.count == 1}" th:text="${content.method}">H-E染色</td>
+      <td th:if="${status.count == 1}" th:text="${content.sampleRequirement}">10%中心缓冲福尔马林浸泡送检</td>
+      <td th:if="${status.count == 1}" th:text="${content.reportRequirement}">3个工作日，如遇需重新取材、制片，特殊染色，疑难病例需全科讨论等，顺延1-2个工作日</td>
+      <td th:if="${status.count == 1}" th:text="${content.price}">60</td>
+      <td th:if="${status.count == 1}">
+        <a class="btn btn-default btn-sm viewTestContentDetail" title="内容详情" th:id="${content.priceId}" name="detail_btn">
+          <i class="fa fa-info fa-fw"></i>
+        </a>
+      </td>
+      </th:block>
+    </tr>
+    <th:block th:each="content, status : ${pathology.pathologyTestContentAndPriceRelationDtos}">
+      <tr th:if="${status.count != 1}">
+      <td th:text="${content.priceCode}">20170810</td>
+      <td th:text="${content.name}">计算机图文报告</td>
+      <td th:text="${content.method}">H-E染色</td>
+      <td th:text="${content.sampleRequirement}">10%中心缓冲福尔马林浸泡送检</td>
+      <td th:text="${content.reportRequirement}">3个工作日，如遇需重新取材、制片，特殊染色，疑难病例需全科讨论等，顺延1-2个工作日</td>
+      <td th:text="${content.price}">8</td>
+      <td>
+        <a class="btn btn-default btn-sm viewTestContentDetail" title="内容详情" th:id="${content.priceId}" name="detail_btn">
+          <i class="fa fa-info fa-fw"></i>
+        </a>
+      </td>
+      </tr>
+    </th:block>
+
+    </th:block>
+    </tbody>
+  </table>
+</div>
+<div th:replace="be/modal/modal_pathology_testprice :: testContentDetailModal"></div>
+</body>
+</html>
