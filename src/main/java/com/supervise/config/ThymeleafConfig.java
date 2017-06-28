@@ -23,7 +23,7 @@ import java.util.Set;
  * Created by nathaniel on 2017/1/6.
  */
 @Configuration
-//@EnableWebMvc  // 启用 SpringMVC ，相当于 xml中的 <mvc:annotation-driven/>
+@EnableWebMvc  // 启用 SpringMVC ，相当于 xml中的 <mvc:annotation-driven/>
 public class ThymeleafConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;

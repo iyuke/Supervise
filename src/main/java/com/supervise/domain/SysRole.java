@@ -105,4 +105,36 @@ public class SysRole extends SuperEntity {
     public void setRoleCode(String roleCode) {
         this.roleCode = roleCode;
     }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public List<SysUser> getSysUsers() {
+        return sysUsers;
+    }
+
+    public void setSysUsers(List<SysUser> sysUsers) {
+        this.sysUsers = sysUsers;
+    }
+
+    public List<Menu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<Menu> menus) {
+        this.menus = menus;
+    }
 }

@@ -22,6 +22,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Autowired
     SysResourceRepository sysResourceRepository;
 
+    //初始化时候存放一个url资源对应多个权限
     @Override
     public Map<String, List<String>> getSysResourceAndPermissionMapping() {
         List<SysResource> list = sysResourceRepository.findAll();

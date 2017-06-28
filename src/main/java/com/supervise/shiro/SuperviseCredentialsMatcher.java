@@ -9,7 +9,7 @@ import org.apache.shiro.codec.CodecSupport;
 import java.util.Arrays;
 
 /**
- * Created by zhu on 15/8/14.
+ * Created by nathaniel on 15/8/14.
  */
 public class SuperviseCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
 

@@ -9,6 +9,7 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -76,16 +77,19 @@ public class ShiroConfiguration {
     @Bean(name="securityManager")
     public DefaultWebSecurityManager securityManager() {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
-//        manager.setRealm(userRealm());
+        manager.setRealm(userRealm());
         manager.setCacheManager(cacheManager());
 //        manager.setSessionManager(defaultWebSessionManager());
         return manager;
     }
 
     /**
-     * @see DefaultWebSessionManager
+     * @see DefaultWebSessionManager 不要使用Shrio维护的Session,
      * @return
      */
+//    DefaultSessionManager：DefaultSecurityManager使用的默认实现，用于JavaSE环境；
+//    ServletContainerSessionManager：DefaultWebSecurityManager使用的默认实现，用于Web环境，其直接使用Servlet容器的会话；
+//    DefaultWebSessionManager：用于Web环境的实现，可以替代ServletContainerSessionManager，自己维护着会话，直接废弃了Servlet容器的会话管理。
 //    @Bean(name="sessionManager")
 //    public DefaultWebSessionManager defaultWebSessionManager() {
 //        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
@@ -113,7 +117,7 @@ public class ShiroConfiguration {
      * @see UserRealm --->AuthorizingRealm
      * @return
      */
-    @Bean
+    @Bean(name="userRealm")
     @DependsOn(value="lifecycleBeanPostProcessor")
     public UserRealm userRealm() {
         UserRealm userRealm = new UserRealm(cacheManager(), new SuperviseCredentialsMatcher());

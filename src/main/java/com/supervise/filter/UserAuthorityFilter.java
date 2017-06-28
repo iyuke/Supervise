@@ -47,6 +47,7 @@ public class UserAuthorityFilter extends IgnorableFilter {
         Map<String, List<String>> urlPermissionMap = (Map<String, List<String>>) application.getAttribute(Constants.URL_PERMISSION_MAP);
 
         Subject subject = SecurityUtils.getSubject();
+        //前面登入时已经认证，用的是Servlet默认的Session
         if (subject.isAuthenticated()) {
             List<String> permissions = urlPermissionMap.get(requestURI);
             boolean isPermitted = false;
@@ -62,6 +63,7 @@ public class UserAuthorityFilter extends IgnorableFilter {
                 }
             } else {
                 for (String permission : permissions) {
+                    //通过url找到对应的权限，验证权限是否isPermitted,在这里会调用UserRealm中的授权信息
                     if (subject.isPermitted(permission)) {
                         isPermitted = true;
                         break;
