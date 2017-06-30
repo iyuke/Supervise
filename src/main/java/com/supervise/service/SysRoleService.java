@@ -16,4 +16,10 @@ public interface SysRoleService {
      */
     @Transactional(readOnly = true)
     List<SysRole> getByUserName(String userName);
+
+    @Transactional(readOnly = true)
+    List<SysRole> getSysRolesByIds(List<Long> idList);
+
+    @Transactional(readOnly = true)
+    List<SysRole> getAllSysRoles();
 }

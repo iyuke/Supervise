@@ -11,7 +11,8 @@ $(document).ready(function () {
 
   $('.setViewOrg').on("click", function () {
     var id = $(this).attr('id');
-    sysuser.queryOrgModalShow(id);
+    // sysuser.queryOrgModalShow(id);
+    sysuser.editModalShow(id)
   });
 
   // 重置用户密码

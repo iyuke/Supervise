@@ -35,7 +35,7 @@ public class Organization extends SuperEntity {
     /**
      * 所辖机构
      */
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private List<Organization> subOrg = new ArrayList<Organization>();
 
     /**

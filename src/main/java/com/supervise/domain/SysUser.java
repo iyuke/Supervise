@@ -1,5 +1,6 @@
 package com.supervise.domain;
 
+import com.supervise.dto.UserDto;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
@@ -11,9 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.ArrayList;
@@ -120,8 +123,45 @@ public class SysUser extends SuperEntity {
     @JoinColumn(name = "ORGANIZATION_ID")
     private Organization organization;
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "leader_id")
+    private SysUser leader;
+
+    @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SysUser> members = new ArrayList<SysUser>();
+
+    @Transient
+    private String organizationsName;
+
     public SysUser() {
         super();
+    }
+
+    public SysUser(String userName, String password, String fullName,
+                   String mobilePhone, String email, String gender, Integer age,
+                   Date lastLoginDate, Boolean valid, String postcode) {
+        super();
+        this.userName = userName;
+        this.password = password;
+        this.mobilePhone = mobilePhone;
+        this.email = email;
+        this.gender = gender;
+        this.age = age;
+        this.lastLoginDate = lastLoginDate;
+        this.valid = valid;
+    }
+
+    public SysUser(UserDto userDto) {
+        this.userName = userDto.getUserName();
+        this.password = userDto.getPassword();
+        this.mobilePhone = userDto.getMobilePhone();
+        this.email = userDto.getEmail();
+        this.gender = userDto.getGender();
+        this.age = userDto.getAge();
+        this.lastLoginDate = userDto.getLastLoginDate();
+        this.valid = userDto.getValid();
+        this.duty = userDto.getDuty();
+        this.remark = userDto.getRemark();
     }
 
     public String getUserName() {
@@ -242,5 +282,29 @@ public class SysUser extends SuperEntity {
 
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+
+    public SysUser getLeader() {
+        return leader;
+    }
+
+    public void setLeader(SysUser leader) {
+        this.leader = leader;
+    }
+
+    public List<SysUser> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<SysUser> members) {
+        this.members = members;
+    }
+
+    public String getOrganizationsName() {
+        return organizationsName;
+    }
+
+    public void setOrganizationsName(String organizationsName) {
+        this.organizationsName = organizationsName;
     }
 }

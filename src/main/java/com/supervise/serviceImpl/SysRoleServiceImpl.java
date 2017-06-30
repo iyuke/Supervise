@@ -26,4 +26,14 @@ public class SysRoleServiceImpl implements SysRoleService {
         }
         return sysRoleList;
     }
+
+    @Override
+    public List<SysRole> getSysRolesByIds(List<Long> idList) {
+        return sysRoleRepository.findSysRolesByIds(idList);
+    }
+
+    @Override
+    public List<SysRole> getAllSysRoles() {
+        return sysRoleRepository.findAll();
+    }
 }

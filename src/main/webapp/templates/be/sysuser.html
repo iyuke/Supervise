@@ -55,7 +55,7 @@
                 <tr th:each="user,iterStat : ${users}">
                   <td th:text="${(pagination.currentPage - 1)* 10 + iterStat.count}">1</td>
                   <td><a class="userName" name="userName" th:id="${user.id}" href="javascript:" th:text="${user.userName}">管理员</a></td>
-                  <td th:text="${user.fullName}">张三</td>
+                  <td th:text="${user.userName}">张三</td>
                   <td th:text="${user.organizationsName}">衡道医学</td>
                   <td th:text="${user.mobilePhone}">131****0101</td>
                   <td th:text="${user.email}">11***_ys@163.com</td>
@@ -69,7 +69,7 @@
                   <td th:text="${user.remark}"></td>
                   <td>
                     <button shiro:hasPermission="user:edit" th:id="${user.id}" class="btn btn-primary btn-xs setViewOrg" name="setViewOrg">
-                      设置查询机构
+                      用户编辑
                     </button>
                     <button shiro:hasPermission="resetPassword" th:id="${user.id}" class="btn btn-danger btn-xs resetPasswd" name="resetPasswd">
                       重置密码

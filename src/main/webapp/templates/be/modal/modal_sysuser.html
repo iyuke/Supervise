@@ -28,8 +28,8 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="fullName_create">用户姓名</label>
-                  <input class="form-control" id="fullName_create" name="fullName" th:field="*{fullName}" type="text" placeholder="请输入用户姓名"/>
+                  <!--<label for="fullName_create">用户姓名</label>-->
+                  <!--<input class="form-control" id="fullName_create" name="fullName" th:field="*{fullName}" type="text" placeholder="请输入用户姓名"/>-->
                 </div>
               </div>
             </div>
@@ -107,15 +107,14 @@
                   <div class="panel-body">
                     <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
                       <ul class="nav nav-tabs" id="tabTitleCreate">
-                        <li th:each="ptd,iterStat : ${orgGroupDtoList}" th:class="${iterStat.first} ? 'active' : ''">
-                          <a href="#create_1" th:href="'#create_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.desc}"></a>
+                        <li class="active">
+                          <a href="#create_1"  data-toggle="tab">机构架构列表</a>
                         </li>
                       </ul>
                       <div id="tabContentCreate" class="tab-content">
-                        <div class="tab-pane active" th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'"
-                             th:each="ptd,iterStat : ${orgGroupDtoList}" id="create_1" th:id="'create_' + ${iterStat.count}" name="tabId">
+                        <div class="tab-pane active" id="create_1" name="tabId">
                           <div class="form-group">
-                            <div class="radio" th:each="dto,iterStat : ${ptd.organizationDtoList}">
+                            <div class="radio" th:each="dto,iterStat : ${orgDtoList}">
                               <label>
                                 <input class="orgHosp" name="organizationId" type="radio" th:field="*{organizationId}" th:value="${dto.id}"/>
                                 <label th:text="${dto.name}"></label>
@@ -168,8 +167,8 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="fullName_edit">用户姓名</label>
-                  <input class="form-control" id="fullName_edit" name="fullName" type="text" th:field="*{fullName}" placeholder="请输入用户姓名"/>
+                  <!--<label for="fullName_edit">用户姓名</label>-->
+                  <!--<input class="form-control" id="fullName_edit" name="fullName" type="text" th:field="*{fullName}" placeholder="请输入用户姓名"/>-->
                 </div>
               </div>
             </div>
@@ -248,16 +247,14 @@
                   <div class="panel-body">
                     <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
                       <ul class="nav nav-tabs" id="tabTitleEdit">
-                        <li th:each="ptd,iterStat : ${orgGroupDtoList}" th:class="${iterStat.first} ? 'active' : ''">
-                          <a href="#edit_1" th:href="'#edit_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.desc}"></a>
+                        <li class="active">
+                          <a href="#edit_1" data-toggle="tab">机构架构列表</a>
                         </li>
                       </ul>
                       <div id="tabContentEdit" class="tab-content">
-                        <div th:each="ptd,iterStat : ${orgGroupDtoList}" class="tab-pane active"
-                             th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" name="tabId" id="edit_1"
-                             th:id="'edit_' + ${iterStat.count}">
+                        <div class="tab-pane active" name="tabId" id="edit_1">
                           <div class="form-group">
-                            <div th:each="dto,iterStat : ${ptd.organizationDtoList}" class="radio">
+                            <div th:each="dto,iterStat : ${orgDtoList}" class="radio">
                               <label>
                                 <input class="orgHosp" name="organizationId" type="radio" th:value="${dto.id}"/>
                                 <label th:text="${dto.name}"></label>
@@ -307,16 +304,6 @@
                      th:value="${userSearchConditions.username}"/>
             </div>
             <div class="form-group">
-              <label for="fullName_search">用户姓名</label>
-              <input class="form-control" name="fullName" id="fullName_search" type="text" th:field="*{fullName}" placeholder="请输入用户姓名"
-                     th:value="${userSearchConditions.fullName}"/>
-            </div>
-            <div class="form-group">
-              <label for="mobilePhone_search">手机号</label>
-              <input class="form-control" name="mobilePhone" id="mobilePhone_search" type="text" th:field="*{mobilePhone}" placeholder="请输入手机号"
-                     th:value="${userSearchConditions.mobilePhone}"/>
-            </div>
-            <div class="form-group">
               <label for="organizationId_search">一级机构</label>
               <select class="form-control" name="organizationId" id="organizationId_search" th:field="*{organizationId}">
                 <option value="">请选择</option>
@@ -347,71 +334,6 @@
   </div>
 </div>
 
-<!-- queryOrgModal -->
-<div id="queryOrgModal" class="modal fade" th:fragment="queryOrgModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="close" type="button" data-dismiss="modal"><span>×</span></button>
-        <h4 class="modal-title">设置查询机构</h4>
-      </div>
-      <div class="modal-body">
-        <form action="#" th:action="@{/be/user/set-vieworg}" id="setSysUserViewOrg" th:object="${viewOrgSysUserDto}" method="post">
-          <input type="hidden" id="id_query" name="id" th:field="*{id}" />
-          <div class="box-body">
-            <div class="alert alert-warning" role="alert">
-              <strong>提示：</strong> 查询机构是指该用户可以查看的订单所属的送检医院或者其下属机构（比如科室），可以设置多个。
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title">可查询机构设置</h3>
-              </div>
-              <div class="panel-body">
-                <div class="nav-tabs-custom" style="box-shadow: none; margin-bottom: 0;">
-                  <ul id="tabTitleQueryOrg" class="nav nav-tabs">
-                    <li th:each="ptd,iterStat : ${viewOrgList}" class="active" th:class="${iterStat.first} ? 'active' : ''">
-                      <a href="#query_1" th:href="'#query_' + ${iterStat.count}" data-toggle="tab" th:text="${ptd.desc}"></a></li>
-                  </ul>
-                  <div class="tab-content" id="tabContentQueryOrg">
-                    <th:block th:each="ptd,iterStat : ${viewOrgList}">
-                      <div name="tabId" th:class="${iterStat.first} ? 'tab-pane active' : 'tab-pane'" id="query_1"
-                           th:id="'query_' + ${iterStat.count}">
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox" name="allOption" checked="checked">
-                            <strong>全选</strong>
-                          </label>
-                        </div>
-                        <div class="form-group">
-                          <div class="checkbox" th:each="dto,iterStat : ${ptd.organizationDtoList}">
-                            <label>
-                              <input class="q-orgHosp" name="userOrgList" type="checkbox" th:value="${dto.id}"/>
-                              <label th:text="${dto.name}"></label>
-                            </label>
-                            <div class="sub-q-orgs" style="padding-left: 40px;">
-                              <div class="checkbox" th:each="subOrg : ${dto.subOrganization}">
-                                <label>
-                                  <input name="userOrgList" type="checkbox" th:value="${subOrg.id}"/>
-                                  <label th:text="${subOrg.name}"></label>
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </th:block>
-                </div><!-- /.tab-content -->
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="box-footer">
-          <input class="btn btn-primary center-block" type="submit" id="set_vieworg" value="提交"/>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 </div>
 <th:block th:fragment="sysUserScript">
   <script src="../../../static/assets/js/modal/modal_sysuser.js" th:src="@{/assets/js/modal/modal_sysuser.js}"></script>
