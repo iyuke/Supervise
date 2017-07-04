@@ -146,4 +146,12 @@ public class Permission extends SuperEntity {
     public void setRoles(List<SysRole> roles) {
         this.roles = roles;
     }
+
+    public PermissionType getPermissionType() {
+        return permissionType;
+    }
+
+    public void setPermissionType(PermissionType permissionType) {
+        this.permissionType = permissionType;
+    }
 }

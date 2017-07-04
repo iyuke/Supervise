@@ -1,6 +1,7 @@
 package com.supervise.service;
 
 import com.supervise.domain.Permission;
+import com.supervise.dto.PermissionGroupDto;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -11,4 +12,10 @@ import java.util.List;
 public interface PermissionService {
     @Transactional(readOnly = true)
     List<Permission> getByUsername(String username);
+
+    @Transactional(readOnly = true)
+    List<Permission> getPermissionByIdList(List<String> ids);
+
+    @Transactional(readOnly = true)
+    List<PermissionGroupDto> getCategoryPermissions();
 }

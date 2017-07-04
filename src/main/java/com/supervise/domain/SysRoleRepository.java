@@ -14,4 +14,10 @@ public interface SysRoleRepository  extends JpaRepository<SysRole, Long> {
 
     @Query("from SysRole  where id in (:idList)")
     List<SysRole> findSysRolesByIds(@Param("idList") List<Long> idList);
+
+    @Query("from SysRole s where s.roleCode = :roleCode")
+    SysRole findByRoleCode(@Param("roleCode") String roleCode);
+
+    @Query("from SysRole s where s.roleName = :roleName")
+    SysRole findByRoleName(@Param("roleName") String roleName);
 }

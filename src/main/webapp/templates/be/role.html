@@ -47,7 +47,6 @@
               <th style="width: 60px">#</th>
               <th>角色名称</th>
               <th>角色代码</th>
-              <th>是否有效</th>
             </tr>
             <th:block th:each="role,iterStat : ${roles}">
               <tr>
@@ -58,10 +57,6 @@
                   </a>
                 </td>
                 <td th:text="${role.roleCode}">ADMIN</td>
-                <td th:switch="${role.valid}">
-                  <span th:case="true" class="text-success" th:text="有效">有效</span>
-                  <span th:case="false" class="text-danger" th:text="无效"></span>
-                </td>
               </tr>
             </th:block>
             </tbody>

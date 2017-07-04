@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.supervise.dto.SysRoleDto;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.ArrayList;
@@ -96,6 +98,13 @@ public class SysRole extends SuperEntity {
             }
             return null;
         }
+    }
+
+    public SysRole() {}
+
+    public SysRole(SysRoleDto roleDto) {
+        this.roleName = roleDto.getRoleName();
+        this.roleCode = roleDto.getRoleCode();
     }
 
     public String getRoleCode() {

@@ -1,6 +1,8 @@
 package com.supervise.service;
 
 import com.supervise.domain.SysRole;
+import com.supervise.dto.SysRoleDto;
+import com.supervise.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,4 +24,10 @@ public interface SysRoleService {
 
     @Transactional(readOnly = true)
     List<SysRole> getAllSysRoles();
+
+    @Transactional(readOnly = true)
+    SysRole getById(String roleId);
+
+    @Transactional
+    void createOrUpdateRole(SysRoleDto roleDto) throws BusinessException;
 }
