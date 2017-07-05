@@ -19,4 +19,7 @@ public interface PermissionRepository extends JpaRepository<Permission, Long>,Jp
 
     @Query("from Permission p where permissionType =:permissionType")
     List<Permission> findPermissionByType(@Param("permissionType") Permission.PermissionType permissionType);
+
+    @Query("from Permission p where p.code = :code")
+    Permission findByCode(@Param("code") String code);
 }

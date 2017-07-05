@@ -1,5 +1,6 @@
 package com.supervise.service;
 
+import com.supervise.dto.SysResourceGroupDto;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,4 +20,9 @@ public interface ResourceService {
      */
     @Transactional(readOnly = true)
     Map<String, List<String>> getSysResourceAndPermissionMapping();
+
+    @Transactional(readOnly = true)
+    List<SysResourceGroupDto> getSysResourceGroupDtoList();
+    @Transactional
+    void refreshSessionSysResourceAndPermissionMapping();
 }
