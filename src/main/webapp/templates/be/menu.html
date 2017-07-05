@@ -35,7 +35,6 @@
                      <th style="width: 80px">菜单级别</th>
                      <th style="width: 220px">菜单名称</th>
                      <th>菜单优先级</th>
-                     <th>菜单代码</th>
                      <th>菜单链接</th>
                      <th style="width: 120px">操作</th>
                    </tr>
@@ -51,7 +50,6 @@
                          th:if="${menu.subMenus.size() == 0}" th:text="${menu.name}"></a>
                     </td>
                     <td th:text="${menu.priority}"></td>
-                    <td th:text="${menu.code}"></td>
                     <td th:text="${menu.href}"></td>
                     <td><button class="btn btn-primary btn-xs editBtn" th:id="${menu.id}" data-th-attr="menuName=${menu.name}" name="edit">编
                       辑</button>
@@ -71,7 +69,6 @@
                         <span th:if="${menuChild1.subMenus.size() == 0}" style="padding-left: 15px" th:text="${menuChild1.name}"></span>
                       </td>
                       <td th:text="${menuChild1.priority}"></td>
-                      <td th:text="${menuChild1.code}"></td>
                       <td th:text="${menuChild1.href}"></td>
                       <td><button class="btn btn-primary btn-xs editBtn" th:id="${menuChild1.id}" data-th-attr="menuName=${menuChild1.name}"
                                   name="edit">编 辑</button>
@@ -87,7 +84,6 @@
                                 style="padding-left: 15px" th:text="${menuChild2.name}"></span>
                       </td>
                       <td th:text="${menuChild2.priority}"></td>
-                      <td th:text="${menuChild2.code}"></td>
                       <td th:text="${menuChild2.href}"></td>
                       <td><button class="btn btn-primary btn-xs editBtn" th:id="${menuChild2.id}" data-th-attr="menuName=${menuChild2.name}"
                                   name="edit">编 辑</button>

@@ -1,5 +1,6 @@
 package com.supervise.serviceImpl;
 
+import com.supervise.domain.Menu;
 import com.supervise.domain.Permission;
 import com.supervise.domain.SysRole;
 import com.supervise.domain.SysRoleRepository;
@@ -68,6 +69,25 @@ public class SysRoleServiceImpl implements SysRoleService {
             }
         }
         sysRoleRepository.save(sysRole);
+    }
+
+    @Override
+    public void updateMenuReference() {
+        List<SysRole> roleList = sysRoleRepository.findAll();
+        for (SysRole role : roleList) {
+            List<Permission> permissions = role.getPermissions();
+            role.setMenus(menuService.getMenuByPermission(permissions));
+        }
+        sysRoleRepository.save(roleList);
+    }
+
+    @Override
+    public void removeMenuReference(List<Menu> menuList) {
+        List<SysRole> roles = sysRoleRepository.findAll();
+        for (SysRole role : roles) {
+            role.getMenus().removeAll(menuList);
+        }
+        sysRoleRepository.save(roles);
     }
 
     private void setRolePermissionAndMenu(SysRole sysRole, SysRoleDto sysRoleDto) {

@@ -128,6 +128,15 @@ public class ResourceServiceImpl implements ResourceService {
         return true;
     }
 
+    @Override
+    public String getUrlById(Long id) throws BusinessException {
+        SysResource sysResource = sysResourceRepository.findOne(id);
+        if (null == sysResource) {
+            throw new BusinessException("未找到资源！");
+        }
+        return sysResource.getUrl();
+    }
+
     public static HttpSession getCurrentSession() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getRequest().getSession(true);

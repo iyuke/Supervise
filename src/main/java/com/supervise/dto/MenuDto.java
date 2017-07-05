@@ -16,7 +16,6 @@ public class MenuDto extends Dto {
     private String parentName;
     private String priority;
     private String description;
-    private String code;
     private Boolean hasChild;
 
     public MenuDto() {
@@ -34,7 +33,6 @@ public class MenuDto extends Dto {
         this.parentName = menu.getParent()==null ? "" : menu.getParent().getName();
         this.priority = menu.getPriority();
         this.description = menu.getDescription();
-        this.code = menu.getCode();
         this.hasChild = menu.getSubMenus() != null && menu.getSubMenus().size() > 0;
     }
 
@@ -97,14 +95,6 @@ public class MenuDto extends Dto {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public Boolean getHasChild() {

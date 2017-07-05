@@ -4,6 +4,7 @@ import com.supervise.domain.Menu;
 import com.supervise.domain.Permission;
 import com.supervise.domain.SysRole;
 import com.supervise.dto.MenuDto;
+import com.supervise.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,4 +24,19 @@ public interface MenuService {
 
     @Transactional(readOnly = true)
     List<Menu> getMenuByPermission(List<Permission> permissions);
+
+    @Transactional(readOnly = true)
+    List<Menu> getMenuByLevel(String level);
+
+    @Transactional
+    void createOrUpdate(MenuDto menuDto) throws BusinessException;
+
+    @Transactional(readOnly = true)
+    MenuDto getDtoById(Long menuId);
+
+    @Transactional
+    void delete(Long id) throws BusinessException;
+
+    @Transactional
+    List<MenuDto> getDtoListByLevel(String level);
 }

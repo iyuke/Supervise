@@ -33,4 +33,6 @@ public interface ResourceService {
     void saveOrUpdate(SysResourceDto sysResourceDto) throws BusinessException;
     @Transactional
     boolean isExistUrl(String url);
+    @Transactional(readOnly = true)
+    String getUrlById(Long id) throws BusinessException;
 }

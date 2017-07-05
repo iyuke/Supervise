@@ -1,5 +1,6 @@
 package com.supervise.domain;
 
+import com.supervise.dto.MenuDto;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -50,19 +51,25 @@ public class Menu extends SuperEntity {
     /**描述*/
     private String description;
 
-    /**代码*/
-    private String code;
-
     /**子菜单*/
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private List<Menu> subMenus = new ArrayList<Menu>();
 
     /**角色*/
-    @ManyToMany(mappedBy = "menus")
+    @ManyToMany(mappedBy = "menus" , fetch = FetchType.EAGER)
     private List<SysRole> roles = new ArrayList<SysRole>();
 
     public Menu() {
         super();
+    }
+
+    public Menu(MenuDto menuDto) {
+        super();
+        this.name = menuDto.getName();
+        this.level = menuDto.getLevel();
+        this.priority = menuDto.getPriority();
+        this.description = menuDto.getDescription();
+        this.isLink = menuDto.getIsLink();
     }
 
     public String getName() {
@@ -135,14 +142,6 @@ public class Menu extends SuperEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     @Override

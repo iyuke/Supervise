@@ -1,5 +1,6 @@
 package com.supervise.service;
 
+import com.supervise.domain.Menu;
 import com.supervise.domain.SysRole;
 import com.supervise.dto.SysRoleDto;
 import com.supervise.exception.BusinessException;
@@ -30,4 +31,10 @@ public interface SysRoleService {
 
     @Transactional
     void createOrUpdateRole(SysRoleDto roleDto) throws BusinessException;
+
+    @Transactional
+    void updateMenuReference();
+
+    @Transactional
+    void removeMenuReference(List<Menu> menuList);
 }

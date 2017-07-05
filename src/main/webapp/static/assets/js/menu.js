@@ -46,7 +46,6 @@ Menu.prototype.editModalShow = function (menuId) {
 Menu.prototype._cleanMenuEdit = function () {
   $("#id_edit").val("");
   $("#name_edit").val("");
-  $("#code_edit").val("");
   $("#level_edit").val("");
   this._setParentMenu("", $("#editParents"), "");
   $("#priority_edit").val("");
@@ -78,7 +77,6 @@ Menu.prototype._cleanMenuEdit = function () {
 Menu.prototype._showMenuEdit = function (menu) {
   $("#id_edit").val(menu.id);
   $("#name_edit").val(menu.name);
-  $("#code_edit").val(menu.code);
   $("#level_edit").val(menu.level);
   this._setParentMenu(menu.level, $("#editParents"), menu.parentId);
   $("#priority_edit").val(menu.priority);
@@ -206,7 +204,6 @@ Menu.prototype.changeParentMenu = function ($level, $parents) {
 
 Menu.prototype.createModalShow = function () {
   $("#name_create").val("");
-  $("#code_create").val("");
   $("#level_create").val("");
   this.changeParentMenu($("#level_create"), $("#parents_create"));
   $("#priority_create").val("");
