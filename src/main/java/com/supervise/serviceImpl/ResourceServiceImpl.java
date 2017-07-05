@@ -6,7 +6,9 @@ import com.supervise.domain.SysResource;
 import com.supervise.domain.SysResourceRepository;
 import com.supervise.dto.SysResourceDto;
 import com.supervise.dto.SysResourceGroupDto;
+import com.supervise.exception.BusinessException;
 import com.supervise.service.ResourceService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,44 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ResourceServiceImpl implements ResourceService {
     @Autowired
     SysResourceRepository sysResourceRepository;
+
+
+    @Override
+    public void saveOrUpdate(SysResourceDto sysResourceDto) throws BusinessException {
+        SysResource.SysResourceType sysResourceType = SysResource.SysResourceType.getByCode(
+                sysResourceDto.getResourceType());
+        if (null == sysResourceType) {
+            throw new BusinessException("未知资源类型！");
+        }
+
+        SysResource newSysResource;
+        if (sysResourceDto.getId() == null) {
+            newSysResource = new SysResource();
+        } else {
+            newSysResource = sysResourceRepository.findOne(sysResourceDto.getId());
+        }
+        if (null == newSysResource.getUrl() || !newSysResource.getUrl().equals(sysResourceDto.getUrl())) {
+            if (isExistUrl(sysResourceDto.getUrl())) {
+                throw new BusinessException("URL已存在！");
+            }
+        }
+        newSysResource.setResourceName(sysResourceDto.getResourceName());
+        newSysResource.setResourceDescription(sysResourceDto.getResourceDescription());
+        newSysResource.setUrl(sysResourceDto.getUrl());
+        newSysResource.setResourceType(sysResourceType);
+        sysResourceRepository.save(newSysResource);
+
+        refreshSessionSysResourceAndPermissionMapping();
+    }
+
+    @Override
+    public boolean isExistUrl(String url) {
+        SysResource sysResource = sysResourceRepository.findByUrl(url);
+        if (null != sysResource) {
+            return true;
+        }
+        return false;
+    }
 
     //初始化时候存放一个url资源对应多个权限
     @Override
@@ -73,6 +113,19 @@ public class ResourceServiceImpl implements ResourceService {
         HttpSession session = getCurrentSession();
         ServletContext application = session.getServletContext();
         application.setAttribute(Constants.URL_PERMISSION_MAP, getSysResourceAndPermissionMapping());
+    }
+
+    @Override
+    public boolean deleteResource(Long id) throws BusinessException {
+        SysResource resource = sysResourceRepository.findOne(id);
+        if (null == resource) {
+            throw new BusinessException("资源不存在！");
+        }
+        if (CollectionUtils.isNotEmpty(resource.getPermissions())) {
+            throw new BusinessException("资源已被使用，无法删除！");
+        }
+        sysResourceRepository.delete(resource);
+        return true;
     }
 
     public static HttpSession getCurrentSession() {

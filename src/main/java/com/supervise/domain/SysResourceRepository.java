@@ -21,5 +21,8 @@ public interface SysResourceRepository extends JpaRepository<SysResource, Long>,
     @Query("from SysResource s where id in (:idList)")
     List<SysResource> findSysResourcesByIds(@Param("idList") List<Long> idList);
 
+    @Query("from SysResource s where url = :url")
+    SysResource findByUrl(@Param("url") String url);
+
 }
 

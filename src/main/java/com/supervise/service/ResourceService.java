@@ -1,6 +1,8 @@
 package com.supervise.service;
 
+import com.supervise.dto.SysResourceDto;
 import com.supervise.dto.SysResourceGroupDto;
+import com.supervise.exception.BusinessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,4 +27,10 @@ public interface ResourceService {
     List<SysResourceGroupDto> getSysResourceGroupDtoList();
     @Transactional
     void refreshSessionSysResourceAndPermissionMapping();
+    @Transactional
+    boolean deleteResource(Long id) throws BusinessException;
+    @Transactional
+    void saveOrUpdate(SysResourceDto sysResourceDto) throws BusinessException;
+    @Transactional
+    boolean isExistUrl(String url);
 }
