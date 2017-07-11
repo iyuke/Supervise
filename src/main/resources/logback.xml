@@ -1,0 +1,92 @@
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+  <!--root的日志配置-->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--基本日志记录-->
+  <appender name="basic" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>./target/logs/supervise.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>./target/logs/supervise-%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--发送给美泉的通知失败的配置-->
+  <!--<appender name="meiquanSendFail" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--<file>./target/logs/meiquan/send/fail.log</file>-->
+    <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+      <!--<fileNamePattern>./target/logs/meiquan/send/fail-%d{yyyy-MM-dd}.log</fileNamePattern>-->
+    <!--</rollingPolicy>-->
+    <!--<encoder>-->
+      <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>-->
+    <!--</encoder>-->
+  <!--</appender>-->
+
+  <!--&lt;!&ndash;发送给美泉的通知成功的配置&ndash;&gt;-->
+  <!--<appender name="meiquanSendSuccess" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--<file>./target/logs/meiquan/send/success.log</file>-->
+    <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+      <!--<fileNamePattern>./target/logs/meiquan/send/success-%d{yyyy-MM-dd}.log</fileNamePattern>-->
+    <!--</rollingPolicy>-->
+    <!--<encoder>-->
+      <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>-->
+    <!--</encoder>-->
+  <!--</appender>-->
+
+  <!--&lt;!&ndash;美泉发送给pms通知失败的配置&ndash;&gt;-->
+  <!--<appender name="meiquanAcceptFail" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--<file>./target/logs/meiquan/accept/fail.log</file>-->
+    <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+      <!--<fileNamePattern>./target/logs/meiquan/accept/fail-%d{yyyy-MM-dd}.log</fileNamePattern>-->
+    <!--</rollingPolicy>-->
+    <!--<encoder>-->
+      <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>-->
+    <!--</encoder>-->
+  <!--</appender>-->
+
+  <!--&lt;!&ndash;美泉发送给pms通知成功的配置&ndash;&gt;-->
+  <!--<appender name="meiquanAcceptSuccess" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--<file>./target/logs/meiquan/accept/success.log</file>-->
+    <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+      <!--<fileNamePattern>./target/logs/meiquan/accept/success-%d{yyyy-MM-dd}.log</fileNamePattern>-->
+    <!--</rollingPolicy>-->
+    <!--<encoder>-->
+      <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>-->
+    <!--</encoder>-->
+  <!--</appender>-->
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+  <logger name="com.supervise" level="INFO" additivity="true">
+    <appender-ref ref="basic"/>
+  </logger>
+
+  <logger name="org.hibernate" level="INFO" additivity="true">
+    <appender-ref ref="basic"/>
+  </logger>
+
+  <!--<logger name="meiquanSendFail" level="ERROR" additivity="true">-->
+    <!--<appender-ref ref="meiquanSendFail"/>-->
+  <!--</logger>-->
+
+  <!--<logger name="meiquanSendSuccess" level="INFO" additivity="true">-->
+    <!--<appender-ref ref="meiquanSendSuccess"/>-->
+  <!--</logger>-->
+
+  <!--<logger name="meiquanAcceptFail" level="ERROR" additivity="true">-->
+    <!--<appender-ref ref="meiquanAcceptFail"/>-->
+  <!--</logger>-->
+
+  <!--<logger name="meiquanAcceptSuccess" level="INFO" additivity="true">-->
+    <!--<appender-ref ref="meiquanAcceptSuccess"/>-->
+  <!--</logger>-->
+</configuration>

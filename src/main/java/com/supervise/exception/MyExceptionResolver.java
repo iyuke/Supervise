@@ -2,6 +2,7 @@ package com.supervise.exception;
 
 import com.supervise.controller.BaseResponse;
 import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
